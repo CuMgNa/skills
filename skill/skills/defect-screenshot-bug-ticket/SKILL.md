@@ -1,6 +1,6 @@
 ---
 name: defect-screenshot-bug-ticket
-description: 缺陷截图→Bug单。用户上传缺陷截图或说"帮我提bug/根据截图写bug/整理缺陷/识别这个问题"时触发,按固定8块字段输出可粘贴到禅道的Bug单。
+description: 缺陷截图→Bug单（仅缺陷录入阶段）。用户上传缺陷截图或说提bug/整理缺陷/识别问题时触发；由qa-agent-defect-intake调用。按8块字段输出禅道Bug单。勿在拉缺陷汇总、写测试报告、钉钉推送流程中触发。
 ---
 
 # 缺陷截图 → Bug 单(精简量化版)

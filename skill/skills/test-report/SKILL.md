@@ -1,6 +1,6 @@
 ---
 name: test-report-writing
-description: 根据测试结果与缺陷汇总，编写标准化测试报告。适用于测试工程师输出测试报告时使用。
+description: 根据禅道缺陷汇总MD编写测试报告（仅报告发布阶段，qa-agent-report-publish）。输入为zentao-bug-summary产出的MD。勿在截图提缺陷、新建禅道Bug流程中触发。
 ---
 
 # 测试报告编写指南

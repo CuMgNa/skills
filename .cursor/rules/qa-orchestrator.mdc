@@ -1,0 +1,14 @@
+---
+description: QA全流程编排：提缺陷、出报告、截图到报告。触发时优先读取 qa-orchestrator 并按 Agent1/Agent2 分工，使用 handoff/latest.json 交接。
+alwaysApply: false
+---
+
+# QA 编排规则
+
+当用户提到 **全流程、截图到报告、提缺陷并出报告、编排 QA** 时：
+
+1. 读取 `skill/skills/qa-orchestrator/SKILL.md` 并按意图路由。
+2. 缺陷录入阶段只使用 `qa-agent-defect-intake`（及其中引用的两个底层 skill）。
+3. 报告发布阶段只使用 `qa-agent-report-publish`（及其中引用的三个底层 skill）。
+4. 全流程必须在 Agent1 完成后读取/写入 `skill/mcp/output/handoff/latest.json` 再启动 Agent2。
+5. 默认禅道项目：`【磐钴】位置监控平台-国际化`。

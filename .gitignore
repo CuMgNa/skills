@@ -1,0 +1,5 @@
+# QA pipeline handoff (runtime state, do not commit)
+skill/mcp/output/handoff/latest.json
+skill/mcp/output/handoff/*.json
+!skill/mcp/output/handoff/.gitkeep
+!skill/mcp/output/handoff/handoff.schema.json

@@ -1,6 +1,6 @@
 ---
 name: zentao-bug-summary
-description: 从禅道拉取指定项目的缺陷列表并生成汇总报告。当用户提到禅道缺陷、Bug汇总、缺陷统计、缺陷报告、项目Bug时触发。
+description: 从禅道拉取项目缺陷汇总MD/JSON（仅报告发布阶段，qa-agent-report-publish）。用户说拉取禅道缺陷、Bug汇总、缺陷统计、未关闭缺陷时触发。勿在截图提缺陷、新建禅道Bug流程中单独触发。
 ---
 
 # 禅道缺陷汇总

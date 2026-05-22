@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QA Pipeline Handoff",
+  "description": "Agent1 → Agent2 交接契约，由 qa-agent-defect-intake 写入，qa-agent-report-publish / qa-orchestrator 读取",
+  "type": "object",
+  "required": ["projectName", "timestamp", "bugsCreated", "bugsFailed", "screenshotPaths"],
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "禅道项目名称（模糊匹配子串）",
+      "examples": ["【磐钴】位置监控平台-国际化"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 时间，Agent1 完成时刻"
+    },
+    "screenshotPaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "本次处理的截图绝对路径列表"
+    },
+    "bugsCreated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "severity": { "type": "integer" },
+          "pri": { "type": "integer" }
+        }
+      }
+    },
+    "bugsFailed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "error": { "type": "string" }
+        }
+      }
+    },
+    "reportOptions": {
+      "type": "object",
+      "properties": {
+        "noClosed": { "type": "boolean", "default": true },
+        "openedBuild": { "type": "string" }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}
