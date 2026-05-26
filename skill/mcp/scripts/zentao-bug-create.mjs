@@ -294,6 +294,7 @@ function parseArgs(argv) {
     else if (a === "--execution" && argv[i + 1]) args.execution = Number(argv[++i]);
     else if (a === "--opened-build" && argv[i + 1]) args.openedBuild.push(argv[++i]);
     else if (a === "--dry-run") args.dryRun = true;
+    else if (a === "--update-bug-id" && argv[i + 1]) args.updateBugId = Number(argv[++i]);
     else if (a === "--list-products") {
       args.listProducts = true;
       if (argv[i + 1] && !String(argv[i + 1]).startsWith("--")) args.listProductsKeyword = argv[++i];
@@ -311,6 +312,7 @@ function parseArgs(argv) {
  * 将纯文本/Markdown 简述转为禅道富文本可用的 HTML。
  * - 连续空行合并，不再为每行空行生成 `<p> </p>`（避免禅道里出现大块异常空白）。
  * - 以 `1、` / `1.` / `1)` 开头的连续行转为 `<ol><li>…</li></ol>`，保留有序编号。
+ * - 列表项之间允许空一行（loose list）；空行后若仍为有序项，归入同一 `<ol>`，避免禅道每条都显示为 `1.`。
  * - 入参里若包含字面量 `\n`、`\r\n`、`\t`（命令行常见情况），先解码为真实控制符。
  */
 function stepsToHtml(s) {
@@ -345,7 +347,15 @@ function stepsToHtml(s) {
     }
     if (ORDERED_RE.test(lines[i])) {
       const items = [];
-      while (i < lines.length && ORDERED_RE.test(lines[i])) {
+      while (i < lines.length) {
+        if (lines[i] === "") {
+          if (items.length > 0 && i + 1 < lines.length && ORDERED_RE.test(lines[i + 1])) {
+            i++;
+            continue;
+          }
+          break;
+        }
+        if (!ORDERED_RE.test(lines[i])) break;
         items.push(lines[i].replace(ORDERED_RE, ""));
         i++;
       }
@@ -470,6 +480,7 @@ if (args.help || process.argv.length <= 2) {
   --opened-build 可多次，默认 trunk
   --execution    可选，迭代/执行 ID
   --dry-run      只打印 JSON，不创建
+  --update-bug-id <数字>  仅更新已有缺陷的 steps（需配合 --steps / --steps-file）
   --list-products [关键词]  列出产品 id 与名称，可选关键词过滤名称
   --attach <路径>  可多次；创建成功后上传到该缺陷（需禅道 v22+，POST /api.php/v2/files）
 
@@ -500,8 +511,8 @@ async function main() {
     return;
   }
 
-  if (!args.title) {
-    console.error("请指定 --title");
+  if (!args.title && !(Number.isFinite(args.updateBugId) && args.updateBugId > 0)) {
+    console.error("请指定 --title（更新步骤时可用 --update-bug-id 省略）");
     process.exit(1);
   }
 
@@ -539,6 +550,16 @@ async function main() {
 
   if (args.dryRun) {
     console.log(JSON.stringify({ path: `/api.php/v1/products/${productId}/bugs`, body, attach: args.attach || [] }, null, 2));
+    return;
+  }
+
+  if (Number.isFinite(args.updateBugId) && args.updateBugId > 0) {
+    const updated = await api(`/api.php/v1/bugs/${args.updateBugId}`, {
+      method: "PUT",
+      body: { steps: body.steps },
+    });
+    console.log(JSON.stringify(updated, null, 2));
+    console.error(`已更新缺陷 ID: ${args.updateBugId} 的重现步骤`);
     return;
   }
 
