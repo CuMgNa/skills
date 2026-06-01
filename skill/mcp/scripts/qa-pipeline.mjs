@@ -31,6 +31,10 @@ function parseArgs(argv) {
     model: "composer-2",
     userNote: "",
     agent2OnlyScript: false,
+    publishNotion: false,
+    notionParentPageId: "",
+    notionDatabaseId: "",
+    notionTitleProperty: "Name",
   };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
@@ -44,6 +48,13 @@ function parseArgs(argv) {
     else if (a === "--model" && argv[i + 1]) args.model = argv[++i];
     else if (a === "--note" && argv[i + 1]) args.userNote = argv[++i];
     else if (a === "--agent2-script") args.agent2OnlyScript = true;
+    else if (a === "--notion") args.publishNotion = true;
+    else if (a === "--notion-parent-page-id" && argv[i + 1])
+      args.notionParentPageId = argv[++i];
+    else if (a === "--notion-database-id" && argv[i + 1])
+      args.notionDatabaseId = argv[++i];
+    else if (a === "--notion-title-property" && argv[i + 1])
+      args.notionTitleProperty = argv[++i];
   }
   return args;
 }
@@ -53,13 +64,17 @@ function printHelp() {
 
 模式 (--mode):
   agent1   截图 → 提取缺陷 → 写禅道 → 写 handoff
-  agent2   读 handoff → 拉禅道 → 测试报告 → 钉钉
+  agent2   读 handoff → 拉禅道 → 测试报告 → 钉钉（可选 Notion）
   full     agent1 完成后串行 agent2
 
 选项:
   --project <名称>     禅道项目名，默认：${DEFAULT_PROJECT}
   --screenshots <paths>  逗号分隔截图绝对路径（agent1/full 需要）
   --no-closed          Agent2 仅拉未关闭缺陷
+  --notion             Agent2 在钉钉之外同步写入 Notion
+  --notion-parent-page-id <uuid>  Notion 父页面 ID（子页面模式，首选）
+  --notion-database-id <uuid>     Notion 数据库 ID（数据库条目模式）
+  --notion-title-property <name>  数据库标题列名，默认 Name
   --note <text>        用户简述（传给 Agent1）
   --model <id>         Cursor 模型，默认 composer-2
   --dry-run            只打印 prompt，不调用 SDK
@@ -73,6 +88,7 @@ Handoff:
 
 示例:
   node skill/mcp/scripts/qa-pipeline.mjs --mode full --screenshots "C:\\\\path\\\\bug.png" --no-closed
+  node skill/mcp/scripts/qa-pipeline.mjs --mode agent2 --no-closed --notion --notion-parent-page-id "<uuid>"
 `);
 }
 
@@ -105,6 +121,16 @@ function buildAgent2Prompt(args) {
   if (existsSync(HANDOFF_PATH)) {
     handoffBlock = readFileSync(HANDOFF_PATH, "utf8");
   }
+  const notionBlock = args.publishNotion
+    ? `
+6. 按 notion-test-report 将完整报告写入 Notion（钉钉完成后执行）。
+   - publishNotion: true
+   - notionParentPageId: ${args.notionParentPageId || "（见 handoff 或向用户确认）"}
+   - notionDatabaseId: ${args.notionDatabaseId || "（见 handoff 或向用户确认）"}
+   - notionTitleProperty: ${args.notionTitleProperty || "Name"}`
+    : `
+6. 不写入 Notion（默认仅钉钉）。若 handoff 中 reportOptions.publishNotion 为 true，则改按 notion-test-report 执行。`;
+
   return `你是 QA Agent2（报告发布）。工作区根目录：${REPO_ROOT}
 
 必须完整阅读并执行：
@@ -112,6 +138,7 @@ function buildAgent2Prompt(args) {
 - skill/skills/zentao-bug-summary/SKILL.md
 - skill/skills/test-report/SKILL.md
 - skill/skills/dingtalk-test-report/SKILL.md
+- skill/skills/notion-test-report/SKILL.md（仅 publishNotion 启用时）
 
 禁止：创建新禅道 Bug、截图提取缺陷。
 
@@ -122,9 +149,9 @@ ${handoffBlock}
 2. 项目名：${args.project}
 3. 拉取缺陷：node skill/mcp/scripts/zentao-bugs-summary.mjs --project-name "${args.project}"${args.noClosed ? " --no-closed" : ""}
 4. 根据生成的 MD 按 test-report 技能编写完整测试报告（三节）。
-5. 按 dingtalk-test-report 写入钉钉文档并 webhook 推送（推送仅「一、测试结果」）。
+5. 按 dingtalk-test-report 写入钉钉文档并 webhook 推送（推送仅「一、测试结果」）。${notionBlock}
 
-返回：汇总 MD 路径、钉钉文档链接、机器人推送 errcode。`;
+返回：汇总 MD 路径、钉钉文档链接、机器人推送 errcode${args.publishNotion ? "、Notion 页面链接或失败原因" : ""}。`;
 }
 
 async function loadSdk() {

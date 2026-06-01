@@ -1,6 +1,6 @@
 ---
 name: qa-orchestrator
-description: QA全流程编排。用户说全流程/截图到报告/提缺陷并出报告、或需自动串行缺陷录入与报告发布时触发。路由到Agent1(截图→禅道)与Agent2(拉缺陷→报告→钉钉)，管理handoff。
+description: QA全流程编排。用户说全流程/截图到报告/提缺陷并出报告、或需自动串行缺陷录入与报告发布时触发。路由到Agent1(截图→禅道)与Agent2(拉缺陷→报告→钉钉，可选同步Notion)，管理handoff。
 ---
 
 # QA Orchestrator — 双 Agent 编排
@@ -16,7 +16,7 @@ description: QA全流程编排。用户说全流程/截图到报告/提缺陷并
 | 用户意图 | 执行 |
 |----------|------|
 | 上传截图 / 提缺陷 / 写禅道 / 识别缺陷 | **仅 Agent1** → `@skill/skills/qa-agent-defect-intake/SKILL.md` |
-| 拉缺陷 / 写测试报告 / 推送钉钉 / 出报告 | **仅 Agent2** → `@skill/skills/qa-agent-report-publish/SKILL.md` |
+| 拉缺陷 / 写测试报告 / 推送钉钉 / 同步 Notion / 出报告 | **仅 Agent2** → `@skill/skills/qa-agent-report-publish/SKILL.md` |
 | 全流程 / 截图到报告 / 缺陷+报告一条龙 | **Agent1 → Agent2**（串行） |
 
 ## Handoff 契约
@@ -55,6 +55,10 @@ description: QA全流程编排。用户说全流程/截图到报告/提缺陷并
 先读取 skill/mcp/output/handoff/latest.json（若存在）。
 项目：{projectName}
 未关闭缺陷：{noClosed}
+同步 Notion：{publishNotion}
+Notion 父页面 ID：{notionParentPageId}
+Notion 数据库 ID：{notionDatabaseId}
+Notion 标题列名：{notionTitleProperty}
 不要创建新禅道 Bug。
 ```
 
@@ -67,7 +71,9 @@ node skill/mcp/scripts/qa-pipeline.mjs \
   --project "【磐钴】位置监控平台-国际化" \
   --mode full \
   --screenshots "path1.png,path2.png" \
-  --no-closed
+  --no-closed \
+  --notion \
+  --notion-parent-page-id "<uuid>"
 ```
 
 需环境变量 `CURSOR_API_KEY`。详见脚本 `--help`。
@@ -78,6 +84,7 @@ node skill/mcp/scripts/qa-pipeline.mjs \
 2. Agent1 全部失败：不写空 handoff 冒充成功；询问是否重试或仅跑 Agent2。
 3. Agent2 拉取禅道失败：**终止**，不推钉钉。
 4. Agent2 钉钉推送失败：仍返回文档链接，标注 webhook 需重试。
+5. Agent2 Notion 写入失败：钉钉结果仍返回，单独说明 Notion 失败与可重试方式。
 
 ## 子技能索引
 
@@ -86,4 +93,4 @@ node skill/mcp/scripts/qa-pipeline.mjs \
 | Agent1 | `skill/skills/qa-agent-defect-intake/SKILL.md` |
 | Agent2 | `skill/skills/qa-agent-report-publish/SKILL.md` |
 
-底层能力仍由 `defect-screenshot-bug-ticket`、`bug-report-and-create`、`zentao-bug-summary`、`test-report`、`dingtalk-test-report` 提供。
+底层能力仍由 `defect-screenshot-bug-ticket`、`bug-report-and-create`、`zentao-bug-summary`、`test-report`、`dingtalk-test-report`、`notion-test-report` 提供。

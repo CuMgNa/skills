@@ -92,7 +92,7 @@ const server = new McpServer({ name: "mcp-zentao", version: "0.1.0" });
 
 // 1) 获取项目列表（验证最常用、也最不容易受权限影响）
 server.tool(
-  "zentao.projects",
+  "zentao_projects",
   "获取项目列表（分页）",
   async ({ page = 1, limit = 50 } = {}) => {
     const data = await zentaoApi("/api.php/v1/projects", { query: { page, limit } });
@@ -102,7 +102,7 @@ server.tool(
 
 // 2) 通用请求：你可以临时调用任何 endpoint
 server.tool(
-  "zentao.request",
+  "zentao_request",
   "通用请求（调试任意 REST API）",
   async ({ path, method = "GET", query, body } = {}) => {
     if (!path) throw new Error("path is required, e.g. /api.php/v1/bugs");

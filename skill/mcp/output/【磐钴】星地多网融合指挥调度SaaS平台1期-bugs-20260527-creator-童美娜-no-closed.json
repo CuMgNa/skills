@@ -6,18 +6,6 @@
   "total": 35,
   "bugs": [
     {
-      "id": 3147,
-      "title": "【账号管理】管理后台仅分配设备后二级账号设备列表未展示已分配设备",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T10:47:43Z",
-      "assignedTo": "pglpk",
-      "type": "codeerror"
-    },
-    {
       "id": 3145,
       "title": "【奥维绑定】奥维绑定接口响应异常",
       "status": "active",
@@ -63,18 +51,6 @@
       "openedByName": "童美娜",
       "openedDate": "2026-05-26T07:52:54Z",
       "assignedTo": "pgoyc",
-      "type": "codeerror"
-    },
-    {
-      "id": 3135,
-      "title": "【求救群聊】个人账号解绑救援棒，群内待发送消息未取消、额度未返还",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T07:40:29Z",
-      "assignedTo": "pglpk",
       "type": "codeerror"
     },
     {
@@ -138,30 +114,6 @@
       "type": "codeerror"
     },
     {
-      "id": 3117,
-      "title": "【设备管理】好友/用户设备编辑页无法查看图标",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T05:53:12Z",
-      "assignedTo": "pgpxy",
-      "type": "codeerror"
-    },
-    {
-      "id": 3114,
-      "title": "【设备管理】批量添加成功未自动勾选回显",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T03:45:06Z",
-      "assignedTo": "pgpxy",
-      "type": "codeerror"
-    },
-    {
       "id": 3098,
       "title": "【大屏监控】设备管理与监控大屏 在线/离线设备数不一致（4 vs 6、1083 vs 1055）",
       "status": "confirmed",
@@ -207,6 +159,30 @@
       "openedByName": "童美娜",
       "openedDate": "2026-05-21T09:41:56Z",
       "assignedTo": "pgoyc",
+      "type": "codeerror"
+    },
+    {
+      "id": 3147,
+      "title": "【账号管理】管理后台仅分配设备后二级账号设备列表未展示已分配设备",
+      "status": "resolved",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-26T10:47:43Z",
+      "assignedTo": "pgtmn",
+      "type": "codeerror"
+    },
+    {
+      "id": 3135,
+      "title": "【求救群聊】个人账号解绑救援棒，群内待发送消息未取消、额度未返还",
+      "status": "resolved",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-26T07:40:29Z",
+      "assignedTo": "pgtmn",
       "type": "codeerror"
     },
     {
@@ -342,6 +318,18 @@
       "type": "codeerror"
     },
     {
+      "id": 3117,
+      "title": "【设备管理】好友/用户设备编辑页无法查看图标",
+      "status": "resolved",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-26T05:53:12Z",
+      "assignedTo": "pgtmn",
+      "type": "codeerror"
+    },
+    {
       "id": 3116,
       "title": "【用户管理】一级账号编辑后剩余可绑定数前端显示 0、接口返回 10",
       "status": "resolved",
@@ -362,6 +350,18 @@
       "openedBy": "pgtmn",
       "openedByName": "童美娜",
       "openedDate": "2026-05-26T03:48:03Z",
+      "assignedTo": "pgtmn",
+      "type": "codeerror"
+    },
+    {
+      "id": 3114,
+      "title": "【设备管理】批量添加成功未自动勾选回显",
+      "status": "resolved",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-26T03:45:06Z",
       "assignedTo": "pgtmn",
       "type": "codeerror"
     },

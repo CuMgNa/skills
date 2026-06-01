@@ -48,7 +48,27 @@
       "type": "object",
       "properties": {
         "noClosed": { "type": "boolean", "default": true },
-        "openedBuild": { "type": "string" }
+        "openedBuild": { "type": "string" },
+        "publishNotion": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否在钉钉之外同步写入 Notion"
+        },
+        "notionParentPageId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Notion 父页面 ID（子页面模式，首选）"
+        },
+        "notionDatabaseId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Notion 数据库 ID（数据库条目模式）"
+        },
+        "notionTitleProperty": {
+          "type": "string",
+          "default": "Name",
+          "description": "数据库模式下标题属性名"
+        }
       }
     },
     "notes": { "type": "string" }

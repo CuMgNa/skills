@@ -9,6 +9,6 @@ alwaysApply: false
 
 1. 读取 `skill/skills/qa-orchestrator/SKILL.md` 并按意图路由。
 2. 缺陷录入阶段只使用 `qa-agent-defect-intake`（及其中引用的两个底层 skill）。
-3. 报告发布阶段只使用 `qa-agent-report-publish`（及其中引用的三个底层 skill）。
+3. 报告发布阶段只使用 `qa-agent-report-publish`（及其中引用的四个底层 skill）。
 4. 全流程必须在 Agent1 完成后读取/写入 `skill/mcp/output/handoff/latest.json` 再启动 Agent2。
 5. 默认禅道项目：`【磐钴】位置监控平台-国际化`。
