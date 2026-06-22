@@ -56,9 +56,7 @@ description: QA全流程编排。用户说全流程/截图到报告/提缺陷并
 项目：{projectName}
 未关闭缺陷：{noClosed}
 同步 Notion：{publishNotion}
-Notion 父页面 ID：{notionParentPageId}
-Notion 数据库 ID：{notionDatabaseId}
-Notion 标题列名：{notionTitleProperty}
+Notion 父页面 ID：{notionParentPageId}   # 未指定则默认：36c5667c6d3a80d593bcf38311cf751d
 不要创建新禅道 Bug。
 ```
 
