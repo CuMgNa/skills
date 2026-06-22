@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "simple-weekly-report-trigger",
+  "prompt": "生成本周周报",
+  "assertions": []
+}

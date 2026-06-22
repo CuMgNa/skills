@@ -3,19 +3,79 @@
     "projectId": 1268,
     "projectName": "【磐钴】星地多网融合指挥调度SaaS平台1期"
   },
-  "total": 36,
+  "total": 30,
   "bugs": [
     {
-      "id": 3223,
-      "title": "【我的信息】三级账号关联的个人账号被解绑后，三级账号「我的信息」页面持续吐司提示“失败”",
+      "id": 3248,
+      "title": "【围栏报警记录】报警内容中文环境显示英文",
       "status": "active",
       "pri": 4,
       "severity": 4,
       "openedBy": "pgtmn",
       "openedByName": "童美娜",
-      "openedDate": "2026-06-01T10:31:17Z",
+      "openedDate": "2026-06-02T09:53:42Z",
       "assignedTo": "pglpk",
       "type": "codeimprovement"
+    },
+    {
+      "id": 3247,
+      "title": "【设备管理】管理后台新增设备类型可编辑未被限制",
+      "status": "active",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-02T09:49:55Z",
+      "assignedTo": "pgpxy",
+      "type": "codeimprovement"
+    },
+    {
+      "id": 3246,
+      "title": "【设备详情】自定义字段与分隔符间距过大",
+      "status": "active",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-02T09:40:30Z",
+      "assignedTo": "pgpxy",
+      "type": "codeerror"
+    },
+    {
+      "id": 3245,
+      "title": "【iOS求救群聊】语音消息时长超过10s限制",
+      "status": "active",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-02T09:36:27Z",
+      "assignedTo": "pgpxy",
+      "type": "codeerror"
+    },
+    {
+      "id": 3244,
+      "title": "【求救群聊】终端报警自动建群后未读消息无角标提示",
+      "status": "active",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-02T09:32:50Z",
+      "assignedTo": "pgoyc",
+      "type": "codeerror"
+    },
+    {
+      "id": 3243,
+      "title": "【求救群聊】终端上报语音消息错误展示“终端已读”状态",
+      "status": "active",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-02T09:30:33Z",
+      "assignedTo": "pgpxy",
+      "type": "codeerror"
     },
     {
       "id": 3222,
@@ -138,30 +198,6 @@
       "type": "codeerror"
     },
     {
-      "id": 3207,
-      "title": "【一级账号】编辑页冻结开关无法切换",
-      "status": "active",
-      "pri": 2,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-29T10:04:46Z",
-      "assignedTo": "pgpxy",
-      "type": "codeerror"
-    },
-    {
-      "id": 3206,
-      "title": "【公众号通知】小程序无法关注公众号",
-      "status": "confirmed",
-      "pri": 2,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-29T10:00:38Z",
-      "assignedTo": "pglpk",
-      "type": "codeerror"
-    },
-    {
       "id": 3205,
       "title": "【电子围栏】三级账号删除同步围栏时，二级/一级账号围栏数据被异常清除",
       "status": "active",
@@ -174,6 +210,18 @@
       "type": "codeerror"
     },
     {
+      "id": 3202,
+      "title": "【电子围栏】设备解绑后重新绑定，已同步解绑的围栏关联被自动恢复",
+      "status": "confirmed",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-29T07:29:03Z",
+      "assignedTo": "pglpk",
+      "type": "codeerror"
+    },
+    {
       "id": 3180,
       "title": "【控制台】设备报警并报平安后切换地图，设备图标重复",
       "status": "confirmed",
@@ -182,7 +230,19 @@
       "openedBy": "pgtmn",
       "openedByName": "童美娜",
       "openedDate": "2026-05-28T10:12:06Z",
-      "assignedTo": "pglpk",
+      "assignedTo": "pgpxy",
+      "type": "codeerror"
+    },
+    {
+      "id": 3177,
+      "title": "【求救群聊】求救群聊产生新消息后，左侧聊天列表最新消息摘要未自动同步",
+      "status": "confirmed",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-05-28T09:43:15Z",
+      "assignedTo": "pgoyc",
       "type": "codeerror"
     },
     {
@@ -210,14 +270,14 @@
       "type": "codeerror"
     },
     {
-      "id": 3202,
-      "title": "【电子围栏】设备解绑后重新绑定，已同步解绑的围栏关联被自动恢复",
+      "id": 3207,
+      "title": "【一级账号】编辑页冻结开关无法切换",
       "status": "resolved",
-      "pri": 3,
+      "pri": 2,
       "severity": 3,
       "openedBy": "pgtmn",
       "openedByName": "童美娜",
-      "openedDate": "2026-05-29T07:29:03Z",
+      "openedDate": "2026-05-29T10:04:46Z",
       "assignedTo": "pgtmn",
       "type": "codeerror"
     },
@@ -234,18 +294,6 @@
       "type": "codeerror"
     },
     {
-      "id": 3179,
-      "title": "【求救群聊】求救群聊状态由“救援中”变更为“已结束”，此时天通救援棒还会触发一条离线报警",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T10:06:59Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
       "id": 3178,
       "title": "【普通群聊】卫星应急救援终端平台取消待发送消息后，平台端对应消息状态未同步为“已取消”",
       "status": "resolved",
@@ -256,66 +304,6 @@
       "openedDate": "2026-05-28T09:51:17Z",
       "assignedTo": "pgtmn",
       "type": "codeerror"
-    },
-    {
-      "id": 3177,
-      "title": "【求救群聊】求救群聊产生新消息后，左侧聊天列表最新消息摘要未自动同步",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T09:43:15Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3176,
-      "title": "【求救群聊】求救群聊发送消息后，卫星应急救援终端平台下行消息管理未生成对应记录",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T09:38:31Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3174,
-      "title": "【用户列表】好友关注列表中关注时间未按账号维度展示最新关注时间",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T09:28:59Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3173,
-      "title": "【设备管理】后台清空设备备注后，新账号扫码关注仍默认展示原绑定账号微信昵称",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T09:22:49Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3172,
-      "title": "【设备管理】协议自动关注设备时，备注名称生成规则不一致",
-      "status": "resolved",
-      "pri": 4,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-28T09:20:38Z",
-      "assignedTo": "pgtmn",
-      "type": "codeimprovement"
     },
     {
       "id": 3145,
@@ -330,42 +318,6 @@
       "type": "codeimprovement"
     },
     {
-      "id": 3136,
-      "title": "【求救群聊】终端建群未读角标双倍计数",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T07:52:54Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3135,
-      "title": "【求救群聊】个人账号解绑救援棒，群内待发送消息未取消、额度未返还",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T07:40:29Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3125,
-      "title": "【设备订阅】关注列表手机号为空显示null",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 4,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T06:49:28Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
       "id": 3124,
       "title": "【账号管理】冻结个人账号导致同号三级账号无法手机号登录",
       "status": "resolved",
@@ -374,30 +326,6 @@
       "openedBy": "pgtmn",
       "openedByName": "童美娜",
       "openedDate": "2026-05-26T06:43:48Z",
-      "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3123,
-      "title": "【设备管理】子级账号扫码关注设备，day默认为空，弹窗未提示“分享最近 3 天动态”",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 4,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-26T06:39:14Z",
-      "assignedTo": "pgtmn",
-      "type": "codeimprovement"
-    },
-    {
-      "id": 3068,
-      "title": "【控制台】详情弹窗未锚定图标上方",
-      "status": "resolved",
-      "pri": 2,
-      "severity": 3,
-      "openedBy": "pgtmn",
-      "openedByName": "童美娜",
-      "openedDate": "2026-05-21T09:53:10Z",
       "assignedTo": "pgtmn",
       "type": "codeerror"
     },

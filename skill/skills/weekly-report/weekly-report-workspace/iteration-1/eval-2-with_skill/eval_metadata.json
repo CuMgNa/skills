@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "weekly-report-with-date-range",
+  "prompt": "帮我生成 2026-06-16 到 2026-06-22 的周报，执行人是童美娜",
+  "assertions": []
+}

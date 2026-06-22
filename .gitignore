@@ -3,3 +3,12 @@ skill/mcp/output/handoff/latest.json
 skill/mcp/output/handoff/*.json
 !skill/mcp/output/handoff/.gitkeep
 !skill/mcp/output/handoff/handoff.schema.json
+
+# Secrets and local config
+.env
+.mcp.json
+
+# One-off output scripts (may contain API tokens)
+skill/mcp/output/notion-*.py
+skill/mcp/output/dingtalk_push_*.py
+skill/mcp/output/*_push_*.py
