@@ -68,6 +68,51 @@
           "type": "string",
           "default": "Name",
           "description": "数据库模式下标题属性名"
+        },
+        "notionTemplatePageId": {
+          "type": "string",
+          "format": "uuid",
+          "default": "c1b23699-3b3b-4b06-b2ac-0ec9ede194b6",
+          "description": "样板页 ID（v3新增，用于 Notion 写入时的版式参考）"
+        },
+        "notionMaterialPageIds": {
+          "type": "array",
+          "items": { "type": "string", "format": "uuid" },
+          "description": "用户指定的辅助测试资料页 ID 数组（第二部分执行表数据来源；为空则隐藏第二部分）"
+        },
+        "reportMode": {
+          "type": "string",
+          "enum": ["create-new", "overwrite", "fail-on-duplicate"],
+          "default": "create-new",
+          "description": "Notion 写入幂等模式：create-new=每次新建 / overwrite=草稿覆盖 / fail-on-duplicate=重复报错"
+        },
+        "reportMeta": {
+          "type": "object",
+          "description": "报告元信息（v3新增，用于填充报告信息 callout）",
+          "properties": {
+            "testType": {
+              "type": "string",
+              "description": "测试类型，如「第二轮功能测试 + 缺陷回归」"
+            },
+            "coverageStart": {
+              "type": "string",
+              "format": "date",
+              "description": "覆盖期起始日期"
+            },
+            "coverageEnd": {
+              "type": "string",
+              "format": "date",
+              "description": "覆盖期截止日期"
+            },
+            "tester": {
+              "type": "string",
+              "description": "测试人姓名（如「童美娜」）"
+            },
+            "developer": {
+              "type": "string",
+              "description": "开发者姓名（可选）"
+            }
+          }
         }
       }
     },

@@ -1,86 +1,141 @@
 ---
 name: notion-test-report
-description: 测试报告可选写入 Notion 页面（仅报告发布阶段，qa-agent-report-publish）。用户明确要求同时写入 Notion 时触发。勿在截图提缺陷、新建禅道Bug流程中触发。
+description: 将测试报告写入 Notion 页面的写入层技能（仅报告发布阶段，qa-agent-report-publish）。主路径使用 API-update-page-markdown replace_content，fallback 到段落追加模式。用户明确要求"同时写入 Notion"时触发。
 ---
 
-# Notion 测试报告发布
+# Notion 测试报告发布（v3 升级版）
 
-## 目标定位
+## 定位
 
-- 本技能是 `dingtalk-test-report` 的并行补充渠道，不替代钉钉。
-- 默认不执行；仅当 Agent2 已判定 `publishNotion=true` 或用户明确要求“同时写 Notion”时执行。
-- 报告内容以“完整保真”为先，格式可保守降级。
+- 本技能是 `dingtalk-test-report` 的并行渠道，不替代钉钉。
+- 默认不执行；仅当 Agent2 已判定 `publishNotion=true` 或用户明确要求时执行。
+- **报告内容以"数据正确 + 格式保真"为优先**，版式降级必须显式标注。
+
+---
 
 ## 输入
 
-1. 测试报告 Markdown 正文（由 `test-report` 产出）。
-2. Notion 目标（至少一种）：
-   - `notionParentPageId`：将报告作为某页面子页面创建（首选）。
-   - `notionDatabaseId`：写入数据库为新条目（需可写标题属性）。
-3. 可选：`notionTitleProperty`（默认 `Name`，仅数据库模式使用）。
+| 输入 | 来源 | 说明 |
+|------|------|------|
+| `notionReportMD` | `test-report-notion` 产出 | Notion 增强 Markdown 全文 |
+| `bugStats` | `bug-stats` 产出 | 单一统计事实源（用于校验） |
+| `notionParentPageId` | `qa-agent-report-publish` 配置 | 写入父页面 ID |
+| `reportMode` | handoff 配置 | `create-new`（默认）/ `overwrite` / `fail-on-duplicate` |
+| `reportKey` | 计算得出 | `项目名 + 测试类型 + 覆盖期` |
 
-## 正文预处理规则（与钉钉保持一致）
+---
 
-- 过滤文档主标题（第一行 `# 标题`）。
-- 过滤报告生成时间（`> 报告生成时间`）。
-- 正文从“一、测试结果”开始，包含一、二、三全部内容。
-- 不得删减原始报告语义；格式不兼容时转为普通段落文本。
+## 核心工具
 
-## MCP 调用前置
+优先使用：
+- `API-post-page`：创建空页面（仅 title）
+- `API-update-page-markdown` + `type: replace_content`：一次性写入增强 Markdown
 
-调用任何 Notion MCP 工具前，先读取对应工具 schema 描述文件，确认参数结构。
+Fallback：
+- `API-patch-block-children`：分批追加纯段落（仅在 replace_content 失败时降级使用）
 
-核心工具：
+---
 
-- `API-post-page`：创建页面。
-- `API-patch-block-children`：分批追加正文块。
-- 可选辅助：`API-retrieve-a-page`、`API-retrieve-a-database`、`API-post-search`。
+## 完整流程
 
-## 写入流程
+### 第一步：安全断言（必须先执行）
 
-### 1) 解析标题与父级
+**目标页安全断言**：写入目标页 ID 必须 ≠ `templatePageId`（`c1b23699-3b3b-4b06-b2ac-0ec9ede194b6`），防止误覆盖样板页。
 
-- 标题建议：`{项目名} 测试报告 YYYY-MM-DD`。
-- 优先使用 `notionParentPageId`；若无则使用 `notionDatabaseId`。
-- 两者都缺失则终止并返回“缺少 Notion 目标配置”。
+若相等 → 终止并返回错误："禁止写入样板页"。
 
-### 2) 创建页面（API-post-page）
+### 第二步：幂等检查（根据 reportMode）
 
-- parent:
-  - 父页面模式：`{ "page_id": "<uuid>" }`
-  - 数据库模式：`{ "type": "database_id", "database_id": "<uuid>" }`
-- properties:
-  - 父页面模式：只需 `title` 类型属性（按 Notion 返回要求构造）。
-  - 数据库模式：标题属性键默认 `Name`，可由 `notionTitleProperty` 覆盖。
+| 模式 | 行为 |
+|------|------|
+| `create-new`（默认） | 每次新建页，标题带日期时间戳 |
+| `overwrite` | 命中相同 reportKey 且为草稿才覆盖；覆盖前先存快照 |
+| `fail-on-duplicate` | 命中重复直接报错退出 |
 
-### 3) Markdown 到 Notion 块（首版保守映射）
+**幂等键**：`reportKey = 项目名 + 测试类型 + 覆盖期/报告日期`
 
-- 普通行/段落 → `paragraph`
-- 无序列表项（`- ` / `* `）→ `bulleted_list_item`
-- 标题、引用、表格、分隔线等不支持语义 → 降级为 `paragraph` 文本
+**留痕（覆盖前必做）**：覆盖前用 `API-retrieve-page-markdown` 读出旧内容，存 `skill/mcp/output/snapshots/{reportKey}-{timestamp}.md`。
 
-说明：当前 MCP schema 对块类型支持较窄，首版不做富文本强还原，优先保证完整入库。
+### 第三步：校验闸门（写入前强制校验）
 
-### 4) 分批追加正文（API-patch-block-children）
+**全部以 `bugStats` 为基准**，任一不过 → **硬阻断**，钉钉与 Notion 均不外发。
 
-- `block_id` 使用新建页面 ID。
-- 分批追加 `children`，避免单次请求过大导致失败。
-- 出错时返回已写入部分和失败原因，供重试。
+| 编号 | 校验项 | 判定规则 |
+|------|--------|---------|
+| C1 | 「一、测试结果」未解决数 | 必须 == `bugStats.byStatus.未解决` |
+| C2 | 「三、未解决问题汇总」条目总数 | 必须 == `bugStats.byStatus.未解决` |
+| C3 | 各级别数量 | 必须 == `bugStats.byLevel`（一级/二级/三级/四级分别相等） |
+| C4 | 统计行数字 | 必须 == `bugStats.total` / `bugStats.byStatus.未解决` / `bugStats.byStatus.已修复待回归` / `bugStats.byStatus.已延期` |
+| C5 | 「四、待回归」条目数 | 必须 == `bugStats.待回归列表.length` |
+| C6 | 执行表各模块未解决之和（仅当第二部分存在） | 必须 == `bugStats.byStatus.未解决`；每模块数字 == `bugStats.byModule` |
+| C7 | 报告缺陷标题 | 必须与 `bugStats.未解决列表` / `bugStats.待回归列表` 原文逐条一致 |
+
+**失败处置**：
+
+| 类别 | 处置 |
+|------|------|
+| **数据类**（C1-C7 任何不过） | **硬阻断**：不写 Notion、不推钉钉；保留草稿（标 `validation_failed`）；告警「哪条校验、期望值 vs 实际值」 |
+| **版式类**（调用 `API-update-page-markdown` 时格式渲染异常） | **降级放行**：仍发布，但报告顶部加 `<callout icon="⚠️" color="yellow_bg">版式降级通知：完整版式写入失败，内容以纯文本呈现</callout>` |
+| **资料缺失**（第二部分辅助资料缺失） | 不算失败，跳过 C6，按 `test-report-notion` 规则隐藏第二部分 |
+
+### 第四步：写入 Notion
+
+#### 主路径（replace_content）
+
+1. `API-post-page` 在 `notionParentPageId` 下创建空页（仅 title = `{项目} 测试报告 {YYYY-MM-DD}`）
+2. `API-update-page-markdown` + `type: replace_content` 一次性写入 `notionReportMD`
+3. 写入后 **回读** `API-retrieve-page-markdown` 做二次一致性目视检查（双保险）
+
+#### Fallback（patch-block-children）
+
+当 `replace_content` 失败时：
+
+1. 降级为 `patch-block-children` 纯段落追加模式
+2. 在报告顶部显式标注版式降级：
+   ```markdown
+   <callout icon="⚠️" color="yellow_bg">版式降级通知：由于技术限制，报告以纯文本形式写入，部分格式可能与预期不符。</callout>
+   ```
+3. 逐段追加 `paragraph` 和 `bulleted_list_item` 块
+
+### 第五步：回读校验（双保险）
+
+写入后执行 `API-retrieve-page-markdown` 读取刚写入的页面内容，**目视确认**关键信息存在（报告信息 callout、第一节数字、缺陷标题列表）。
+
+若回读内容与预期严重不符（如 callout 完全丢失）→ 记录告警，**不阻断**（已完成写入优先）。
+
+---
 
 ## 输出
 
 成功时返回：
 
-- `notionPageId`
-- `notionUrl`
-- `notionWriteStatus=success`
+```json
+{
+  "notionPageId": "<新建页面ID>",
+  "notionUrl": "https://www.notion.so/……",
+  "notionWriteStatus": "success",
+  "reportMode": "create-new",
+  "sectionTwoRendered": true  // 或 false（无资料时）
+}
+```
 
 失败时返回：
 
-- `notionWriteStatus=failed`
-- `error`（原始错误摘要）
+```json
+{
+  "notionWriteStatus": "failed",
+  "error": "错误描述",
+  "failedAt": "校验闸门 / replace_content / 回读校验",
+  "sectionTwoRendered": false
+}
+```
 
-## 失败策略
+---
 
-- Notion 写入失败不应覆盖钉钉已完成结果。
-- 将失败作为附加渠道失败回报给用户，并提示可重试 Notion 发布。
+## 关键约束
+
+1. **目标页安全断言先于一切**：写入前必须校验目标页 ≠ 样板页
+2. **校验闸门先于写入**：C1-C7 全部通过才进入写入步骤
+3. **降级必须显式标注**：任何版式降级都必须在报告顶部加 `<callout icon="⚠️">` 说明
+4. **回读校验双保险**：写入后必须回读确认，不强制阻断但必须记录
+5. **Notion 失败不阻断钉钉**：钉钉已通过同一份 bugStats 与校验，Notion 写入失败时钉钉推送不受影响

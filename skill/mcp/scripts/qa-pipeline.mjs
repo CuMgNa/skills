@@ -35,6 +35,14 @@ function parseArgs(argv) {
     notionParentPageId: "",
     notionDatabaseId: "",
     notionTitleProperty: "Name",
+    notionTemplatePageId: "",
+    notionMaterialPageIds: [],
+    reportMode: "create-new",
+    testType: "",
+    coverageStart: "",
+    coverageEnd: "",
+    tester: "",
+    developer: "",
   };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
@@ -55,40 +63,65 @@ function parseArgs(argv) {
       args.notionDatabaseId = argv[++i];
     else if (a === "--notion-title-property" && argv[i + 1])
       args.notionTitleProperty = argv[++i];
+    else if (a === "--notion-template-page-id" && argv[i + 1])
+      args.notionTemplatePageId = argv[++i];
+    else if (a === "--notion-material-page-ids" && argv[i + 1])
+      args.notionMaterialPageIds = argv[++i].split(",").map((s) => s.trim()).filter(Boolean);
+    else if (a === "--report-mode" && argv[i + 1])
+      args.reportMode = argv[++i];
+    else if (a === "--test-type" && argv[i + 1])
+      args.testType = argv[++i];
+    else if (a === "--coverage-start" && argv[i + 1])
+      args.coverageStart = argv[++i];
+    else if (a === "--coverage-end" && argv[i + 1])
+      args.coverageEnd = argv[++i];
+    else if (a === "--tester" && argv[i + 1])
+      args.tester = argv[++i];
+    else if (a === "--developer" && argv[i + 1])
+      args.developer = argv[++i];
   }
   return args;
 }
 
 function printHelp() {
-  console.log(`QA Pipeline — 双 Agent 编排（Cursor SDK）
+  console.log(`QA Pipeline (v3) — 双 Agent 编排
 
-模式 (--mode):
+Mode (--mode):
   agent1   截图 → 提取缺陷 → 写禅道 → 写 handoff
-  agent2   读 handoff → 拉禅道 → 测试报告 → 钉钉（可选 Notion）
+  agent2   读 handoff → 拉禅道 → 单一统计源 → 钉钉报告 → (可选 Notion)
   full     agent1 完成后串行 agent2
 
-选项:
-  --project <名称>     禅道项目名，默认：${DEFAULT_PROJECT}
+Options:
+  --project <name>     禅道项目名，默认: ${DEFAULT_PROJECT}
   --screenshots <paths>  逗号分隔截图绝对路径（agent1/full 需要）
   --no-closed          Agent2 仅拉未关闭缺陷
   --notion             Agent2 在钉钉之外同步写入 Notion
   --notion-parent-page-id <uuid>  Notion 父页面 ID（子页面模式，首选）
   --notion-database-id <uuid>     Notion 数据库 ID（数据库条目模式）
   --notion-title-property <name>  数据库标题列名，默认 Name
+  --notion-template-page-id <uuid>  样板页 ID（v3 默认 c1b23699-3b3b-4b06-b2ac-0ec9ede194b6）
+  --notion-material-page-ids <uuids> 逗号分隔的辅助测试资料页 ID（第二部分数据来源）
+  --report-mode <mode>    create-new（默认）/ overwrite / fail-on-duplicate
+  --test-type <text>     测试类型，如"第二轮功能测试 + 缺陷回归"
+  --coverage-start <date>  覆盖期起始 YYYY-MM-DD
+  --coverage-end <date>    覆盖期截止 YYYY-MM-DD
+  --tester <name>        测试人姓名（如"童美娜"）
+  --developer <name>      开发者姓名（可选）
   --note <text>        用户简述（传给 Agent1）
   --model <id>         Cursor 模型，默认 composer-2
   --dry-run            只打印 prompt，不调用 SDK
   --agent2-script      Agent2 仅执行 zentao-bugs-summary（不调用 SDK，用于无 API Key 时验证拉取）
 
-环境:
+Environment:
   CURSOR_API_KEY       调用 @cursor/sdk 时必填（--agent2-script 除外）
 
 Handoff:
   ${HANDOFF_PATH}
 
-示例:
-  node skill/mcp/scripts/qa-pipeline.mjs --mode full --screenshots "C:\\\\path\\\\bug.png" --no-closed
-  node skill/mcp/scripts/qa-pipeline.mjs --mode agent2 --no-closed --notion --notion-parent-page-id "<uuid>"
+Examples:
+  node qa-pipeline.mjs --mode full --screenshots "C:\\path\\bug.png" --no-closed
+  node qa-pipeline.mjs --mode agent2 --no-closed --notion --notion-parent-page-id "<uuid>"
+  node qa-pipeline.mjs --mode agent2 --no-closed --notion --tester "童美娜" --test-type "第二轮功能测试 + 缺陷回归" --coverage-start 2026-06-02 --coverage-end 2026-06-13
 `);
 }
 
@@ -101,7 +134,7 @@ function buildAgent1Prompt(args) {
 - skill/skills/defect-screenshot-bug-ticket/SKILL.md
 - skill/skills/bug-report-and-create/SKILL.md
 
-禁止：拉取禅道汇总、写测试报告、钉钉推送。
+禁止：拉取禅道汇总，写测试报告、钉钉推送。
 
 任务：
 1. 项目名：${args.project}
@@ -121,24 +154,30 @@ function buildAgent2Prompt(args) {
   if (existsSync(HANDOFF_PATH)) {
     handoffBlock = readFileSync(HANDOFF_PATH, "utf8");
   }
+
   const notionBlock = args.publishNotion
     ? `
-6. 按 notion-test-report 将完整报告写入 Notion（钉钉完成后执行）。
+6. 执行 Notion 富格式报告管线（钉钉完成后）：
+   a. 按 bug-stats 技能生成 bugStats.json（单一统计事实源）
+   b. 按 test-report-notion 编排 Notion 富格式 Markdown（含校验闸门）
+   c. 按 notion-test-report 写入 Notion（含 replace_content 主路径 + 降级策略）
    - publishNotion: true
    - notionParentPageId: ${args.notionParentPageId || "（见 handoff 或向用户确认）"}
-   - notionDatabaseId: ${args.notionDatabaseId || "（见 handoff 或向用户确认）"}
-   - notionTitleProperty: ${args.notionTitleProperty || "Name"}`
+   - reportMode: ${args.reportMode}
+   - notionMaterialPageIds: ${args.notionMaterialPageIds.join(",") || "（无，按 test-report-notion 规则隐藏第二部分）"}
+   - reportMeta: testType="${args.testType}", coverageStart="${args.coverageStart}", coverageEnd="${args.coverageEnd}", tester="${args.tester}", developer="${args.developer}"`
     : `
-6. 不写入 Notion（默认仅钉钉）。若 handoff 中 reportOptions.publishNotion 为 true，则改按 notion-test-report 执行。`;
+6. 不写入 Notion（默认仅钉钉）。若 handoff 中 reportOptions.publishNotion 为 true，则改按 v3 流程执行 Notion 富格式报告。`;
 
-  return `你是 QA Agent2（报告发布）。工作区根目录：${REPO_ROOT}
+  return `你是 QA Agent2（报告发布 v3）。工作区根目录：${REPO_ROOT}
 
-必须完整阅读并执行：
-- skill/skills/qa-agent-report-publish/SKILL.md
-- skill/skills/zentao-bug-summary/SKILL.md
-- skill/skills/test-report/SKILL.md
-- skill/skills/dingtalk-test-report/SKILL.md
-- skill/skills/notion-test-report/SKILL.md（仅 publishNotion 启用时）
+必须完整阅读并执行（v3 升级）：
+- skill/skills/qa-agent-report-publish/SKILL.md（主流程）
+- skill/skills/bug-stats/SKILL.md（单一统计事实源）
+- skill/skills/test-report/SKILL.md（钉钉简版）
+- skill/skills/dingtalk-test-report/SKILL.md（钉钉推送）
+- skill/skills/test-report-notion/SKILL.md（Notion 富格式编排，publishNotion 时）
+- skill/skills/notion-test-report/SKILL.md（Notion 写入，含校验闸门，publishNotion 时）
 
 禁止：创建新禅道 Bug、截图提取缺陷。
 
@@ -147,11 +186,13 @@ function buildAgent2Prompt(args) {
 ${handoffBlock}
 
 2. 项目名：${args.project}
-3. 拉取缺陷：node skill/mcp/scripts/zentao-bugs-summary.mjs --project-name "${args.project}"${args.noClosed ? " --no-closed" : ""}
-4. 根据生成的 MD 按 test-report 技能编写完整测试报告（三节）。
-5. 按 dingtalk-test-report 写入钉钉文档并 webhook 推送（推送仅「一、测试结果」）。${notionBlock}
+3. 拉取缺陷：
+   node skill/mcp/scripts/zentao-bugs-summary.mjs --project-name "${args.project}"${args.noClosed ? " --no-closed" : ""}
+4. 按 bug-stats 生成单一统计事实源 bugStats.json（数字只算一次，钉钉与 Notion 共用）
+5. 按 test-report 编写钉钉三节简版报告（数字全取 bugStats，不重算）
+6. 按 dingtalk-test-report 写入钉钉文档 + webhook 推送（仅摘录「一、测试结果」）${notionBlock}
 
-返回：汇总 MD 路径、钉钉文档链接、机器人推送 errcode${args.publishNotion ? "、Notion 页面链接或失败原因" : ""}。`;
+返回：汇总 MD 路径、bugStats 路径、钉钉文档链接、机器人推送 errcode${args.publishNotion ? "、Notion 页面链接或失败原因" : ""}。`;
 }
 
 async function loadSdk() {
@@ -231,7 +272,7 @@ async function main() {
   }
 
   if (args.mode === "agent2" || args.mode === "full") {
-    if (args.mode === "full" && !args.dryRun && !existsSync(HANDOFF_PATH)) {
+    if (args.mode === "full" && !existsSync(HANDOFF_PATH) && !args.dryRun) {
       console.error(`警告：未找到 handoff ${HANDOFF_PATH}，Agent2 将仅依赖 --project`);
     }
     await runAgentPrompt(buildAgent2Prompt(args), args);
