@@ -54,57 +54,16 @@ update_document(
 创建成功后,记录返回的 `nodeId`,用于后续推送消息中的链接。
 
 ### 第二步:推送钉钉机器人消息
-使用 Python 发送 HTTP 请求到 webhook:
-```python
-import requests
-import time
-import hmac
-import hashlib
-import base64
-import os
-from urllib.parse import urlencode
 
-access_token = "6bf732946c8873abc98b35d2d82deb6e987a4cd687076549e0d79cddf3a3dbc2"
-secret = "SEC2fa2956f6facd9270222bb93eb76460f3d564f72c4671528ea7cd14b2c7de888"
+**统一使用 `publish_report.py`**（签名/重试/限流/@校验已内置，禁止手写 requests.post）：
 
-timestamp = str(int(time.time() * 1000))
-string_to_sign = timestamp + '\n' + secret
-hmac_code = hmac.new(secret.encode('utf-8'), string_to_sign.encode('utf-8'), digestmod=hashlib.sha256).digest()
-sign = base64.b64encode(hmac_code).decode('utf-8')
-
-# 唯一的签名 URL 拼装出处：其它技能只调用本函数，不要各自重写
-def build_signed_webhook_url(access_token, timestamp, sign):
-    base_url = "https://oapi.dingtalk.com/robot/send"
-    query = urlencode({"access_token": access_token, "timestamp": timestamp, "sign": sign})
-    return f"{base_url}?{query}"
-
-url = build_signed_webhook_url(access_token, timestamp, sign)
-
-# 负责人手机号：正文 @ 与 atMobiles 共用同一变量，保证逐位一致
-at_mobile = "13250703582"  # lunu
-
-# ⚠️ @负责人 这一行必须始终拼进 text，且必须包含 @{手机号} 文本，否则 @ 不生效
-mention_line = f"---\n**负责人**：@{at_mobile} 请关注并优先跟进"
-
-data = {
-    'msgtype': 'markdown',
-    'markdown': {
-        'title': '文档标题',
-        # 顺序固定：测试结果 → 负责人@（必拼）→ 附件
-        'text': f'## 文档标题\n\n### 一、测试结果\n\n[内容]\n\n{mention_line}\n\n### 附件\n\n完整测试报告：[链接](url)'
-    },
-    'at': {
-        'atMobiles': [at_mobile],
-        'isAtAll': False
-    }
-}
-
-# 推送前自检：text 必须包含每个 atMobiles 对应的 @手机号，否则 @ 不会生效
-assert all(f"@{m}" in data['markdown']['text'] for m in data['at']['atMobiles']), "正文缺少 @手机号，@ 不会生效"
-
-r = requests.post(url, headers={'Content-Type': 'application/json'}, json=data)
-print(r.text)
+```powershell
+python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "文档标题" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}" --summary-file "mcp/output/{项目}-section1-{日期}.md"
 ```
+
+- `--summary-file`：**必填**（或与钉钉文档第一节逐字一致的 `{项目}-section1-{日期}.md` 放在 bugStats 同目录供自动发现）
+- 也可用 `--report-file` 传完整报告，脚本自动截取「一、测试结果」
+- 推送内容必须与钉钉文档第一节**完全一致**，不得使用脚本内一句话模板摘要
 
 ## 消息模板
 ```markdown
@@ -112,7 +71,7 @@ print(r.text)
 
 ### 一、测试结果
 
-[从测试报告提取的测试结果内容]
+[与钉钉文档「一、测试结果」逐字一致的内容，来自 --summary-file]
 
 ---
 **负责人**:@13250703582 请关注并优先跟进(正文里的 @手机号 必须与 at.atMobiles 一致,否则 @ 不生效)

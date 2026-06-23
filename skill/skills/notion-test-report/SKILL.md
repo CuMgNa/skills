@@ -57,15 +57,15 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 <table header-row="true">
 <tr><td>编号</td><td>校验项</td><td>判定规则</td></tr>
 <tr><td>C1</td><td>「一、测试结果」未解决数</td><td>必须 == `bugStats.byStatus.未解决`</td></tr>
-<tr><td>C2</td><td>「三、未解决问题汇总」条目总数</td><td>必须 == `bugStats.byStatus.未解决`（全部罗列，不截断）</td></tr>
+<tr><td>C2</td><td>「三、未解决问题汇总」条目总数</td><td>必须 == `bugStats.byStatus.未关闭`（全部罗列，不截断）</td></tr>
 <tr><td>C3</td><td>各级别数量</td><td>必须 == `bugStats.byLevel`（一级/二级/三级/四级分别相等）</td></tr>
-<tr><td>C4</td><td>统计行数字</td><td>必须 == `bugStats.total` / `bugStats.byStatus.未解决` / `bugStats.byStatus.已修复待回归` / `bugStats.byStatus.已延期`</td></tr>
+<tr><td>C4</td><td>统计行数字</td><td>必须 == `bugStats.total` / `bugStats.byStatus.未关闭` / `bugStats.byStatus.已修复待回归` / `bugStats.byStatus.已延期`</td></tr>
 <tr><td>C5</td><td>「四、待回归」条目数</td><td>必须 == `bugStats.待回归列表.length`</td></tr>
-<tr><td>C6</td><td>执行表各模块未解决之和（完整表或精简表均适用）</td><td>必须 == `bugStats.byStatus.未解决`；每模块数字 == `bugStats.byModule`</td></tr>
-<tr><td>C7</td><td>报告缺陷标题</td><td>必须与 `bugStats.未解决列表` / `bugStats.待回归列表` 原文逐条一致</td></tr>
+<tr><td>C6</td><td>执行表各模块未关闭之和（完整表或精简表均适用）</td><td>必须 == `bugStats.byStatus.未关闭`；每模块数字 == `bugStats.byModule`</td></tr>
+<tr><td>C7</td><td>报告缺陷标题</td><td>必须与 `bugStats.未关闭列表` / `bugStats.待回归列表` 原文逐条一致</td></tr>
 <tr><td>C8</td><td>「一、测试结果」分组维度</td><td>不得按级别（[一级]…[四级]）或状态（激活-待确认 / 激活-已确认 / 已延期）分组；命中即不过</td></tr>
-<tr><td>C9</td><td>缺陷标题 / ID 与数字逐条溯源</td><td>每个缺陷标题 / ID 必须在 `bugStats.未解决列表 / 待回归列表` 找到完全一致项，且每个数字 == bugStats 对应字段</td></tr>
-<tr><td>C10</td><td>「五、风险与遗留影响评估」溯源</td><td>每条风险引用的缺陷均存在于 `bugStats.未解决列表 / 已延期`，风险等级与级别 / 状态映射一致，且无 bugStats 之外的风险项（未通过仅阻断 Notion 写入，不影响钉钉）</td></tr>
+<tr><td>C9</td><td>缺陷标题 / ID 与数字逐条溯源</td><td>每个缺陷标题 / ID 必须在 `bugStats.未关闭列表 / 待回归列表` 找到完全一致项，且每个数字 == bugStats 对应字段</td></tr>
+<tr><td>C10</td><td>「五、风险与遗留影响评估」溯源</td><td>每条风险引用的缺陷均存在于 `bugStats.未关闭列表 / 已延期列表`，风险等级与级别 / 状态映射一致，且无 bugStats 之外的风险项（未通过仅阻断 Notion 写入，不影响钉钉）</td></tr>
 </table>
 
 **失败处置**：
@@ -170,8 +170,9 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 ## 关键约束
 
 1. **目标页安全断言先于一切**：写入前必须校验目标页 ≠ 样板页
-2. **校验闸门先于写入**：C1-C10 全部通过才进入写入步骤
-3. **降级必须显式标注且可见**：任何版式降级都必须在报告顶部先加普通 Markdown 可见块说明；不得只用 callout 承载降级提示
-4. **关键 callout 强类型写入**：报告信息、功能测试结论、降级通知等关键卡片不得只依赖 Markdown `<callout>` 解析，必须支持强类型 block 写入 / 补写
-5. **回读校验是结构化闸门**：写入后必须回读并执行 F1-F4；失败时自动补写或显式降级，不能只记录告警
-6. **Notion 失败不阻断钉钉**：钉钉已通过同一份 bugStats 与校验，Notion 写入失败时钉钉推送不受影响
+2. **父页必须正确**：报告页必须作为 `notionParentPageId`（defaultParentPageId）的**子页面**新建；`materialPageId` 仅用于读测试方案，禁止当作报告父页；传 `--notion-page-id` 时脚本会校验 parent
+3. **校验闸门先于写入**：C1-C10 全部通过才进入写入步骤
+4. **降级必须显式标注且可见**：任何版式降级都必须在报告顶部先加普通 Markdown 可见块说明；不得只用 callout 承载降级提示
+5. **关键 callout 强类型写入**：报告信息、功能测试结论、降级通知等关键卡片不得只依赖 Markdown `<callout>` 解析，必须支持强类型 block 写入 / 补写
+6. **回读校验是结构化闸门**：写入后必须回读并执行 F1-F4；失败时自动补写或显式降级，不能只记录告警
+7. **Notion 失败不阻断钉钉**：钉钉已通过同一份 bugStats 与校验，Notion 写入失败时钉钉推送不受影响

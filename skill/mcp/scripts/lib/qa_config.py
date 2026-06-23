@@ -91,8 +91,9 @@ def get_notion_version():
 
 
 # Notion 固定配置（来自 qa-agent-report-publish SKILL）
-NOTION_DEFAULT_PARENT_PAGE_ID = "36c5667c6d3a80d593bcf38311cf751d"  # 测试报告汇总页
-NOTION_TEMPLATE_PAGE_ID = "c1b23699-3b3b-4b06-b2ac-0ec9ede194b6"     # 样板页，禁止写入
+NOTION_DEFAULT_PARENT_PAGE_ID = "36c5667c-6d3a-80d5-93bc-f38311cf751d"  # 测试报告汇总页
+NOTION_TEMPLATE_PAGE_ID = "c1b23699-3b3b-4b06-b2ac-0ec9ede194b6"       # 样板页，禁止写入
+NOTION_DEFAULT_MATERIAL_PAGE_ID = "3585667c-6d3a-807b-8757-d831c8cd84cd"  # SaaS1期测试方案（只读辅助资料，非报告父页）
 
 
 if __name__ == "__main__":

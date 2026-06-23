@@ -42,9 +42,9 @@ def build_stats(data):
         "generatedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "total": len(bugs),
         "byLevel": {"一级": 0, "二级": 0, "三级": 0, "四级": 0},
-        "byStatus": {"未解决": 0, "已修复待回归": 0, "已延期": 0, "已关闭": 0},
+        "byStatus": {"未关闭": 0, "已修复待回归": 0, "已延期": 0, "已关闭": 0},
         "回归不通过": 0,
-        "未解决列表": [],   # active + confirmed
+        "未关闭列表": [],   # active + confirmed（不含已延期）
         "待回归列表": [],   # resolved
         "已延期列表": [],   # postponed
         "byModule": {},
@@ -52,7 +52,7 @@ def build_stats(data):
 
     def ensure_module(mod):
         if mod not in stats["byModule"]:
-            stats["byModule"][mod] = {"未解决": 0, "已修复": 0, "延期": 0, "回归不通过": 0}
+            stats["byModule"][mod] = {"未关闭": 0, "已修复": 0, "延期": 0, "回归不通过": 0}
 
     for b in bugs:
         status = b.get("status", "")
@@ -65,13 +65,13 @@ def build_stats(data):
             stats["byLevel"][level] += 1
 
         if status in ("active", "confirmed"):
-            stats["byStatus"]["未解决"] += 1
-            stats["byModule"][module]["未解决"] += 1
+            stats["byStatus"]["未关闭"] += 1
+            stats["byModule"][module]["未关闭"] += 1
             is_reg_fail = status == "confirmed"
             if is_reg_fail:
                 stats["回归不通过"] += 1
                 stats["byModule"][module]["回归不通过"] += 1
-            stats["未解决列表"].append({
+            stats["未关闭列表"].append({
                 "id": str(b.get("id")),
                 "级别": level,
                 "模块": module,
@@ -95,8 +95,6 @@ def build_stats(data):
         elif status == "closed":
             stats["byStatus"]["已关闭"] += 1
 
-    # 便于第一节叙述：遗留合计 = 未解决 + 已延期（不改变「未解决」口径）
-    stats["遗留合计"] = stats["byStatus"]["未解决"] + stats["byStatus"]["已延期"]
     return stats
 
 
@@ -111,16 +109,16 @@ def self_validate(s):
     if status_sum != s["total"]:
         errors.append(f"C4 byStatus合计({status_sum}) != total({s['total']})")
     # C2/C5: 列表长度 == 对应状态计数
-    if len(s["未解决列表"]) != s["byStatus"]["未解决"]:
-        errors.append(f"未解决列表({len(s['未解决列表'])}) != byStatus.未解决({s['byStatus']['未解决']})")
+    if len(s["未关闭列表"]) != s["byStatus"]["未关闭"]:
+        errors.append(f"未关闭列表({len(s['未关闭列表'])}) != byStatus.未关闭({s['byStatus']['未关闭']})")
     if len(s["待回归列表"]) != s["byStatus"]["已修复待回归"]:
         errors.append(f"待回归列表({len(s['待回归列表'])}) != byStatus.已修复待回归({s['byStatus']['已修复待回归']})")
     if len(s["已延期列表"]) != s["byStatus"]["已延期"]:
         errors.append(f"已延期列表({len(s['已延期列表'])}) != byStatus.已延期({s['byStatus']['已延期']})")
-    # C6: byModule 未解决之和 == byStatus.未解决
-    module_unresolved = sum(m["未解决"] for m in s["byModule"].values())
-    if module_unresolved != s["byStatus"]["未解决"]:
-        errors.append(f"C6 byModule未解决合计({module_unresolved}) != byStatus.未解决({s['byStatus']['未解决']})")
+    # C6: byModule 未关闭之和 == byStatus.未关闭
+    module_unclosed = sum(m["未关闭"] for m in s["byModule"].values())
+    if module_unclosed != s["byStatus"]["未关闭"]:
+        errors.append(f"C6 byModule未关闭合计({module_unclosed}) != byStatus.未关闭({s['byStatus']['未关闭']})")
     # 回归不通过一致性
     module_regfail = sum(m["回归不通过"] for m in s["byModule"].values())
     if module_regfail != s["回归不通过"]:
@@ -157,7 +155,7 @@ def main():
 
     ok, errors = self_validate(stats)
     print(f"项目: {stats['projectName']}")
-    print(f"总数: {stats['total']} | 未解决: {stats['byStatus']['未解决']}（回归不通过 {stats['回归不通过']}）"
+    print(f"总数: {stats['total']} | 未关闭: {stats['byStatus']['未关闭']}（回归不通过 {stats['回归不通过']}）"
           f" | 待回归: {stats['byStatus']['已修复待回归']} | 已延期: {stats['byStatus']['已延期']} | 已关闭: {stats['byStatus']['已关闭']}")
     print(f"按级别: {stats['byLevel']}")
     print(f"输出: {out_path}")
