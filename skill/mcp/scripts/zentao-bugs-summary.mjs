@@ -146,9 +146,15 @@ async function findProject(nameKey) {
     all.slice(0, 20).forEach((p) => console.error(`  ${p.id}  ${p.name}`));
     process.exit(1);
   }
+  // 名称完全相等时直接命中（即便存在其它包含该关键词的项目）
+  const exact = hits.filter((p) => String(p.name || "") === nameKey);
+  if (exact.length === 1) return exact[0];
   if (hits.length > 1) {
-    console.error(`匹配到多个项目，使用第一个：`);
+    // 多命中时绝不静默取第一个，避免拉错项目。要求改用 --project-id 精确指定。
+    console.error(`关键词「${nameKey}」命中 ${hits.length} 个项目，已中止以防拉错数据。`);
+    console.error(`请改用 --project-id <id> 精确指定，候选如下：`);
     hits.forEach((p) => console.error(`  ${p.id}  ${p.name}`));
+    process.exit(1);
   }
   return hits[0];
 }

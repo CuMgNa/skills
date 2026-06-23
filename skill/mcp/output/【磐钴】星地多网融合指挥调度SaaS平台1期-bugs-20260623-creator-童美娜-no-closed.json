@@ -3,56 +3,8 @@
     "projectId": 1268,
     "projectName": "【磐钴】星地多网融合指挥调度SaaS平台1期"
   },
-  "total": 32,
+  "total": 23,
   "bugs": [
-    {
-      "id": 3262,
-      "title": "【APP】【视频会议】APP与个人账号进行视频会议的时候名称有误",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-06T08:55:58Z",
-      "assignedTo": "pgoyc",
-      "type": "codeerror"
-    },
-    {
-      "id": 3257,
-      "title": "【平台】【消息调度】没有监听任何调度组的时候选择发送文件，提示语错误，应提示&#039;请先选择对应监听调度组&#039;",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-06T07:46:51Z",
-      "assignedTo": "pgpxy",
-      "type": "codeerror"
-    },
-    {
-      "id": 3256,
-      "title": "【平台】【消息调度】预览Word文档时出现两个导航栏，应去掉一个",
-      "status": "active",
-      "pri": 4,
-      "severity": 4,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-06T07:45:02Z",
-      "assignedTo": "pgpxy",
-      "type": "designdefect"
-    },
-    {
-      "id": 3255,
-      "title": "【平台】【消息调度】预览到不能加载的pdf文件，点击重新加载，直接把整个通信页面关闭了",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-06T07:42:06Z",
-      "assignedTo": "pgpxy",
-      "type": "codeerror"
-    },
     {
       "id": 3252,
       "title": "【停港逻辑】PN07处于报警+离线+停港状态时，设备列表的离线状态数值统计错误",
@@ -126,18 +78,6 @@
       "type": "codeerror"
     },
     {
-      "id": 3218,
-      "title": "【平台】【视频会议】视频窗口提示文字显示不完整，字体被遮挡",
-      "status": "active",
-      "pri": 4,
-      "severity": 4,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-01T06:21:46Z",
-      "assignedTo": "pgoyc",
-      "type": "designdefect"
-    },
-    {
       "id": 3217,
       "title": "【消息通知】报文携带者和紧急联系人关联的个人账号为同一账号，紧急联系人拒收设置失效",
       "status": "active",
@@ -147,18 +87,6 @@
       "openedByName": "童美娜",
       "openedDate": "2026-06-01T06:01:21Z",
       "assignedTo": "pglpk",
-      "type": "codeerror"
-    },
-    {
-      "id": 3215,
-      "title": "【平台】【视频会议】参会人员名称显示为账号ID，未正确显示用户名称",
-      "status": "active",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-01T05:44:29Z",
-      "assignedTo": "pgoyc",
       "type": "codeerror"
     },
     {
@@ -270,30 +198,6 @@
       "type": "codeerror"
     },
     {
-      "id": 3258,
-      "title": "【平台】【语音调度】编辑设备图标以后设备没有实时更新图标，仍为之前旧的",
-      "status": "resolved",
-      "pri": 4,
-      "severity": 4,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-06T07:52:52Z",
-      "assignedTo": "pglqm",
-      "type": "designdefect"
-    },
-    {
-      "id": 3254,
-      "title": "【控制台】APP设备缺少通信入口",
-      "status": "resolved",
-      "pri": 3,
-      "severity": 3,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-05T09:20:59Z",
-      "assignedTo": "pglqm",
-      "type": "codeerror"
-    },
-    {
       "id": 3251,
       "title": "【通知记录】通知记录模块未隐藏",
       "status": "resolved",
@@ -327,18 +231,6 @@
       "openedByName": "童美娜",
       "openedDate": "2026-06-02T09:36:27Z",
       "assignedTo": "pgtmn",
-      "type": "codeerror"
-    },
-    {
-      "id": 3216,
-      "title": "【平台】【设备管理】添加调度组弹窗中点击刷新按钮，页面抖动且无实际刷新效果",
-      "status": "resolved",
-      "pri": 4,
-      "severity": 4,
-      "openedBy": "pglqm",
-      "openedByName": "林庆敏",
-      "openedDate": "2026-06-01T05:54:00Z",
-      "assignedTo": "pglqm",
       "type": "codeerror"
     },
     {
