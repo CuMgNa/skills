@@ -118,7 +118,7 @@ async function findProject(nameKey) {
   return hits[0];
 }
 
-async function findProduct(nameKey) {
+async function listProducts() {
   const all = [];
   let page = 1;
   for (;;) {
@@ -130,7 +130,16 @@ async function findProduct(nameKey) {
     page++;
     if (page > 50) break;
   }
-  const hits = all.filter((p) => String(p.name || "").includes(nameKey));
+  return all;
+}
+
+async function findProducts(nameKey) {
+  const all = await listProducts();
+  return all.filter((p) => String(p.name || "").includes(nameKey));
+}
+
+async function findProduct(nameKey) {
+  const hits = await findProducts(nameKey);
   if (!hits.length) {
     console.error(`未找到名称包含「${nameKey}」的产品。可用 --list-products 查看列表。`);
     process.exit(1);
@@ -140,6 +149,62 @@ async function findProduct(nameKey) {
     hits.forEach((p) => console.error(`  ${p.id}  ${p.name}`));
   }
   return hits[0];
+}
+
+async function listProductProjects(productId) {
+  const data = await api(`/api.php/v1/products/${productId}/projects`);
+  return data.projects ?? [];
+}
+
+async function productLinksProject(productId, projectId) {
+  const projects = await listProductProjects(productId);
+  return {
+    linked: projects.some((p) => Number(p.id) === Number(projectId)),
+    projects,
+  };
+}
+
+async function ensureProductLinksProject(productId, projectForBody, productLabel = `产品 ID ${productId}`) {
+  if (!projectForBody) return;
+  const { linked, projects } = await productLinksProject(productId, projectForBody.id);
+  if (linked) return;
+
+  const projectList = projects.length
+    ? projects.map((p) => `${p.id} ${p.name}`).join("\n  ")
+    : "无关联项目";
+  console.error(
+    `${productLabel} 未关联目标项目「${projectForBody.name}」(ID ${projectForBody.id})，已停止创建，避免产生产品/项目不匹配的缺陷。\n` +
+      `当前产品关联项目：\n  ${projectList}\n`
+  );
+  process.exit(1);
+}
+
+async function findProductLinkedToProject(project, productNameHint = "") {
+  const all = await listProducts();
+  const nameHits = productNameHint
+    ? all.filter((p) => String(p.name || "").includes(productNameHint))
+    : [];
+  const ordered = [
+    ...nameHits,
+    ...all.filter((p) => !nameHits.some((h) => Number(h.id) === Number(p.id))),
+  ];
+
+  const matches = [];
+  for (const p of ordered) {
+    const { linked } = await productLinksProject(p.id, project.id);
+    if (linked) matches.push(p);
+  }
+  if (!matches.length) return null;
+
+  const exact = matches.find((p) => String(p.name || "") === String(project.name || ""));
+  if (exact) return exact;
+  const named = matches.find((p) => productNameHint && String(p.name || "").includes(productNameHint));
+  if (named) return named;
+  if (matches.length > 1) {
+    console.error(`项目「${project.name}」关联到多个产品，使用第一个：`);
+    matches.forEach((p) => console.error(`  ${p.id}  ${p.name}`));
+  }
+  return matches[0];
 }
 
 /** 从项目详情推断关联产品 ID（不同禅道版本字段可能不同） */
@@ -172,16 +237,41 @@ function pickProductIdFromBug(b) {
 
 /**
  * 方案一：与「按项目拉缺陷」同源接口 GET /api.php/v1/projects/{id}/bugs，
- * 从首条（或前列）缺陷上的 product 字段推断创建新缺陷所需的产品 ID。
+ * 从缺陷上的 product 字段收集候选产品，并只采用已绑定当前项目的产品。
  */
-async function inferProductIdFromProjectBugs(projectId) {
+async function inferProductIdFromProjectBugs(project) {
+  const projectId = typeof project === "object" ? project.id : project;
+  const projectName = typeof project === "object" ? project.name : "";
   const data = await api(`/api.php/v1/projects/${projectId}/bugs`, { query: { page: 1, limit: 100 } });
   const list = data.bugs ?? [];
+  const ids = [];
   for (const b of list) {
     const pid = pickProductIdFromBug(b);
-    if (pid != null) return pid;
+    if (pid != null && !ids.some((id) => Number(id) === Number(pid))) ids.push(pid);
   }
-  return null;
+  const linked = [];
+  for (const id of ids) {
+    const link = await productLinksProject(id, projectId);
+    if (!link.linked) continue;
+    let product = { id, name: "" };
+    try {
+      product = await api(`/api.php/v1/products/${id}`);
+    } catch {
+      // 绑定关系已确认，产品详情失败时仍可使用 ID。
+    }
+    linked.push(product);
+  }
+  if (!linked.length) return null;
+
+  const exact = linked.find((p) => projectName && String(p.name || "") === String(projectName));
+  if (exact) return Number(exact.id);
+  const named = linked.find((p) => projectName && String(p.name || "").includes(projectName));
+  if (named) return Number(named.id);
+  if (linked.length > 1) {
+    console.error(`项目「${projectName || projectId}」历史缺陷中存在多个已绑定产品，使用第一个：`);
+    linked.forEach((p) => console.error(`  ${p.id}  ${p.name || ""}`));
+  }
+  return Number(linked[0].id);
 }
 
 /**
@@ -207,6 +297,7 @@ async function resolveCreateContext(args) {
       const proj = await findProject(projectName);
       projectForBody = proj;
     }
+    await ensureProductLinksProject(id, projectForBody);
     const hint =
       projectForBody && projectForBody.name
         ? `产品 ID ${id}，关联项目「${projectForBody.name}」(ID ${projectForBody.id})`
@@ -215,10 +306,32 @@ async function resolveCreateContext(args) {
   }
 
   if (productName) {
-    const p = await findProduct(productName);
     if (projectName && !projectForBody) {
       const proj = await findProject(projectName);
       projectForBody = proj;
+    }
+    let p = null;
+    if (projectForBody) {
+      const hits = await findProducts(productName);
+      if (!hits.length) {
+        console.error(`未找到名称包含「${productName}」的产品。可用 --list-products 查看列表。`);
+        process.exit(1);
+      }
+      for (const hit of hits) {
+        const { linked } = await productLinksProject(hit.id, projectForBody.id);
+        if (linked) {
+          p = hit;
+          break;
+        }
+      }
+      if (!p) {
+        console.error(
+          `名称包含「${productName}」的产品均未关联项目「${projectForBody.name}」(ID ${projectForBody.id})，已停止创建。\n`
+        );
+        process.exit(1);
+      }
+    } else {
+      p = await findProduct(productName);
     }
     const hint =
       projectForBody && projectForBody.name
@@ -229,26 +342,42 @@ async function resolveCreateContext(args) {
 
   if (projectName) {
     const proj = await findProject(projectName);
+    const linkedProduct = await findProductLinkedToProject(proj, proj.name);
+    if (linkedProduct) {
+      return {
+        productId: Number(linkedProduct.id),
+        hint: `由项目「${proj.name}」反查到关联产品「${linkedProduct.name}」(ID ${linkedProduct.id})，并关联该项目`,
+        projectForBody: proj,
+      };
+    }
+
     const detail = await api(`/api.php/v1/projects/${proj.id}`);
     let inferredProductId = pickProductIdFromProjectDetail(detail);
     let productSource = inferredProductId ? "detail" : null;
     if (!inferredProductId) {
-      inferredProductId = await inferProductIdFromProjectBugs(proj.id);
+      inferredProductId = await inferProductIdFromProjectBugs(proj);
       productSource = inferredProductId ? "bugs" : null;
+    }
+    if (inferredProductId) {
+      await ensureProductLinksProject(
+        inferredProductId,
+        proj,
+        productSource === "bugs" ? `历史缺陷推断产品 ID ${inferredProductId}` : `项目详情产品 ID ${inferredProductId}`
+      );
     }
     if (!inferredProductId) {
       console.error(
         `项目「${proj.name}」(ID ${proj.id}) 无法解析产品 ID：\n` +
+          `  · 未从产品-项目绑定关系反查到关联产品，且\n` +
           `  · 项目详情中无产品字段，且\n` +
-          `  · GET /projects/${proj.id}/bugs 无缺陷记录，或缺陷对象上无 product 字段。\n\n` +
-          `请先在该项目下至少有一条历史缺陷（与 zentao-bugs-summary 能拉到数据同源），\n` +
-          `或使用「--product-id <数字>」手动指定产品。\n`
+          `  · GET /projects/${proj.id}/bugs 无可用缺陷记录，或缺陷对象上无 product 字段。\n\n` +
+          `请使用「--product-id <数字>」手动指定产品。\n`
       );
       process.exit(1);
     }
     const hint =
       productSource === "bugs"
-        ? `由项目「${proj.name}」下已有缺陷推断产品 ID ${inferredProductId}（GET /projects/{id}/bugs），并关联该项目`
+        ? `由项目「${proj.name}」下已有缺陷兜底推断产品 ID ${inferredProductId}（已校验产品-项目绑定），并关联该项目`
         : `由项目「${proj.name}」详情解析到产品 ID ${inferredProductId}，并关联该项目`;
     return {
       productId: inferredProductId,
@@ -260,17 +389,30 @@ async function resolveCreateContext(args) {
   if (rawProjectId != null && productId == null && productName == null && !projectName) {
     const pid = Number(rawProjectId);
     if (!Number.isFinite(pid)) throw new Error("--project-id 必须是数字");
-    const inferredProductId = await inferProductIdFromProjectBugs(pid);
+    const project = { id: pid, name: `(ID ${pid})` };
+    const linkedProduct = await findProductLinkedToProject(project);
+    let inferredProductId = linkedProduct ? Number(linkedProduct.id) : null;
+    let productSource = linkedProduct ? "linked" : null;
+    if (!inferredProductId) {
+      inferredProductId = await inferProductIdFromProjectBugs(project);
+      productSource = inferredProductId ? "bugs" : null;
+    }
+    if (inferredProductId) {
+      await ensureProductLinksProject(inferredProductId, project, `产品 ID ${inferredProductId}`);
+    }
     if (!inferredProductId) {
       console.error(
-        `项目 ID ${pid} 下无法从已有缺陷推断产品 ID（GET /projects/${pid}/bugs 无记录或无 product 字段）。请使用 --product-id。\n`
+        `项目 ID ${pid} 下无法从产品-项目绑定或已有缺陷推断产品 ID。请使用 --product-id。\n`
       );
       process.exit(1);
     }
     return {
       productId: inferredProductId,
-      hint: `由项目 ID ${pid} 下已有缺陷推断产品 ID ${inferredProductId}，并关联该项目`,
-      projectForBody: { id: pid, name: `(ID ${pid})` },
+      hint:
+        productSource === "linked"
+          ? `由项目 ID ${pid} 反查到关联产品 ID ${inferredProductId}，并关联该项目`
+          : `由项目 ID ${pid} 下已有缺陷兜底推断产品 ID ${inferredProductId}（已校验产品-项目绑定），并关联该项目`,
+      projectForBody: project,
     };
   }
 
