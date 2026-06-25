@@ -20,8 +20,10 @@ from datetime import datetime
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 PRI_LABEL = {1: "一级", 2: "二级", 3: "三级", 4: "四级"}
+LEVEL_CODE_MAP = {"一级": "P1", "二级": "P2", "三级": "P3", "四级": "P4"}
 
 
 def pri_label(pri):
@@ -48,6 +50,11 @@ def build_stats(data):
         "待回归列表": [],   # resolved
         "已延期列表": [],   # postponed
         "byModule": {},
+        # 机器可稳定消费的 ASCII 键，避免终端/环境中文编码影响逻辑。
+        "byLevelCode": {"P1": 0, "P2": 0, "P3": 0, "P4": 0},
+        "byStatusCode": {"open": 0, "pendingRegression": 0, "deferred": 0, "closed": 0},
+        "regressionFailed": 0,
+        "lists": {"open": [], "pendingRegression": [], "deferred": []},
     }
 
     def ensure_module(mod):
@@ -63,37 +70,51 @@ def build_stats(data):
 
         if level in stats["byLevel"]:
             stats["byLevel"][level] += 1
+            code = LEVEL_CODE_MAP.get(level)
+            if code:
+                stats["byLevelCode"][code] += 1
 
         if status in ("active", "confirmed"):
             stats["byStatus"]["未关闭"] += 1
+            stats["byStatusCode"]["open"] += 1
             stats["byModule"][module]["未关闭"] += 1
             is_reg_fail = status == "confirmed"
             if is_reg_fail:
                 stats["回归不通过"] += 1
+                stats["regressionFailed"] += 1
                 stats["byModule"][module]["回归不通过"] += 1
-            stats["未关闭列表"].append({
+            item = {
                 "id": str(b.get("id")),
                 "级别": level,
                 "模块": module,
                 "标题": title,
                 "状态": "激活-已确认（回归不通过）" if is_reg_fail else "激活-待确认",
-            })
+            }
+            stats["未关闭列表"].append(item)
+            stats["lists"]["open"].append(item)
         elif status == "resolved":
             stats["byStatus"]["已修复待回归"] += 1
+            stats["byStatusCode"]["pendingRegression"] += 1
             stats["byModule"][module]["已修复"] += 1
-            stats["待回归列表"].append({
+            item = {
                 "id": str(b.get("id")), "级别": level, "模块": module,
                 "标题": title, "状态": "已解决",
-            })
+            }
+            stats["待回归列表"].append(item)
+            stats["lists"]["pendingRegression"].append(item)
         elif status == "postponed":
             stats["byStatus"]["已延期"] += 1
+            stats["byStatusCode"]["deferred"] += 1
             stats["byModule"][module]["延期"] += 1
-            stats["已延期列表"].append({
+            item = {
                 "id": str(b.get("id")), "级别": level, "模块": module,
                 "标题": title, "状态": "已延期",
-            })
+            }
+            stats["已延期列表"].append(item)
+            stats["lists"]["deferred"].append(item)
         elif status == "closed":
             stats["byStatus"]["已关闭"] += 1
+            stats["byStatusCode"]["closed"] += 1
 
     return stats
 
@@ -123,6 +144,25 @@ def self_validate(s):
     module_regfail = sum(m["回归不通过"] for m in s["byModule"].values())
     if module_regfail != s["回归不通过"]:
         errors.append(f"byModule回归不通过合计({module_regfail}) != 回归不通过({s['回归不通过']})")
+    # ASCII 键一致性校验
+    if s["regressionFailed"] != s["回归不通过"]:
+        errors.append(f"regressionFailed({s['regressionFailed']}) != 回归不通过({s['回归不通过']})")
+    if s["byStatusCode"]["open"] != s["byStatus"]["未关闭"]:
+        errors.append("byStatusCode.open 与 byStatus.未关闭 不一致")
+    if s["byStatusCode"]["pendingRegression"] != s["byStatus"]["已修复待回归"]:
+        errors.append("byStatusCode.pendingRegression 与 byStatus.已修复待回归 不一致")
+    if s["byStatusCode"]["deferred"] != s["byStatus"]["已延期"]:
+        errors.append("byStatusCode.deferred 与 byStatus.已延期 不一致")
+    if s["byStatusCode"]["closed"] != s["byStatus"]["已关闭"]:
+        errors.append("byStatusCode.closed 与 byStatus.已关闭 不一致")
+    if len(s["lists"]["open"]) != len(s["未关闭列表"]):
+        errors.append("lists.open 与 未关闭列表 长度不一致")
+    if len(s["lists"]["pendingRegression"]) != len(s["待回归列表"]):
+        errors.append("lists.pendingRegression 与 待回归列表 长度不一致")
+    if len(s["lists"]["deferred"]) != len(s["已延期列表"]):
+        errors.append("lists.deferred 与 已延期列表 长度不一致")
+    if sum(s["byLevelCode"].values()) != s["total"]:
+        errors.append("byLevelCode 合计与 total 不一致")
     return (len(errors) == 0, errors)
 
 

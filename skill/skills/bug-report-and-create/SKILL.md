@@ -127,6 +127,22 @@ node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
 | 严重程度 | `--severity` | 3 | 根据缺陷等级参考表自动判断 |
 | 优先级 | `--pri` | 3 | 根据影响面判断 |
 
+### 缺陷语义持久化产物（供报告阶段只读消费）
+
+`zentao-bug-create.mjs` 在缺陷创建成功后会**自动追加写**一条结构化语义记录到：
+
+```
+mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
+```
+
+每行一个 JSON，字段含：`bugId / title / module / severity / pri / type / projectId / productId / createdAt / preconditions / steps / actual / expected / rootProblem / userImpact / evidenceRef / sourceConfidence`。其中：
+
+- `preconditions / steps / actual / expected` 由第二步 `--steps` 正文按「前置条件 / 步骤 / 结果 / 期望」自动切分。
+- `rootProblem` 兜底取「实际结果」或标题去【模块】前缀。
+- `userImpact`（业务影响）**默认留空**，需人工/LLM 补全后才可作为确定性业务影响结论；报告阶段对未补全项标注「（影响待复核）」，不臆造。
+
+**消费方**：`qa-agent-report-publish` 报告阶段通过 `lib/bug_semantic_context.py` **只读**加载该目录构建 `BugSemanticContext`（持久化产物 → 禅道 steps → 标题，三来源按优先级 reconcile）。**报告阶段绝不触发缺陷创建**；产物缺失时降级为禅道 steps / 标题级语义分析并在报告附录如实标注。写入失败不影响缺陷创建（仅打印告警）。
+
 ### 指派成员额外处理
 
 `zentao-bug-create.mjs` 不支持直接指派人。若用户指定成员，在 Bug 创建成功后追加调用：

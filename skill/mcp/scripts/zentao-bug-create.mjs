@@ -16,7 +16,7 @@
  *
  * 配置：同 zentao-bugs-summary.mjs（mcp.json 中 zentao.env 或环境变量）
  */
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, appendFileSync } from "fs";
 import { basename, dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -601,6 +601,96 @@ async function uploadBugAttachments(bugId, paths) {
   }
 }
 
+/**
+ * 从缺陷描述纯文本里按「标签：内容」抽取结构化语义字段。
+ * 供报告阶段（report 流程）只读消费，不触发任何创建。
+ */
+function extractSemantic(stepsText, title) {
+  const decoded = String(stepsText || "")
+    .replace(/\\r\\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "\t");
+  const sectionDefs = [
+    ["preconditions", ["前置条件", "前提", "预置条件"]],
+    ["steps", ["重现步骤", "操作步骤", "步骤", "复现步骤"]],
+    ["actual", ["实际结果", "实际", "现象"]],
+    ["expected", ["预期结果", "预期", "期望"]],
+  ];
+  const out = {};
+  const lines = decoded.split(/\r?\n/);
+  let current = null;
+  let buf = [];
+  const flush = () => {
+    if (current && buf.length) out[current] = buf.join("\n").trim();
+  };
+  for (const line of lines) {
+    let matched = null;
+    for (const [field, labels] of sectionDefs) {
+      for (const lb of labels) {
+        const re = new RegExp(`^\\s*${lb}\\s*[:：]`);
+        if (re.test(line)) {
+          matched = [field, line.replace(re, "").trim()];
+          break;
+        }
+      }
+      if (matched) break;
+    }
+    if (matched) {
+      flush();
+      current = matched[0];
+      buf = matched[1] ? [matched[1]] : [];
+    } else if (current) {
+      buf.push(line);
+    }
+  }
+  flush();
+
+  // rootProblem 兜底：标题去掉【模块】前缀
+  const mTitle = String(title || "").match(/^【.*?】(.+)$/);
+  const rootProblem = out.actual || (mTitle ? mTitle[1].trim() : String(title || "").trim());
+  return { ...out, rootProblem: rootProblem || null };
+}
+
+/**
+ * 缺陷创建成功后写结构化语义产物（JSONL），路径：
+ *   mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
+ * 报告阶段（bug_semantic_context.load_persisted_semantics）只读消费。
+ */
+function persistBugSemantic({ bugId, title, severity, pri, type, stepsText, projectId, productId }) {
+  try {
+    const outDir = join(__dirname, "..", "output", "bug-semantic");
+    mkdirSync(outDir, { recursive: true });
+    const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const key = projectId || productId || "unknown";
+    const file = join(outDir, `${key}-${ymd}.jsonl`);
+    const mod = (String(title || "").match(/^【(.+?)】/) || [])[1] || "未分类";
+    const sem = extractSemantic(stepsText, title);
+    const record = {
+      bugId: String(bugId),
+      title: title || "",
+      module: mod,
+      severity: Number.isFinite(severity) ? severity : null,
+      pri: Number.isFinite(pri) ? pri : null,
+      type: type || null,
+      projectId: projectId || null,
+      productId: productId || null,
+      createdAt: new Date().toISOString(),
+      preconditions: sem.preconditions || null,
+      steps: sem.steps || null,
+      actual: sem.actual || null,
+      expected: sem.expected || null,
+      rootProblem: sem.rootProblem || null,
+      userImpact: sem.userImpact || null, // 业务影响默认留空，需人工/LLM 补全后才可作确定性结论
+      evidenceRef: `zentao#${bugId}`,
+      sourceConfidence: "high",
+    };
+    appendFileSync(file, JSON.stringify(record) + "\n", "utf8");
+    console.error(`已写缺陷语义产物: ${file}（bug #${bugId}）`);
+  } catch (e) {
+    console.error(`缺陷语义产物写入失败（不影响创建）: ${e.message || e}`);
+  }
+}
+
 const args = parseArgs(process.argv);
 
 if (args.help || process.argv.length <= 2) {
@@ -716,6 +806,16 @@ async function main() {
     const base = ZENTAO_URL.replace(/\/$/, "");
     console.error(`已创建缺陷 ID: ${bugId}（请在禅道界面核对产品与项目归属）`);
     console.error(`可尝试访问: ${base}/bug-view-${bugId}.html（路径因禅道路由配置可能略有不同）`);
+    persistBugSemantic({
+      bugId,
+      title: args.title,
+      severity,
+      pri,
+      type,
+      stepsText: steps.trim(),
+      projectId: projectForBody && Number.isFinite(Number(projectForBody.id)) ? Number(projectForBody.id) : null,
+      productId,
+    });
     if (args.attach?.length) {
       await uploadBugAttachments(bugId, args.attach);
     }

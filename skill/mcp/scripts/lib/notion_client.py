@@ -210,6 +210,21 @@ def heading2(text):
     return {"object": "block", "type": "heading_2", "heading_2": {"rich_text": _rt(text)}}
 
 
+def heading3(text):
+    return {"object": "block", "type": "heading_3", "heading_3": {"rich_text": _rt(text)}}
+
+
+def toggle(text, children=None):
+    """可折叠块（用于附录：解析详情 / 冲突 / 阈值等长内容）。
+
+    children: list[block]，作为 toggle 内部子块（Notion 限制：附加在创建时即写入）。
+    """
+    body = {"rich_text": _rt(text)}
+    if children:
+        body["children"] = children
+    return {"object": "block", "type": "toggle", "toggle": body}
+
+
 def paragraph(text):
     return {"object": "block", "type": "paragraph", "paragraph": {"rich_text": _rt(text)}}
 
