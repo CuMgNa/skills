@@ -10,7 +10,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道。
 ## 允许引用的技能（仅此两个）
 
 1. `@skill/skills/defect-screenshot-bug-ticket/SKILL.md` — 从截图提取 8 块 Bug 单
-2. `@skill/skills/bug-report-and-create/SKILL.md` — 确认后 `--steps` 直接写入禅道
+2. `@skill/skills/bug-report-and-create/SKILL.md` — 确认后 `--steps-file` 写入禅道（正文写 UTF-8 文件再传路径）
 
 ## 禁止引用
 
@@ -21,7 +21,10 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道。
 
 1. 读取用户截图（及可选一句简述、项目名；默认项目：`【磐钴】位置监控平台-国际化`）。
 2. 按 `defect-screenshot-bug-ticket` 输出 8 块字段，展示给用户确认。
-3. 用户确认后，按 `bug-report-and-create` 构造 `zentao-bug-create.mjs` 命令（`--steps` 内用真实换行或 `\n`，序号 `1.` `2.` `3.`）。
+3. 用户确认后，按 `bug-report-and-create`：
+   a. 将正文四块以 UTF-8 无 BOM 写入 `skill/mcp/output/handoff/steps-<timestamp>.md`
+   b. 构造并执行 `zentao-bug-create.mjs` 命令，使用 `--steps-file` 传入路径
+   c. 禁止用 `--steps` 传含中文的长正文
 4. 执行脚本，收集返回的 Bug ID 与链接。
 5. **写入 handoff**（必须，即使部分失败）：
 

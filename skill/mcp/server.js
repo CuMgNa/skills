@@ -21,7 +21,7 @@ async function login() {
   const url = joinUrl(ZENTAO_URL, "/api.php/v1/tokens");
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify({ account: ZENTAO_ACCOUNT, password: ZENTAO_PASSWORD }),
   });
   const text = await res.text();
@@ -54,7 +54,7 @@ async function zentaoApi(path, { method = "GET", query, body } = {}) {
   let res = await fetch(urlObj.toString(), {
     method,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
       "Token": token,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -67,7 +67,7 @@ async function zentaoApi(path, { method = "GET", query, body } = {}) {
     res = await fetch(urlObj.toString(), {
       method,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
         "Token": newToken,
       },
       body: body ? JSON.stringify(body) : undefined,

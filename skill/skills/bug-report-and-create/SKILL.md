@@ -71,48 +71,74 @@ description: 结构化Bug报告并写入禅道（仅缺陷录入阶段，qa-agen
 
 ### 构建命令
 
-将四段正文直接拼接为 `--steps` 参数，不创建 `tmp-bug*.md` 等本地记录文件。
+含中文标点的正文必须通过文件传入，避免 Windows Shell 编码转换：
 
-> 换行写法：在命令行里用字面量 `\n` 表示换行，脚本会自动解码为真实换行；序号行 `1.` / `1、` / `1)` 都会被脚本识别为有序列表项并渲染成禅道 `<ol>`，避免“密密麻麻挤成一段”。
+1. 将正文四块写入 UTF-8 无 BOM 临时文件，路径：
+   `skill/mcp/output/handoff/steps-<timestamp>.md`
+2. 文件格式：
+
+   前置条件：
+   1. ……
+
+   复现步骤：
+   1. ……
+
+   实际结果：
+   1. ……
+
+   预期结果：
+   1. ……
+
+3. 命令行只传文件路径：
 
 ```bash
 node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
   --project-name "{项目名称}" ^
-  --title "{Bug 标题}" ^
-  --steps "{[前置条件][步骤][结果][期望]拼接后的文本}" ^
-  --severity {严重程度} ^
-  --pri {优先级} ^
-  --opened-build {版本号} ^
-  --execution {迭代/测试模块ID}
+  --title-file ./title.txt ^
+  --steps-file ./steps-<timestamp>.md ^
+  --severity {n} --pri {n}
 ```
+
+4. Windows PowerShell 执行前建议：`chcp 65001`
+5. `--steps`（命令行直传）仅用于纯 ASCII 调试场景，含中文时禁用。
 
 ### 写入正文结构（与第一步对齐）
 
-第一步报告含 前置条件 / 复现步骤 / 实际结果 / 预期结果 四块时，写入 `--steps` 参数必须四块齐全。推荐格式：
+第一步报告含 前置条件 / 复现步骤 / 实际结果 / 预期结果 四块时，写入 `--steps-file` 必须四块齐全。推荐格式：
 
 ```markdown
-[前置条件]
+前置条件：
 1. ……
 2. ……
 
-[步骤]
+复现步骤：
 1. ……
 2. ……
 
-[结果]
+实际结果：
 1. ……
 2. ……
 
-[期望]
+预期结果：
 1. ……
 ```
 
 ### 序号规范（写入 steps 时强制对齐）
 
 1. 仅使用 `{n}.`（如 `1.` `2.` `3.`），每条独占一行。  
-2. 每个小节（`[前置条件]`、`[步骤]`、`[结果]`、`[期望]`）都从 `1.` 重新编号。  
+2. 每个小节（前置条件、复现步骤、实际结果、预期结果）都从 `1.` 重新编号。  
 3. 若用户草稿里出现 `1、` / `（1）` / 多级编号，写入前统一改写为 `1.` `2.`。  
 4. 小节标题和说明句独立成行，不加序号。
+
+### 标点规范速查（对齐禅道缺陷标点符号使用规范）
+
+| 场景 | 正确 | 错误 |
+|------|------|------|
+| 中文描述 | ，。、；："" | , . " |
+| UI/按钮/页面 | "提交订单" | 「提交订单」 |
+| 字段/接口/枚举 | `payStatus` | "payStatus" |
+| 标题结尾 | 无句号 | 加句号。 |
+| 连续感叹/问号 | 禁止 | ！！！ ？？？ |
 
 ### 参数映射规则
 
@@ -137,7 +163,7 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 
 每行一个 JSON，字段含：`bugId / title / module / severity / pri / type / projectId / productId / createdAt / preconditions / steps / actual / expected / rootProblem / userImpact / evidenceRef / sourceConfidence`。其中：
 
-- `preconditions / steps / actual / expected` 由第二步 `--steps` 正文按「前置条件 / 步骤 / 结果 / 期望」自动切分。
+- `preconditions / steps / actual / expected` 由第二步 `--steps-file` 正文按「前置条件 / 步骤 / 结果 / 期望」自动切分。
 - `rootProblem` 兜底取「实际结果」或标题去【模块】前缀。
 - `userImpact`（业务影响）**默认留空**，需人工/LLM 补全后才可作为确定性业务影响结论；报告阶段对未补全项标注「（影响待复核）」，不臆造。
 
@@ -153,8 +179,8 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 
 1. 收集用户输入：项目名称 + 问题描述 + 可选参数（模块、版本、指派人）。  
 2. 按模板输出完整 Bug 报告，展示给用户确认。  
-3. 用户确认后，将正文整理为 `--steps` 文本（含四段）。  
-4. 构造并执行 `zentao-bug-create.mjs` 命令，直接写入禅道。  
+3. 用户确认后，将正文整理为 `--steps-file` 文件（含四段）。  
+4. 构造并执行 `zentao-bug-create.mjs` 命令，使用 `--steps-file` 传入路径。  
 5. 若需指派成员，追加调用分配接口。  
 6. 反馈结果：Bug ID + 禅道链接 + 分配状态。
 
@@ -176,7 +202,7 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
   --project-name "【磐钴】位置监控平台-国际化项目" ^
   --title "【通信记录-会话窗口】英文界面下错误提示中英混排" ^
-  --steps "[前置条件]\n1. 界面语言为英文。\n2. 已进入 Message → Communication Logs。\n\n[步骤]\n1. 打开会话窗口。\n2. 触发发送失败场景。\n3. 查看失败提示。\n\n[结果]\n1. 提示中出现中文残留。\n\n[期望]\n1. 英文界面下整句提示均为英文。" ^
+  --steps-file "skill/mcp/output/handoff/steps-tmp.md" ^
   --severity 3 ^
   --pri 3 ^
   --opened-build "V2.5.8"

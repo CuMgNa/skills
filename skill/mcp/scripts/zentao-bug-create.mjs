@@ -60,7 +60,7 @@ let token = null;
 async function login() {
   const res = await fetch(joinUrl(ZENTAO_URL, "/api.php/v1/tokens"), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify({ account: ZENTAO_ACCOUNT, password: ZENTAO_PASSWORD }),
   });
   const text = await res.text();
@@ -79,7 +79,7 @@ async function api(path, { method = "GET", query, body } = {}) {
   }
   const opts = {
     method,
-    headers: { Token: token, "Content-Type": "application/json" },
+    headers: { Token: token, "Content-Type": "application/json; charset=utf-8" },
     body: body != null ? JSON.stringify(body) : undefined,
   };
   let res = await fetch(u, opts);
@@ -428,6 +428,7 @@ function parseArgs(argv) {
     else if (a === "--project-name" && argv[i + 1]) args.projectName = argv[++i];
     else if (a === "--project-id" && argv[i + 1]) args.projectId = argv[++i];
     else if (a === "--title" && argv[i + 1]) args.title = argv[++i];
+    else if (a === "--title-file" && argv[i + 1]) args.titleFile = argv[++i];
     else if (a === "--steps" && argv[i + 1]) args.steps = argv[++i];
     else if (a === "--steps-file" && argv[i + 1]) args.stepsFile = argv[++i];
     else if (a === "--severity" && argv[i + 1]) args.severity = Number(argv[++i]);
@@ -450,6 +451,50 @@ function parseArgs(argv) {
   return args;
 }
 
+const HTML_ENTITY_MAP = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#39;": "'",
+  "&apos;": "'",
+};
+
+function unescapeHtml(s) {
+  return String(s).replace(
+    /&(?:amp|lt|gt|quot|#39|apos);/gi,
+    (m) => HTML_ENTITY_MAP[m.toLowerCase()] || m
+  );
+}
+
+/**
+ * 标点与分节标签规范化（写入禅道前统一处理）。
+ * - 统一 CRLF → LF
+ * - 保护反引号内技术串
+ * - 「」→ 中文双引号
+ * - [小节] / 小节: / ## 小节 → 小节：
+ */
+function normalizePunctuation(s) {
+  if (!s) return s;
+  let r = String(s).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const chunks = [];
+  r = r.replace(/`[^`\n]*`/g, (m) => {
+    chunks.push(m);
+    return `\x00BT_${chunks.length - 1}\x00`;
+  });
+  const SEC =
+    "前置条件|预置条件|前提|重现步骤|操作步骤|复现步骤|步骤|实际结果|现象|实际|预期结果|期望|预期";
+  r = r
+    .replace(/「/g, "\u201c")
+    .replace(/」/g, "\u201d")
+    .replace(new RegExp(`^\\[(${SEC})\\]\\s*$`, "gm"), "$1：")
+    .replace(new RegExp(`^(${SEC})\\s*:\\s*$`, "gm"), "$1：")
+    .replace(new RegExp(`^#{1,3}\\s*(${SEC})\\s*$`, "gm"), "$1：");
+  if (/[？?]{2,}|[！!]{2,}/.test(r))
+    console.error("[warn] 正文含连续问号/叹号（规范禁止），请人工检查");
+  return r.replace(/\x00BT_(\d+)\x00/g, (_, i) => chunks[Number(i)]);
+}
+
 /**
  * 将纯文本/Markdown 简述转为禅道富文本可用的 HTML。
  * - 连续空行合并，不再为每行空行生成 `<p> </p>`（避免禅道里出现大块异常空白）。
@@ -458,11 +503,14 @@ function parseArgs(argv) {
  * - 入参里若包含字面量 `\n`、`\r\n`、`\t`（命令行常见情况），先解码为真实控制符。
  */
 function stepsToHtml(s) {
-  const esc = (t) =>
-    String(t)
+  const esc = (t) => {
+    const raw = unescapeHtml(String(t));
+    return raw
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  };
   const decoded = String(s)
     .replace(/\\r\\n/g, "\n")
     .replace(/\\n/g, "\n")
@@ -480,10 +528,17 @@ function stepsToHtml(s) {
   while (lines.length && lines[lines.length - 1] === "") lines.pop();
 
   const ORDERED_RE = /^\d+[、.)]\s*/;
+  const SECTION_LABEL_RE =
+    /^(前置条件|预置条件|前提|重现步骤|操作步骤|复现步骤|步骤|实际结果|现象|实际|预期结果|期望|预期)\s*[：:]\s*$/;
   const parts = [];
   let i = 0;
   while (i < lines.length) {
     if (lines[i] === "") {
+      i++;
+      continue;
+    }
+    if (SECTION_LABEL_RE.test(lines[i])) {
+      parts.push(`<p><strong>${esc(lines[i])}</strong></p>`);
       i++;
       continue;
     }
@@ -612,7 +667,7 @@ function extractSemantic(stepsText, title) {
     .replace(/\\t/g, "\t");
   const sectionDefs = [
     ["preconditions", ["前置条件", "前提", "预置条件"]],
-    ["steps", ["重现步骤", "操作步骤", "步骤", "复现步骤"]],
+    ["steps", ["重现步骤", "操作步骤", "复现步骤", "步骤"]],
     ["actual", ["实际结果", "实际", "现象"]],
     ["expected", ["预期结果", "预期", "期望"]],
   ];
@@ -627,7 +682,7 @@ function extractSemantic(stepsText, title) {
     let matched = null;
     for (const [field, labels] of sectionDefs) {
       for (const lb of labels) {
-        const re = new RegExp(`^\\s*${lb}\\s*[:：]`);
+        const re = new RegExp(`^\\s*(?:\\[${lb}\\]|${lb}\\s*[:：])\\s*`);
         if (re.test(line)) {
           matched = [field, line.replace(re, "").trim()];
           break;
@@ -706,8 +761,9 @@ if (args.help || process.argv.length <= 2) {
   --project-name  关键词，匹配项目名（可单独使用：自动解析/推断产品 ID 后创建）
   --project-id    数字，可与 --product-id 同用；单独使用时从该项目下已有缺陷推断产品 ID
 
+  --title-file   从 UTF-8 文件读取标题（取首行，推荐含中文标题时使用）
   --steps-file   缺陷描述全文（前置条件、步骤、实际、预期等）
-  --steps        直接跟一段文字（换行用 \\n）
+  --steps        直接跟一段文字（换行用 \\n；含中文时建议改用 --steps-file）
   --severity     默认 3  |  --pri 默认 3  |  --type 默认 others
   --opened-build 可多次，默认 trunk
   --execution    可选，迭代/执行 ID
@@ -743,14 +799,21 @@ async function main() {
     return;
   }
 
+  if (args.titleFile) {
+    args.title = readFileSync(resolve(args.titleFile), "utf8")
+      .replace(/^\uFEFF/, "")
+      .split(/\r?\n/)[0]
+      .trim();
+  }
+
   if (!args.title && !(Number.isFinite(args.updateBugId) && args.updateBugId > 0)) {
-    console.error("请指定 --title（更新步骤时可用 --update-bug-id 省略）");
+    console.error("请指定 --title 或 --title-file（更新步骤时可用 --update-bug-id 省略）");
     process.exit(1);
   }
 
   let steps = args.steps;
   if (args.stepsFile) {
-    steps = readFileSync(resolve(args.stepsFile), "utf8");
+    steps = readFileSync(resolve(args.stepsFile), "utf8").replace(/^\uFEFF/, "");
   }
   if (steps == null || String(steps).trim() === "") {
     console.error("请通过 --steps 或 --steps-file 提供缺陷描述（重现步骤等）");
@@ -767,6 +830,9 @@ async function main() {
   const { productId, hint, projectForBody } = await resolveCreateContext(args);
   console.error(hint);
 
+  steps = normalizePunctuation(steps);
+  args.title = normalizePunctuation(args.title || "").replace(/[。]$/, "");
+
   const body = {
     title: args.title,
     severity,
@@ -781,6 +847,13 @@ async function main() {
   }
 
   if (args.dryRun) {
+    const combined = (body.title || "") + (body.steps || "");
+    const warn = [];
+    if (combined.includes("\uFFFD"))
+      warn.push("含 U+FFFD 替换字符，UTF-8 解码失败，建议改用 --steps-file / --title-file");
+    warn.length
+      ? warn.forEach((w) => console.error("[encoding-warn] " + w))
+      : console.error("[encoding-check] 通过（未检测到 U+FFFD）");
     console.log(JSON.stringify({ path: `/api.php/v1/products/${productId}/bugs`, body, attach: args.attach || [] }, null, 2));
     return;
   }
