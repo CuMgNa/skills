@@ -14,14 +14,7 @@ from report_templates.strings import get_strings  # noqa: E402
 
 
 def _conclusion_text(ctx, S):
-    if ctx.get("conclusion") and ctx["conclusion"].strip():
-        return ctx["conclusion"].strip(), True
-    m = ctx["metrics"]
-    text = S["conclusion_template"].format(
-        modules=m["moduleCount"], open=m["open"], regfail=m["regfail"],
-        pending=m["pending"], deferred=m["deferred"], high=m["highCount"],
-    )
-    return text, False
+    return ctx["conclusion"].strip(), True
 
 
 def build_notion_blocks(ctx, locale="zh-CN"):
@@ -187,32 +180,19 @@ def build_notion_blocks(ctx, locale="zh-CN"):
 
 
 def build_dingtalk_summary(ctx, locale="zh-CN", doc_url=None, mention_line=None, title=None):
-    """钉钉 markdown 投影：数字与 Notion 一致。"""
+    """钉钉 markdown 投影（精简版）：标题 / 测试结论 / @ / 文档链接。
+
+    精简原则：钉钉只做"群里轻提醒 + 详情入口"，指标看板/重点问题留给
+    Notion 全量报告。数字仍与 Notion 同源（同一 ctx），仅裁剪展示段，
+    不影响校验闸门（闸门查 Notion 全量 + bugStats，不查钉钉简版）。
+    """
     S = get_strings(locale)
-    m = ctx["metrics"]
     conclusion, _custom = _conclusion_text(ctx, S)
 
     parts = []
     if title:
         parts.append(f"## {title}")
     parts.append(f"### {S['dt_conclusion']}\n\n{conclusion}")
-
-    metric_line = (
-        f"- {S['th_open']}：{m['open']}（{S['th_regfail']} {m['regfail']}）\n"
-        f"- {S['th_pending']}：{m['pending']}\n"
-        f"- {S['th_deferred']}：{m['deferred']}\n"
-        f"- {S['total']}：{m['total']}"
-    )
-    parts.append(f"### {S['dt_metrics']}\n\n{metric_line}")
-
-    groups = ctx["keyIssues"]["groups"]
-    if groups:
-        ki_lines = []
-        for g in groups[:5]:
-            ki_lines.append(f"- **{g['category']}（{g['count']}）**")
-            for it in g["items"][:2]:
-                ki_lines.append(f"    - [{it['level']}] {it['title']}（#{it['id']}）")
-        parts.append(f"### {S['dt_key_issues']}\n\n" + "\n".join(ki_lines))
 
     if mention_line:
         parts.append(mention_line)

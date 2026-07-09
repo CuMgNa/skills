@@ -1,29 +1,29 @@
 {
   "project": "【天翼】星联应急叫应平台2期",
-  "generatedAt": "2026-06-25 18:56:54",
+  "generatedAt": "2026-07-09 17:48:22",
   "reportKind": "functional",
   "materialEngine": "context",
   "metrics": {
     "total": 31,
-    "open": 20,
-    "pending": 11,
-    "deferred": 0,
+    "open": 15,
+    "pending": 14,
+    "deferred": 2,
     "closed": 0,
-    "regfail": 0,
-    "highCount": 4,
+    "regfail": 4,
+    "highCount": 1,
     "byLevel": {
       "一级": 0,
-      "二级": 5,
-      "三级": 21,
-      "四级": 5
+      "二级": 3,
+      "三级": 24,
+      "四级": 4
     },
     "byStatus": {
-      "未关闭": 20,
-      "已修复待回归": 11,
-      "已延期": 0,
+      "未关闭": 15,
+      "已修复待回归": 14,
+      "已延期": 2,
       "已关闭": 0
     },
-    "moduleCount": 13
+    "moduleCount": 14
   },
   "coverage": {
     "mode": "full",
@@ -31,7 +31,7 @@
     "confidence": 0.95,
     "title": null,
     "notices": [
-      "[notion:12fb4509-6f40-46c9-933f-1ffb8bf9957c] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）"
+      "[notion:d185667c6d3a82df962b016c0c9b807e] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）"
     ],
     "ratio": 0.0,
     "belowThreshold": true
@@ -39,23 +39,23 @@
   "keyIssueGroups": [
     {
       "category": "资金/计费",
-      "count": 10
+      "count": 6
     },
     {
-      "category": "消息/通信",
-      "count": 4
+      "category": "权限/安全",
+      "count": 3
     },
     {
       "category": "数据一致性",
       "count": 3
     },
     {
-      "category": "权限/安全",
-      "count": 2
+      "category": "其他功能问题",
+      "count": 3
     },
     {
-      "category": "其他功能问题",
-      "count": 1
+      "category": "消息/通信",
+      "count": 2
     }
   ],
   "sourceSummary": {
@@ -79,7 +79,7 @@
   "validation": {
     "errors": [],
     "warnings": [
-      "资料解析：[notion:12fb4509-6f40-46c9-933f-1ffb8bf9957c] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）",
+      "资料解析：[notion:d185667c6d3a82df962b016c0c9b807e] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）",
       "资料覆盖率 0.0 低于阈值 0.5，已并行展示模块明细",
       "缺陷语义持久化产物缺失（bug-semantic/*.jsonl），已降级为禅道 steps / 标题级语义分析",
       "重点问题业务影响可溯源率 0.0，不可溯源项已标注「（影响待复核）」"

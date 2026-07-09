@@ -108,7 +108,8 @@ def load_materials(args, notion_client=None):
 
     page_ids = list(args.material_page_id or [])
     if args.material_auto and not page_ids:
-        page_ids.append(qa_config.NOTION_DEFAULT_MATERIAL_PAGE_ID)
+        print("[material] 警告：--material-auto 需配合 --material-page-id 才有效，"
+              "未指定资料页将降级为精简执行表", file=sys.stderr)
     if page_ids:
         client = notion_client or nc.NotionClient()
         for pid in page_ids:
@@ -211,11 +212,6 @@ def publish_notion(ctx, args, locale, template):
 
 
 def publish_dingtalk(ctx, args, locale, template):
-    if not ctx.get("conclusion") and not args.allow_fallback:
-        print("[dingtalk] 错误：推送需要「一、测试结果」详细版，请传 --summary-file 或 --report-file，"
-              "或将 {项目}-section1-{日期}.md 放在 bugStats 同目录；如确需自动结论请加 --allow-fallback",
-              file=sys.stderr)
-        return {"ok": False, "errcode": -1, "errmsg": "missing section1"}
     mention = dt.build_mention_line()
     text = template.build_dingtalk_summary(
         ctx, locale, doc_url=args.doc_url, mention_line=mention, title=args.title)
@@ -240,8 +236,10 @@ def main():
     ap.add_argument("--tester")
     ap.add_argument("--test-type", dest="test_type")
     ap.add_argument("--coverage")
-    ap.add_argument("--summary-file", dest="summary_file")
-    ap.add_argument("--report-file", dest="report_file")
+    ap.add_argument("--summary-file", dest="summary_file",
+                    help="[deprecated] 仅写入 meta 供审计对比，不参与结论生成")
+    ap.add_argument("--report-file", dest="report_file",
+                    help="[deprecated] 仅写入 meta 供审计对比，不参与结论生成")
     ap.add_argument("--material-file", dest="material_file", action="append",
                     help="本地测试方案/计划/大纲 Markdown，可多次")
     ap.add_argument("--material-page-id", dest="material_page_id", action="append",
@@ -257,8 +255,6 @@ def main():
     ap.add_argument("--semantic-key", dest="semantic_key",
                     help="只读取文件名含该 key 的语义产物（如 projectId）")
     ap.add_argument("--dry", action="store_true", help="只构建上下文与 blocks，不发布")
-    ap.add_argument("--allow-fallback", dest="allow_fallback", action="store_true",
-                    help="钉钉无详细第一节时允许使用确定性自动结论")
     ap.add_argument("--no-validate", dest="no_validate", action="store_true")
     args = ap.parse_args()
 
@@ -267,7 +263,7 @@ def main():
     bs = load_bugstats(args.bugstats)
     section1_md, section1_source = load_section1_md(args.bugstats, args.summary_file, args.report_file)
     if section1_md:
-        print(f"[section1] 来源={section1_source}，{len(section1_md)} 字")
+        print(f"[section1] 来源={section1_source}，{len(section1_md)} 字（仅审计，不参与结论）")
 
     # 缺陷语义持久化产物（只读消费）
     semantic_dir = args.semantic_dir or str(Path(__file__).parent.parent / "output" / "bug-semantic")

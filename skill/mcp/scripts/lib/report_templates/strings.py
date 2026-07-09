@@ -54,10 +54,6 @@ STRINGS = {
         "appendix_conflict": "字段冲突（展示以 bugStats 为准）",
         "appendix_threshold": "生效阈值与配置",
         "appendix_source": "缺陷语义来源分布",
-        "conclusion_template": (
-            "本轮覆盖 {modules} 个模块，当前未关闭 {open} 个（其中回归不通过 {regfail} 个），"
-            "待回归 {pending} 个，已延期 {deferred} 个，高优问题（二级及以上）{high} 个。"
-        ),
         "final_conclusion": (
             "功能测试结论：缺陷总计 {total} 个，未关闭 {open} 个（含回归不通过 {regfail} 个），"
             "待回归 {pending} 个，已延期 {deferred} 个。"
@@ -120,10 +116,6 @@ STRINGS = {
         "appendix_conflict": "Field Conflicts (bugStats is authoritative)",
         "appendix_threshold": "Effective Thresholds & Config",
         "appendix_source": "Defect Semantic Sources",
-        "conclusion_template": (
-            "Covered {modules} modules. Open {open} (regression failed {regfail}), "
-            "pending {pending}, deferred {deferred}, high-priority (>= level 2) {high}."
-        ),
         "final_conclusion": (
             "Functional test conclusion: total {total} defects, open {open} (incl. regression failed {regfail}), "
             "pending {pending}, deferred {deferred}."

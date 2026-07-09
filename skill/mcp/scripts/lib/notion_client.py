@@ -97,7 +97,7 @@ class NotionClient:
                 "请在汇总页下新建子页面，不要传 --notion-page-id 覆盖"
             )
         actual = normalize_page_id(parent["page_id"])
-        material = normalize_page_id(qa_config.NOTION_DEFAULT_MATERIAL_PAGE_ID)
+        material = normalize_page_id(qa_config.NOTION_MATERIAL_GUARD_PAGE_ID)
         if actual == material:
             raise NotionError(
                 "禁止覆盖测试方案页（materialPageId）下的报告。"

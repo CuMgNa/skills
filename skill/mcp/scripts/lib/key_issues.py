@@ -25,9 +25,16 @@ def _is_unresolved(bug):
     return (bug.get("status") or "") != "已解决"
 
 
-def _primary_label(bug):
+def _primary_label(bug, config=None):
     sigs = bug.get("impactSignals") or []
-    return sigs[0]["label"] if sigs else OTHER_LABEL
+    if sigs:
+        return sigs[0]["label"]
+    if config:
+        module = bug.get("module") or ""
+        for prefixes, alias in config.get("moduleAlias", []):
+            if any(module == p or module.startswith(p + "-") for p in prefixes):
+                return alias
+    return OTHER_LABEL
 
 
 def _primary_phrase(bug):
@@ -56,7 +63,7 @@ def extract_key_issues(bug_context, config=None):
     # 1) 初步按主方向分组
     groups = {}
     for bug in candidates:
-        label = _primary_label(bug)
+        label = _primary_label(bug, config)
         groups.setdefault(label, []).append(bug)
 
     # 2) 不成立的方向并入「其他」

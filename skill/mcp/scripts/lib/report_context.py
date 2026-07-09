@@ -14,9 +14,11 @@ try:
     import material_context as mc
     import bug_semantic_context as bsc
     import key_issues as ki
+    import conclusion_builder as cb
 except ImportError:
     from . import report_config, material_context as mc  # type: ignore
     from . import bug_semantic_context as bsc, key_issues as ki  # type: ignore
+    from . import conclusion_builder as cb  # type: ignore
 
 
 # ── bugStats 取数小工具 ────────────
@@ -175,7 +177,7 @@ def build_report_context(bs, *, material=None, bug_context=None, key_issues=None
         "reportKind": report_kind,
         "meta": meta,
         "metrics": metrics,
-        "conclusion": meta.get("section1_md"),
+        "conclusion": None,
         "keyIssues": key_issues,
         "coverage": coverage,
         "coverageMapping": mapping,
@@ -197,6 +199,7 @@ def build_report_context(bs, *, material=None, bug_context=None, key_issues=None
         },
         "_bs": bs,
     }
+    ctx["conclusion"] = cb.format_conclusion(ctx)
     return ctx
 
 
@@ -248,5 +251,22 @@ def validate_report_context(ctx):
         warnings.append(f"重点问题业务影响可溯源率 {tr}，不可溯源项已标注「（影响待复核）」")
     if ctx["conflicts"]:
         warnings.append(f"字段冲突 {len(ctx['conflicts'])} 处（展示口径以 bugStats 为准，详见附录）")
+
+    # C_conclusion 结论结构闸门
+    conclusion = ctx.get("conclusion") or ""
+    if m["open"] > 0 and "高优问题（二级及以上）" not in conclusion:
+        errors.append("C_conclusion 结论缺少「高优问题（二级及以上）」点名")
+    if m["open"] > 0 and "【" not in conclusion:
+        errors.append("C_conclusion 结论缺少业务方向分组")
+
+    import re as _re
+
+    def _strip_title(t):
+        return _re.sub(r"^(【[^】]+】)+", "", t or "").strip()
+
+    for g in ctx["keyIssues"]["groups"]:
+        used = [_strip_title(it["title"]) for it in g["items"][:4] if it.get("title")]
+        if used and not any(t and t in conclusion for t in used):
+            warnings.append(f"C_conclusion 方向「{g['category']}」在结论中未体现具体缺陷标题")
 
     return errors, warnings
