@@ -1,0 +1,117 @@
+{
+  "project": "【天翼】星联应急叫应平台2期",
+  "generatedAt": "2026-07-10 17:43:18",
+  "reportKind": "functional",
+  "materialEngine": "context",
+  "metrics": {
+    "total": 31,
+    "open": 12,
+    "pending": 17,
+    "deferred": 2,
+    "closed": 0,
+    "regfail": 3,
+    "highCount": 0,
+    "byLevel": {
+      "一级": 0,
+      "二级": 2,
+      "三级": 25,
+      "四级": 4
+    },
+    "byStatus": {
+      "未关闭": 12,
+      "已修复待回归": 17,
+      "已延期": 2,
+      "已关闭": 0
+    },
+    "moduleCount": 17
+  },
+  "coverage": {
+    "mode": "full",
+    "docType": "unknown",
+    "confidence": 0.95,
+    "title": null,
+    "notices": [
+      "[notion:d185667c-6d3a-82df-962b-016c0c9b807e] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）"
+    ],
+    "ratio": 0.0,
+    "belowThreshold": true
+  },
+  "keyIssueGroups": [
+    {
+      "category": "资金/计费",
+      "count": 4
+    },
+    {
+      "category": "权限/安全",
+      "count": 4
+    },
+    {
+      "category": "数据一致性",
+      "count": 3
+    },
+    {
+      "category": "🛰️ 对讲群通信",
+      "count": 2
+    },
+    {
+      "category": "其他功能问题",
+      "count": 1
+    }
+  ],
+  "sourceSummary": {
+    "semantic": 8,
+    "zentao_steps": 0,
+    "title": 23
+  },
+  "conflicts": [
+    {
+      "bugId": "3570",
+      "field": "level",
+      "display": "三级",
+      "severityImplies": "二级",
+      "note": "展示级别以 bugStats 为准，severity 仅参考"
+    },
+    {
+      "bugId": "3562",
+      "field": "level",
+      "display": "三级",
+      "severityImplies": "四级",
+      "note": "展示级别以 bugStats 为准，severity 仅参考"
+    },
+    {
+      "bugId": "3567",
+      "field": "level",
+      "display": "三级",
+      "severityImplies": "四级",
+      "note": "展示级别以 bugStats 为准，severity 仅参考"
+    },
+    {
+      "bugId": "3561",
+      "field": "level",
+      "display": "三级",
+      "severityImplies": "四级",
+      "note": "展示级别以 bugStats 为准，severity 仅参考"
+    }
+  ],
+  "thresholds": {
+    "key_issue_force_level_rank": 3,
+    "dynamic_label_min_support": 2,
+    "key_issue_max_groups": 8,
+    "key_issue_max_items_per_group": 6,
+    "coverage_min_ratio": 0.5,
+    "confidence_low": 0.6
+  },
+  "appliedConfig": {
+    "projectConfig": null,
+    "cli": false
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [
+      "资料解析：[notion:d185667c-6d3a-82df-962b-016c0c9b807e] 完整执行表（已匹配测试方案 1.4.1 / 范围全景表）",
+      "资料覆盖率 0.0 低于阈值 0.5，已并行展示模块明细",
+      "重点问题业务影响可溯源率 0.0，不可溯源项已标注「（影响待复核）」",
+      "字段冲突 4 处（展示口径以 bugStats 为准，详见附录）"
+    ]
+  }
+}

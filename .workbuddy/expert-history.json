@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "sessions": {
+    "253bc4dc58464c82a81240141238753f": [
+      {
+        "expertId": "TechnicalDocumentationEngineer",
+        "name": "文通通",
+        "profession": "技术文档工程师",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/02-Engineering/TechnicalDocumentationEngineer/TechnicalDocumentationEngineer.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/02-Engineering/TechnicalDocumentationEngineer/TechnicalDocumentationEngineer_zh.md",
+        "usedAt": 1781256216507,
+        "industryId": "02-Engineering"
+      }
+    ]
+  },
+  "lastUpdated": 1781256599653
+}
