@@ -1,0 +1,160 @@
+{
+    "query":  {
+                  "path":  "C:\\Users\\33606\\Desktop\\skills",
+                  "keyword":  "测试",
+                  "keywords":  [
+                                   "测试"
+                               ],
+                  "timeFilter":  "",
+                  "timeField":  "Modified",
+                  "timeRange":  null
+              },
+    "summary":  {
+                    "total":  6,
+                    "byExt":  [
+                                  {
+                                      "ext":  ".md",
+                                      "count":  6,
+                                      "percent":  100
+                                  }
+                              ],
+                    "extCount":  1,
+                    "isGitRepo":  true,
+                    "gitRoot":  "C:\\Users\\33606\\Desktop\\skills",
+                    "timeSource":  "git"
+                },
+    "excludeRules":  {
+                         "dirs":  [
+                                      "node_modules",
+                                      ".git",
+                                      "output",
+                                      "dist",
+                                      "build",
+                                      "__pycache__",
+                                      ".venv",
+                                      "venv",
+                                      "target",
+                                      ".idea",
+                                      ".vscode",
+                                      "bin",
+                                      "obj"
+                                  ],
+                         "files":  [
+                                       "文档盘点报告-*",
+                                       "~$*",
+                                       "Thumbs.db",
+                                       "desktop.ini",
+                                       ".DS_Store",
+                                       "*.tmp"
+                                   ]
+                     },
+    "files":  [
+                  {
+                      "name":  "2026-AI驱动测试技术-公司内部调研报告.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-AI驱动测试技术-公司内部调研报告.md",
+                      "relPath":  "2026-AI驱动测试技术-公司内部调研报告.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-13T18:17:21",
+                      "modified":  "2026-07-14T13:44:05",
+                      "size":  24524,
+                      "sizeReadable":  "23.9 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "2026-AI驱动测试技术深潜调研报告.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-AI驱动测试技术深潜调研报告.md",
+                      "relPath":  "2026-AI驱动测试技术深潜调研报告.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-13T18:05:58",
+                      "modified":  "2026-07-14T13:44:05",
+                      "size":  25529,
+                      "sizeReadable":  "24.9 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "2026-测试岗位AI技术地图与落地实践.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-测试岗位AI技术地图与落地实践.md",
+                      "relPath":  "2026-测试岗位AI技术地图与落地实践.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-10T10:51:54",
+                      "modified":  "2026-07-10T10:51:54",
+                      "size":  13506,
+                      "sizeReadable":  "13.2 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "notion富格式测试报告_完整方案_v2.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\notion富格式测试报告_完整方案_v2.md",
+                      "relPath":  "notion富格式测试报告_完整方案_v2.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-06-23T09:40:04",
+                      "modified":  "2026-06-23T09:40:04",
+                      "size":  19791,
+                      "sizeReadable":  "19.3 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "notion富格式测试报告_完整方案_v3.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\notion富格式测试报告_完整方案_v3.md",
+                      "relPath":  "notion富格式测试报告_完整方案_v3.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-06-23T09:40:04",
+                      "modified":  "2026-06-23T09:40:04",
+                      "size":  22510,
+                      "sizeReadable":  "22.0 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "测试报告多渠道发布规范优化建议.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\测试报告多渠道发布规范优化建议.md",
+                      "relPath":  "测试报告多渠道发布规范优化建议.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-06-24T09:40:40",
+                      "modified":  "2026-06-24T09:40:40",
+                      "size":  22427,
+                      "sizeReadable":  "21.9 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  }
+              ],
+    "warnings":  {
+                     "skipped":  [
+
+                                 ],
+                     "emptyFiles":  [
+
+                                    ],
+                     "hugeFiles":  [
+
+                                   ],
+                     "duplicates":  [
+
+                                    ],
+                     "stale":  [
+
+                               ]
+                 }
+}

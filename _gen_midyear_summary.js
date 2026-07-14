@@ -1,0 +1,609 @@
+const fs = require("fs");
+const {
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+  AlignmentType, BorderStyle, WidthType, ShadingType, PageNumber,
+  LevelFormat, Header, Footer
+} = require("docx");
+
+// ═══════════════════════════════════════════════════
+// 模板格式规范（源自 童美娜-2025个人年度总结.docx）
+// ═══════════════════════════════════════════════════
+// 默认字体: 宋体(中文) + Times New Roman(英文)  sz=21 (10.5pt)
+// 标题:     宋体加粗 sz=28 (14pt) 居中 行距360
+// 副标题行: 宋体加粗 sz=24 (12pt) 居中 行距360
+// 一级标题: decimalEnclosedCircleChinese ①②③... sz=24 加粗 行距360
+// 正文:     宋体 sz=24 (12pt) 行距360 首行缩进420
+// 二级列表: Wingdings实心方块bullet 左420悬挂420 行距360 sz=21
+// 表格:     "Table Grid"样式 autofit 黑色细边框sz=4
+//           表头灰底 #E7E6E6 宋体加粗sz=21
+//           单元格宋体sz=21 垂直居中
+//           单元格边距 top=0 left=108 bottom=0 right=108
+// 页边距:   上下左右 1440 (1 inch)
+// ═══════════════════════════════════════════════════
+
+const FONT_CN = "宋体";
+const FONT_EN = "Times New Roman";
+const SZ_TITLE = 28;     // 14pt - 大标题
+const SZ_SUB = 24;       // 12pt - 副标题/一级标题/正文
+const SZ_BODY = 24;      // 12pt
+const SZ_TABLE = 21;     // 10.5pt - 表格
+const LINE_SPACING = 360;
+const INDENT_FIRST = 420; // 首行缩进
+const HEADER_FILL = "E7E6E6";
+
+// Table borders matching template "Table Grid"
+const tblBorder = { style: BorderStyle.SINGLE, size: 4, color: "auto" };
+const tblBorders = {
+  top: tblBorder, bottom: tblBorder, left: tblBorder, right: tblBorder,
+  insideH: tblBorder, insideV: tblBorder
+};
+
+// ───── helpers ─────
+function fontCn(opts = {}) {
+  return { name: FONT_CN, eastAsia: FONT_CN, ...opts };
+}
+
+function tr(text, opts = {}) {
+  return new TextRun({
+    text,
+    font: fontCn(),
+    size: SZ_BODY,
+    ...opts
+  });
+}
+
+function trEn(text, opts = {}) {
+  return new TextRun({
+    text,
+    font: { name: FONT_EN, eastAsia: FONT_CN },
+    size: SZ_BODY,
+    ...opts
+  });
+}
+
+function trB(text, opts = {}) {
+  return tr(text, { bold: true, ...opts });
+}
+
+function trTable(text, opts = {}) {
+  return new TextRun({
+    text,
+    font: fontCn(),
+    size: SZ_TABLE,
+    ...opts
+  });
+}
+
+function trTableB(text, opts = {}) {
+  return trTable(text, { bold: true, ...opts });
+}
+
+function bodyPara(texts, opts = {}) {
+  const children = Array.isArray(texts)
+    ? texts.map(t => (typeof t === "string" ? tr(t) : t))
+    : [tr(texts)];
+  return new Paragraph({
+    spacing: { line: LINE_SPACING, lineRule: "auto" },
+    indent: { firstLine: INDENT_FIRST, firstLineChars: 0 },
+    children,
+    ...opts
+  });
+}
+
+// Rich text parser for **bold** and `code`
+function parseRich(text, opts = {}) {
+  const result = [];
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "*" && text[i + 1] === "*" && text.indexOf("**", i + 2) > i + 1) {
+      const end = text.indexOf("**", i + 2);
+      const inner = text.substring(i + 2, end);
+      result.push(trB(inner, opts));
+      i = end + 2;
+    } else if (text[i] === "`" && text.indexOf("`", i + 1) > i) {
+      const end = text.indexOf("`", i + 1);
+      result.push(tr(inner = text.substring(i + 1, end), { ...opts, font: { name: FONT_EN, eastAsia: FONT_CN } }));
+      i = end + 1;
+    } else {
+      let end = text.length;
+      const bIdx = text.indexOf("**", i + 1);
+      const cIdx = text.indexOf("`", i + 1);
+      if (bIdx > 0) end = Math.min(end, bIdx);
+      if (cIdx > 0) end = Math.min(end, cIdx);
+      result.push(tr(text.substring(i, end), opts));
+      i = end;
+    }
+  }
+  return result;
+}
+
+function bodyRich(text) {
+  return bodyPara(parseRich(text));
+}
+
+// ───── Title ─────
+function titlePara(text, size = SZ_TITLE) {
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { line: LINE_SPACING, lineRule: "auto" },
+    children: [trB(text, { size })]
+  });
+}
+
+// ───── Subtitle line (姓名/日期) ─────
+function subtitleLine(text) {
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { line: LINE_SPACING, lineRule: "auto" },
+    children: [trB(text, { size: SZ_SUB, color: "000000" })]
+  });
+}
+
+// ───── Section heading (① ② ③...) ─────
+// docx-js doesn't support decimalEnclosedCircleChinese natively,
+// use DECIMAL with Chinese circle as suffix
+function sectionHeading(text) {
+  return new Paragraph({
+    spacing: { line: LINE_SPACING, lineRule: "auto" },
+    children: [trB(text, { size: SZ_SUB, color: "000000" })]
+  });
+}
+
+// ───── Table helpers ─────
+function hCell(text, width) {
+  return new TableCell({
+    borders: tblBorders,
+    width: { size: width, type: WidthType.DXA },
+    shading: { fill: HEADER_FILL, type: ShadingType.CLEAR },
+    margins: { top: 0, bottom: 0, left: 108, right: 108 },
+    verticalAlign: "center",
+    children: [new Paragraph({
+      spacing: { line: LINE_SPACING, lineRule: "auto" },
+      children: [trTableB(text)]
+    })]
+  });
+}
+
+function dCell(text, width, align = AlignmentType.LEFT) {
+  return new TableCell({
+    borders: tblBorders,
+    width: { size: width, type: WidthType.DXA },
+    margins: { top: 0, bottom: 0, left: 108, right: 108 },
+    verticalAlign: "center",
+    children: [new Paragraph({
+      alignment: align,
+      spacing: { line: LINE_SPACING, lineRule: "auto" },
+      children: parseRich(text, { size: SZ_TABLE, bold: false })
+    })]
+  });
+}
+
+function makeTable(headers, rows, widths) {
+  return new Table({
+    width: { size: 0, type: WidthType.AUTO },
+    rows: [
+      new TableRow({
+        children: headers.map((h, i) => hCell(h, widths[i]))
+      }),
+      ...rows.map(row =>
+        new TableRow({
+          children: row.map((c, i) => {
+            const align = (i > 0 && /^\d/.test(c.trim())) ? AlignmentType.CENTER : AlignmentType.LEFT;
+            return dCell(c, widths[i], align);
+          })
+        })
+      )
+    ]
+  });
+}
+
+// ───── Numbering config ─────
+// We'll use manual numbering for section headings since
+// docx-js can't do decimalEnclosedCircleChinese
+const CIRCLE_NUM = ["\u2460","\u2461","\u2462","\u2463","\u2464","\u2465","\u2466","\u2467","\u2468","\u2469",
+                     "\u246A","\u246B","\u246C","\u246D","\u246E","\u246F","\u2470","\u2471","\u2472","\u2473"];
+
+// ───── Bullet (Wingdings style → use solid square) ─────
+const numberingConfig = {
+  config: [
+    {
+      reference: "bullets",
+      levels: [{
+        level: 0, format: LevelFormat.BULLET, text: "\u25AA", alignment: AlignmentType.LEFT,
+        style: { paragraph: { indent: { left: 420, hanging: 420 } } }
+      }]
+    },
+    {
+      reference: "bullets-2",
+      levels: [{
+        level: 0, format: LevelFormat.BULLET, text: "\u25AA", alignment: AlignmentType.LEFT,
+        style: { paragraph: { indent: { left: 840, hanging: 420 } } }
+      }]
+    },
+  ]
+};
+
+function bulletItem(text, level = 0) {
+  return new Paragraph({
+    numbering: { reference: level === 0 ? "bullets" : "bullets-2", level: 0 },
+    spacing: { line: LINE_SPACING, lineRule: "auto" },
+    children: parseRich(text)
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// Build document content
+// ═══════════════════════════════════════════════════
+const children = [];
+
+// ── Title ──
+children.push(titlePara("2026 年年中个人总结"));
+
+// ── Subtitle ──
+children.push(subtitleLine("姓名：童美娜　　岗位：软件测试工程师（SDET）"));
+children.push(subtitleLine("周期：2026 年 1 月 — 2026 年 6 月（H1）"));
+children.push(subtitleLine("日期：2026 年 7 月 13 日"));
+
+// ═══════════════════════════════════════════
+// 核心成果速览
+// ═══════════════════════════════════════════
+children.push(makeTable(
+  ["维度", "成果"],
+  [
+    ["项目交付", "4 个核心项目（监控平台国际化、星联应急 1 期 + 2 期、SaaS 平台 1 期重构）+ 多个支持项目"],
+    ["缺陷质量", "累计提交 **651 个**缺陷，已关闭 **594 个**，整体关闭率 **91.2%**（禅道实查，2026-07-13）"],
+    ["AI 落地", "「AI 驱动的 QA 提效助手」获公司 AI 应用先锋赛**四等奖**；事务性工时降约 40%，报告编写 2~3h → 半小时"],
+    ["技术建设", "独立搭建 `jkpt_api_test` 接口自动化框架（17 次提交），探索 mem0 Bugfix 记忆闭环"],
+    ["自评", "总体 **7.5/10**（交付与 AI 落地有实效，自动化闭环与非功能测试为下半年补齐方向）"],
+  ],
+  [1800, 7000]
+));
+
+// ═══════════════════════════════════════════
+// 一、半年概述
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2460 半年概述"));
+
+children.push(bodyRich("2026 上半年，工作沿「**项目测试交付**」与「**AI 工具落地提效**」两条主线推进。"));
+
+children.push(bodyRich("**项目交付侧**：全程负责 4 个核心项目测试——【磐钴】位置监控平台国际化、【天翼】星联应急叫应平台（1 期 + 2 期）、【磐钴】星地多网融合指挥调度 SaaS 平台 1 期（重构），同时支持 NTN App、PG 综合服务平台、中海石油、辽宁天通星讯、可视化编译平台等项目。累计提交缺陷 **651 个**，整体关闭率 **91.2%**，两个收尾项目（监控国际化 94.1%、星联 1 期 95.3%）关闭率均超 94%。"));
+
+children.push(bodyRich("**AI 落地侧**：将 Cursor / Notion / Gemini / WorkBuddy 系统融入用例生成、缺陷录入、报告编写日常环节，跑通半自动化 QA 链路，事务性工时降约 40%，凭借《AI 驱动的 QA 提效助手》获公司「AI 应用先锋赛」**四等奖**。"));
+
+// ═══════════════════════════════════════════
+// 二、半年数据回顾
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2461 半年数据回顾"));
+
+children.push(bodyRich("说明：缺陷数据来自禅道实查（创建人=童美娜，拉取日 2026-07-13，按 `openedDate` 过滤 2026-01-01 ~ 2026-06-30）；其余来自周报 / git 记录。", { indent: { firstLine: 0 } }));
+
+children.push(bodyRich("缺陷总览（四大核心项目 · 2026 H1）：", { indent: { firstLine: 0 }, children: undefined }));
+// Override - just put heading-like text
+children[children.length - 1] = new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("缺陷总览（四大核心项目 · 2026 H1）")]
+});
+
+children.push(makeTable(
+  ["项目", "缺陷总数", "已关闭", "关闭率", "二级缺陷"],
+  [
+    ["【磐钴】位置监控平台-国际化", "324", "305", "94.1%", "18"],
+    ["【天翼】星联应急叫应平台（1 期）", "170", "162", "95.3%", "46"],
+    ["【天翼】星联应急叫应平台（2 期）", "59", "52", "88.1%", "6"],
+    ["【磐钴】星地多网融合 SaaS 平台 1 期", "98", "75", "76.5%", "19"],
+    ["**合计**", "**651**", "**594**", "**91.2%**", "**89**"],
+  ],
+  [3200, 1200, 1000, 1000, 1400]
+));
+
+children.push(bodyPara("其他状态：已解决 29 个、激活待确认 17 个、回归不通过 3 个、已延期 8 个（已关闭+已解决合计 95.7%）。按月分布：2 月 134、3 月 180、4 月 173、5 月 86、6 月 78（3-4 月为测试高峰，与监控平台国际化三轮回归 + 星联应急 1 期版本迭代节奏吻合）。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("其他维度数据：")]
+}));
+
+children.push(makeTable(
+  ["维度", "数据", "备注"],
+  [
+    ["参与项目数", "4 个核心 + 多个支持项目", "支持项含 NTN App、PG 综合服务、中海石油、辽宁天通星讯、可视化编译平台等"],
+    ["核心测试用例覆盖", "监控平台国际化全模块 + 星联应急 1 期全覆盖（XMind 一稿 + 二稿）+ SaaS 1 期 10+ 模块大纲", ""],
+    ["测试报告产出", "多版本回归报告 + 阶段性报告 + 项目验收报告（SaaS 1 期、星联 1 期等）", "各版本逐份输出"],
+    ["文档/说明书", "监控平台中英文说明书、星联应急使用说明书、SaaS 1 期验收报告与项目总结等", ""],
+    ["软著参与", "**无**（上半年未参与软著编写）", ""],
+    ["专利参与", "**无**", ""],
+    ["系统分析师考试", "**上半年未报考**，计划下半年 11 月参加", ""],
+    ["代码提交次数", "**17 次**（个人学习项目 jkpt_api_test，非公司项目）", "git 记录，属个人学习计划产出"],
+    ["周末加班天数", "__待主人补充__", "2025 全年为 3 天"],
+  ],
+  [2000, 4200, 2600]
+));
+
+// ═══════════════════════════════════════════
+// 三、工作成果与目标达成
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2462 工作成果与目标达成"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("3.1 重点项目与关键贡献")]
+}));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("项目一：【磐钴】位置监控平台 — 国际化")]
+}));
+children.push(bulletItem("**角色**：全流程测试负责人"));
+children.push(bulletItem("**核心成果**：完成 8 大核心模块中英文双语适配、接口字段翻译校验、时区专项测试，推进三轮修复回归，独立编写中英文说明书"));
+children.push(bulletItem("**质量数据**（禅道实查，H1）：提交 **324 个**缺陷（二级 18），已关闭 **305 个**，关闭率 **94.1%**"));
+children.push(bulletItem("**典型高价值缺陷**：后端接口字段未翻译/中文硬编码残留、英文环境 UI 文本截断排版错乱、时区转换逻辑缺失（报警弹窗、轨迹导出、统计列表）——均属上线后影响海外用户体验的高风险类"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("项目二：【天翼】星联应急叫应平台（1 期 + 2 期）")]
+}));
+children.push(bulletItem("**角色**：1 期从零搭建测试体系；2 期独立编制《测试方案》V1.0，担任测试负责人"));
+children.push(bulletItem("**核心成果**："));
+children.push(bulletItem("**1 期**：完成 10+ 业务模块用例覆盖（含状态机/订单/计费），完成 7 个版本迭代回归，输出验收报告与使用说明书", 1));
+children.push(bulletItem("**2 期**：主攻对讲群通信与星豆计费两大高风险模块，针对计费场景采用「**账本核对 + 幂等/并发构造**」专项验证方法——逐项核对余额守恒（充值 - 消费 + 退还 = 账本），守住「同一动作只扣一次」红线，推动资金安全类高优缺陷优先修复", 1));
+children.push(bulletItem("**质量数据**（禅道实查，H1）：1 期提交 **170 个**（二级 46），关闭率 **95.3%**；2 期提交 **59 个**（二级 6），关闭率 **88.1%**（进行中）"));
+children.push(bulletItem("**质量信号**：1 期二级缺陷 46 个，是四个项目中最高，反映对状态机、计费等深层业务逻辑的覆盖深度"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("项目三：【磐钴】星地多网融合指挥调度 SaaS 平台 1 期（监控平台重构）")]
+}));
+children.push(bulletItem("**角色**：核心测试工程师，独立编制《重构测试方案》V1.0"));
+children.push(bulletItem("**核心成果**：覆盖 12 大核心模块（定位轨迹、消息通信、SOS 报警、求救群聊、套餐扣费、电子围栏、三级账号权限、WebSocket 推送、第三方对接等），完成两轮功能测试 + 线上环境验证，输出验收报告"));
+children.push(bulletItem("**质量数据**（禅道实查，H1）：提交 **98 个**缺陷（二级 19），已关闭 **75 个**，关闭率 **76.5%**（仍迭代中）；重构 P0 核心链路全部验证通过，**无阻塞性未解决问题，剩余缺陷已收敛至三/四级**"));
+children.push(bulletItem("**重构测试核心方法**：每条关键链路结合数据库/缓存/接口日志三层验证；每个扣费动作验幂等；每个权限动作验三级账号边界；新旧数据兼容性逐项核查"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("3.2 工作亮点与突破")]
+}));
+children.push(bodyPara("1. **AI 驱动的 QA 提效闭环（获奖产品）**：构建「AI 读需求批量生成用例 → 截图自动写入禅道 → 一键生成报告 → 钉钉推送」全链路闭环。量化效果：事务性工时降约 **40%**，缺陷登记完整率达 **95%+**，测试报告编写从 2~3 小时压缩至半小时内。获公司「AI 应用先锋赛」**四等奖**。"));
+children.push(bodyPara("2. **计费高风险场景专项测试**：在星联应急 2 期中针对计费场景采用「账本守恒核对 + 幂等/并发构造」验证方法，提前拦截退款未扣减、余额负值、重复扣费等资金安全类高危缺陷，形成可复用的计费测试思路。"));
+children.push(bodyPara("3. **从零搭建复杂业务测试体系**：星联应急 1 期从零建立 10+ 模块用例体系，包含状态机、订单、计费等深层逻辑，1 期二级缺陷 46 个（四大项目最高），反映深层覆盖能力。"));
+
+// ═══════════════════════════════════════════
+// 四、个人能力发展
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2463 个人能力发展"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("4.1 能力提升与技能成长")]
+}));
+children.push(bulletItem("**AI 工具链能力**：系统掌握 Cursor（Skills + MCP 接入禅道/Apifox）、Notion（多源数据汇聚）、Gemini（重复任务批处理 + UI 初筛）、WorkBuddy（远程接入）。从「偶尔问问」转变为日常工作流固定环节。"));
+children.push(bulletItem("**复杂业务建模能力**：在星联应急项目中，逐步建立「先梳理业务逻辑和数据模型 → 再逐层拆分功能点 → 最后补齐异常和边界」的分析方法（1 期二级缺陷 46 个，反映深层逻辑覆盖提升）。"));
+children.push(bulletItem("**国际化专项测试方法论**：积累术语一致性校验、语言展示完整性检查、时区差异场景设计等专项经验。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("4.2 证书与资质")]
+}));
+children.push(bodyPara("上半年未报考。按学习计划，下半年（7—11 月）全力备考**系统分析师-高级**，争取 11 月一次通过。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("4.3 知识沉淀与分享")]
+}));
+children.push(bulletItem("参赛经验内部分享（AI 先锋赛获奖感言三点思路：靠迭代固化踩坑、把个人经验沉淀为可复用 skills、分清人机边界）；"));
+children.push(bulletItem("持续积累 QA Skills 用例编写规范，目标「换个项目改配置即可复用」；"));
+children.push(bulletItem("编写/更新监控平台中英文说明书、星联应急使用说明书、SaaS 1 期验收报告等可交付文档。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("4.4 个人学习计划推进（《2026 年学习计划》第一阶段）")]
+}));
+children.push(bodyPara("以下为个人学习计划落地内容，**非公司项目交付**，作为 AI 先锋赛参赛产品与下半年自动化闭环建设的基座。"));
+children.push(bulletItem("**学习方向**：「AI 在测试中的应用探索」，核心目标为实现 AI 驱动的接口自动化测试闭环。"));
+children.push(bulletItem("**落地产物 —— `jkpt_api_test` 接口自动化框架**："));
+children.push(bulletItem("技术栈 `Python + pytest + requests + YAML + Allure`，上半年 git 提交 **17 次**，已覆盖监控平台 login、group_controller、terminal 等核心接口", 1));
+children.push(bulletItem("通过 Cursor MCP 连接 Apifox，实现基于接口定义自动生成测试脚本；Allure 可视化报告已集成", 1));
+children.push(bulletItem("**技术探索 —— mem0 Bugfix 记忆闭环**：将接口测试排障经验（场景-根因-排查路径-反模式）沉淀为结构化记忆，形成「报错→召回→复用→沉淀」闭环；已搭建 3 个 Cursor Rules 技能包并接入 mem0 云端 MCP，验证中。"));
+children.push(bulletItem("**当前进度**：框架基座与文档自动生成原型已验证；mem0 记忆闭环搭建完成，接口变更监控与智能回归选择待下半年推进。"));
+
+// ═══════════════════════════════════════════
+// 五、团队协作与影响
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2464 团队协作与影响"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("5.1 团队贡献")]
+}));
+children.push(bulletItem("上半年并行多个核心项目，在频繁切换下保持核心项目交付节奏；"));
+children.push(bulletItem("主动梳理疑问清单、提前与产品/开发对齐（如星联 2 期需求变更 v1.2 计费规则消化、与庆敏分模块对齐 SaaS 1 期四大模块迁移分工）；"));
+children.push(bulletItem("输出物从单一执行结果扩展到测试大纲、报告、说明书、验收报告、调研文档等多种形式。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("5.2 指导与协作")]
+}));
+children.push(bulletItem("与庆敏同步星联应急项目涉及的文件与 skills，完成 SaaS 1 期模块分工对齐（A：语音+视频；B：消息+会议）；"));
+children.push(bulletItem("协助同事完成执法记录仪宣传视频拍摄；"));
+children.push(bulletItem("客户演示支持：协助完成救援棒与平台交互核心链路演示（实名认证 → 绑定终端 → SOS 建群 → 求救通信 → 套餐扣费 → 救援完成）。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("5.3 跨部门协作")]
+}));
+children.push(bulletItem("推动计费资金安全类高优缺陷与研发优先对齐（见 6.1 挑战）；"));
+children.push(bulletItem("反馈小程序提测延期风险并跟进解决时间点。"));
+
+// ═══════════════════════════════════════════
+// 六、反思与规划
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2465 反思与规划"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("6.1 半年反思")]
+}));
+children.push(bodyPara("认识到需要改进的方向："));
+children.push(bodyPara("1. **测试左移做得还不够**：上半年多个项目暴露「评审时对业务规则理解不够深、主要风险识别后移」，下半年争取在需求评审阶段就前置输出测试疑问与风险初判，而不是等测试设计阶段才补。"));
+children.push(bodyPara("2. **回归测试仍以手工为主**：版本迭代密集时重复执行量大，是下半年自动化要解决的核心问题。"));
+children.push(bodyPara("3. **非功能测试（性能/安全）仍是短板**：上半年精力聚焦功能交付与 AI 落地，这块推进有限，下半年逐步补齐。"));
+children.push(bodyPara("4. **AI 辅助测试设计的稳定性有待提升**：复杂业务规则下 AI 生成的测试点偏通用化，需持续优化提示词与知识沉淀。"));
+children.push(bodyPara("以上改进方向已在「6.2 下半年规划」中对应安排，此处不展开细节。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("6.2 下半年规划（H2）")]
+}));
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("维度一：工作交付（主线）")]
+}));
+children.push(bodyRich("**上半年遗留跟进**：H1 遗留的「待回归/延期」缺陷（监控平台国际化、星联应急 1/2 期、SaaS 1 期）随版本节奏逐项闭环或降级评估，遗留项清零。"));
+children.push(bodyRich("**新项目承接**：下半年承接若干新项目排期测试（含监控平台新版本、星联平台新期、SaaS 平台新期），待各项目需求评审后输出测试方案与用例；完成标志统一为准入准出达标、P0/P1 缺陷闭环、测试报告与遗留风险输出。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("维度二：个人学习计划（业余时间 · 含考证）")]
+}));
+children.push(bodyPara("考证与 AI 技能进阶统一占用业余时间，不挤占工作日交付；学习产出反哺工作。"));
+children.push(makeTable(
+  ["方向", "内容", "完成标志"],
+  [
+    ["**系统分析师-高级备考**", "基础学习 + 真题攻坚 + 冲刺，参加下半年考试", "参加考试；未通过则次年续考"],
+    ["**接口自动化闭环深化**", "mem0 Bugfix 记忆闭环验证 + 禅道 bug ID 联动 + 接口变更监控原型", "mem0 同类报错召回可复用，核心接口覆盖率达标"],
+    ["**RAG 检索能力**", "通用文档检索场景（与 mem0 互补，各司其职）", "检索精度与召回率有可量化提升"],
+    ["**AI 输出质量治理**", "Cursor Skills 迭代、AI 输出标准检查清单", "用例生成稳定性与缺陷录入准确率持续提升"],
+  ],
+  [2200, 4000, 2600]
+));
+
+// ═══════════════════════════════════════════
+// 七、建议与思考
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2466 建议与思考"));
+children.push(bodyPara("基于上半年项目实践与日常感受，从制度、流程、业务、资源四个维度提出建议，供领导参考。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("7.1 公司 / 部门 / 制度建议")]
+}));
+children.push(bodyPara("1. **薪酬福利相关信息的透明化**。部分福利项的计算规则与等级标准目前不够清晰，员工需要主动询问行政才能了解，建议在工资单或员工手册中明确："));
+children.push(bodyPara("**公积金缴纳基数**的计算方式与构成目前较为模糊，希望明确公式（基数如何确定、是否含各项补贴、调整周期等），让员工清楚自己的缴纳明细；", { indent: { left: 420 } }));
+children.push(bodyPara("**交通补贴、餐补**的等级划分标准不够明确，建议随工资单注明所属档位与对应金额，避免每次都要单独询问。", { indent: { left: 420 } }));
+children.push(bodyPara("这类信息透明化能减少重复沟通成本，也增强员工对薪酬体系的信任感。", { indent: { left: 420 } }));
+children.push(bodyPara("2. **多项目并行的工时与节奏管理**：下半年将并行 3 个新项目（监控四期图传、星联 3 期分销、SaaS 2 期）+ 遗留缺陷跟进，多项目切换对单人测试压力较大。建议部门层面建立项目测试工时可视化与负载预警机制，在排期阶段就识别资源瓶颈，避免测试成为交付链路的被动瓶颈。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("7.2 工作流程优化建议（基于上半年项目体验）")]
+}));
+children.push(bodyPara("3. **提测准入与节奏对齐**：上半年个别项目出现过「约定提测时间未按时提测、测试被动等待」的情况（如某项目核心链路测试因提测推迟延期约一周）。建议研发与测试在排期阶段约定**提测准入清单**（提测包可用、P0 自测通过、变更范围说明），降低测试空等与节奏被动。"));
+children.push(bodyPara("4. **需求变更的同步与消化窗口**：上半年遇到过计费类规则在测试设计阶段才发生变更（如报位扣费口径调整），测试用例需返工重写。建议涉及计费、权限、状态机等核心规则的需求变更，**同步给测试并预留消化窗口**，避免变更与测试执行撞期。"));
+children.push(bodyPara("5. **重构/大版本项目的变更清单交付**：重构类项目（如 SaaS 1 期）初期缺乏完整变更清单，测试需按业务链路倒推覆盖范围，效率偏低。建议研发在重构/大版本提测时**同步交付变更清单**（接口、缓存、分表、异步任务、权限边界），提升测试覆盖的精准度与效率。"));
+children.push(bodyPara("6. **规则密集型需求的前置评审**：计费、分润、权限、状态机这类规则密集场景，上半年暴露过「规则未前置冻结、测试阶段反复发现同源问题」的痛点（如 2 期出现退款未扣减、余额负值等资金安全类缺陷）。建议这类需求在评审阶段就**冻结规则基线**（含统计口径、状态边界、红线），降低后期返工。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("7.3 业务 / 产品发展建议（基于测试发现）")]
+}));
+children.push(bodyPara("7. **软硬件协同研发的真实集成验证**：硬件与软件同步研发，测试阶段常无就绪硬件，关键链路只能靠理想环境模拟，真实设备集成验证被推迟到上线前后，无法保障交付质量。建议将「真机集成验证」纳入准出门禁，按「软模拟 → 半真机 → 全真机」分层推进，硬件就绪晚于软件时约定补测窗口，杜绝上线即首测。"));
+children.push(bodyPara("8. **原始协议数据的提供**：部分协议从未使用真实设备测试（如图传机），测试侧不清楚其上报的原始数据格式，只能凭协议文档模拟构造，存在覆盖遗漏。希望研发/业务方提供各协议的真实上报报文样本，测试据此模拟推送验证轨迹、报警、通信、图传等展示场景，其他协议同理。"));
+children.push(bodyPara("9. **移动端 UI 兼容性系统覆盖**：APP/小程序当前以功能验证为主，UI 兼容性几乎不系统覆盖，设备依赖测试人员自有机型，无法达到市面主流机型/分辨率/系统版本的真实覆盖。建议基于客户机型分布建立机型覆盖矩阵，引入云真机平台（按次付费、无需大量自购）覆盖主流机型回归，高优主链路冒烟接入 CI 自动执行。"));
+children.push(bodyPara("10. **业务强绑定字段的全链路覆盖**：以监控平台国际化为例，翻译与字段一致性问题不止在页面文案，还广泛存在于 Excel 导入导出、报警内容、WebSocket 推送、通信状态等业务强绑定字段，易漏测。建议多端/多链路项目在需求阶段就梳理「全链路影响点清单」作为测试覆盖依据。"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("7.4 资源与支持需求")]
+}));
+children.push(bodyPara("11. **真机与协议验证的专项支持**：下半年新项目涉及图传/卫星/通信等协议，建议在**实体终端设备、协议录制与回放工具、云真机平台账号**上给予专项支持，作为机制落地的资源底座。"));
+children.push(bodyPara("12. **新业务域的前置对齐支持**：新项目若涉及新业务领域，希望有与产品/业务方提前对齐需求的机会，降低测试设计阶段的理解偏差。"));
+children.push(bodyPara("13. **AI 工具账号统一采购**：上半年已汇总团队所需 AI 工具清单，统一采购可提升落地一致性，也便于沉淀团队级 Skills 服务于多项目并行。"));
+
+// ═══════════════════════════════════════════
+// 八、自评与期望
+// ═══════════════════════════════════════════
+children.push(sectionHeading("\u2467 自评与期望"));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("8.1 半年自评（1-10 分）")]
+}));
+children.push(makeTable(
+  ["维度", "自评分", "说明"],
+  [
+    ["工作成果", "8", "核心项目交付扎实，上半年四大项目提交 651 缺陷、关闭率 91.2%，AI 大赛获奖，自动化框架落地"],
+    ["能力成长", "7", "AI 工具链与接口自动化从 0 到 1，但闭环未建成、安全/性能待补"],
+    ["工作态度", "8", "主动前置、多项目并行、疑问清单主动对齐"],
+    ["团队贡献", "7", "文档与 skills 沉淀、新人/同事协作、客户演示支持"],
+    ["**总体**", "**7.5**", "上半年交付与 AI 落地双线推进有实效；不足在自动化闭环与非功能测试深度，下半年针对性补齐"],
+  ],
+  [1800, 1200, 5800]
+));
+
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("8.2 期望与反馈")]
+}));
+children.push(bulletItem("**职业指导**：期望管理者分享性能与安全测试实战经验与踩坑心得；"));
+children.push(bulletItem("**绩效评估**：从工作态度、效率、产出质量、任务难易、出勤等多维度横向考量；"));
+children.push(bulletItem("**沟通支持**：每季度一次一对一职业沟通，对齐目标与改进方向；明确测试岗位专业晋升路径及对应薪资福利。"));
+
+// ── 数据来源说明 ──
+children.push(new Paragraph({ spacing: { line: LINE_SPACING, lineRule: "auto" }, children: [] }));
+children.push(new Paragraph({
+  spacing: { line: LINE_SPACING, lineRule: "auto" },
+  children: [trB("**数据来源说明**：")]
+}));
+children.push(bodyPara("缺陷数据：禅道实查（创建人=童美娜，按 `openedDate` 过滤 2026-01-01 ~ 2026-06-30，拉取日 2026-07-13），覆盖监控平台国际化（ID 1211）、星联应急 1 期（ID 1216）、星联应急 2 期（ID 1278）、SaaS 平台 1 期（ID 1268）四个核心项目。"));
+children.push(bodyPara("代码提交：`jkpt_api_test` 个人学习项目 git 记录，非公司项目交付。"));
+children.push(bodyPara("效率提升百分比（40%、95%+ 等）：来自 AI 先锋赛参赛产品统计，未做二次夸大。"));
+children.push(bodyPara("**唯一待补项**：周末加班天数（建议从考勤系统导出后补齐）。"));
+
+// ═══════════════════════════════════════════
+// Build document
+// ═══════════════════════════════════════════
+const doc = new Document({
+  styles: {
+    default: {
+      document: {
+        run: { font: fontCn(), size: SZ_BODY }
+      }
+    }
+  },
+  numbering: numberingConfig,
+  sections: [{
+    properties: {
+      page: {
+        size: { width: 11906, height: 16838 }, // A4
+        margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+      }
+    },
+    headers: {
+      default: new Header({
+        children: [new Paragraph({
+          children: [tr("2026 年年中个人总结 · 童美娜", { size: 18, color: "999999" })]
+        })]
+      })
+    },
+    footers: {
+      default: new Footer({
+        children: [new Paragraph({
+          alignment: AlignmentType.CENTER,
+          children: [
+            tr("", { size: 18 }),
+            new TextRun({ children: [PageNumber.CURRENT], font: fontCn(), size: 18, color: "999999" })
+          ]
+        })]
+      })
+    },
+    children
+  }]
+});
+
+const OUTPUT = "c:\\Users\\33606\\Desktop\\skills\\2026年年中总结-童美娜-v2.docx";
+Packer.toBuffer(doc).then(buffer => {
+  fs.writeFileSync(OUTPUT, buffer);
+  console.log("OK: " + OUTPUT);
+}).catch(err => {
+  console.error("ERROR:", err.message);
+  process.exit(1);
+});

@@ -11,7 +11,18 @@
         "usedAt": 1781256216507,
         "industryId": "02-Engineering"
       }
+    ],
+    "c5a65487aeb94e36bb1acbbe0ac58d82": [
+      {
+        "expertId": "DocumentGenerationExpert",
+        "name": "文档达",
+        "profession": "文档生成专家",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/11-ProfessionalServices/DocumentGenerationExpert/DocumentGenerationExpert.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/11-ProfessionalServices/DocumentGenerationExpert/DocumentGenerationExpert_zh.md",
+        "usedAt": 1784023145487,
+        "industryId": "all"
+      }
     ]
   },
-  "lastUpdated": 1781256599653
+  "lastUpdated": 1784023891116
 }
