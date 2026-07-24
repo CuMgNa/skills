@@ -17,16 +17,20 @@ description: 将整理好的缺陷标题与描述通过禅道 REST API 创建为
 - 若不知产品 ID，可先执行 `node mcp/scripts/zentao-bug-create.mjs --list-products <关键词>`。
 - 必填：`--title`，以及 `--steps` 或 `--steps-file`（缺陷描述全文）。
 - 可选：`--severity`、`--pri`、`--type`（如 `codeerror` / `others`）、`--opened-build trunk`、`--execution <迭代ID>`、`--dry-run`。
-- 可选：`--attach <本地路径>`（可多次）创建成功后上传到该缺陷（`POST /api.php/v2/files`，建议禅道 v22+）。
-- 正文 HTML：`steps-file` 中多条列表请用 `1、` `2、` 连续行，脚本会生成 `<ol>`；空行过多会已由脚本合并，避免禅道里异常大空白。
+- 可选：`--attach <本地路径>`（可多次）——**上传截图并嵌入「实际结果」**（与线上习惯一致：`steps` 内 `<img src="/zentao/file-read-*.png">`，不是附件栏）。
+  - 实现：网页 session 登录 + `POST /file-ajaxUpload.json`（字段 **`imgFile`**）。
+  - 可选：`--attach-section 实际结果`（默认）。
+  - 上传失败会中止创建，避免「无图当成功」。
+- 正文 HTML：`steps-file` 中多条列表请用 `1.` `2.` 连续行，脚本会生成 `<ol>`；空行过多会已由脚本合并，避免禅道里异常大空白。
 
-## 示例
+## 带截图示例
 
 ```bash
 node mcp/scripts/zentao-bug-create.mjs ^
   --project-name "星联应急叫应平台" ^
   --title "【求救群聊】会话内停留时头像在线状态不实时更新" ^
-  --steps-file ./bug-steps.md
+  --steps-file ./bug-steps.md ^
+  --attach "C:\path\to\screenshot.png"
 ```
 
 首次建议加 `--dry-run` 确认请求体，再去掉后正式创建。

@@ -23,8 +23,10 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道。
 2. 按 `defect-screenshot-bug-ticket` 输出 8 块字段，展示给用户确认。
 3. 用户确认后，按 `bug-report-and-create`：
    a. 将正文四块以 UTF-8 无 BOM 写入 `skill/mcp/output/handoff/steps-<timestamp>.md`
-   b. 构造并执行 `zentao-bug-create.mjs` 命令，使用 `--steps-file` 传入路径
-   c. 禁止用 `--steps` 传含中文的长正文
+   b. 将聊天截图保存到本地（若尚无稳定路径），绝对路径写入待传列表
+   c. 构造并执行 `zentao-bug-create.mjs`：`--steps-file` + **每个截图 `--attach <绝对路径>`**
+   d. 禁止用 `--steps` 传含中文的长正文
+   e. 禁止省略 `--attach`（本环境截图必须嵌入「实际结果」HTML，不走附件栏）
 4. 执行脚本，收集返回的 Bug ID 与链接。
 5. **写入 handoff**（必须，即使部分失败）：
 
@@ -42,7 +44,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道。
 }
 ```
 
-6. 向用户汇报：已创建 Bug 列表 + handoff 路径；若编排层后续要跑 Agent2，提示可 `@qa-agent-report-publish` 或 `@qa-orchestrator 继续出报告`。
+6. 向用户汇报：已创建 Bug 列表 + handoff 路径；核对禅道「实际结果」是否含截图。若编排层后续要跑 Agent2，提示可 `@qa-agent-report-publish` 或 `@qa-orchestrator 继续出报告`。
 
 ## 幂等
 

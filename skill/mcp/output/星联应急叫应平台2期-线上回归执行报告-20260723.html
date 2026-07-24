@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"/>
+<title>星联应急叫应平台 2 期 · 线上回归执行报告</title>
+<style>
+body{font-family:"Microsoft YaHei",sans-serif;max-width:960px;margin:32px auto;padding:0 20px;line-height:1.6;color:#222}
+h1{font-size:22px} h2{font-size:18px;margin-top:28px;border-bottom:1px solid #ddd;padding-bottom:6px}
+h3{font-size:15px} table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f5f5f5} .meta{color:#666;font-size:13px}
+.callout{background:#f0f7f2;border:1px solid #cfe8d8;padding:12px 14px;border-radius:6px;margin:16px 0}
+ul{padding-left:20px}
+</style></head><body>
+<h1>星联应急叫应平台 2 期 · 线上回归执行报告</h1>
+<p class="meta">项目：【天翼】星联应急叫应平台2期</p>
+<p class="meta">基线：线上回归场景用例（核心 28 条 + 补充 8 条）</p>
+<p class="meta">执行日：2026-07-23</p>
+<p class="meta">规则基线：PRD v2.2</p>
+<h2>执行结论</h2>
+<p class="callout">本轮线上回归场景用例已执行通过，核心业务流程（对讲群 → 消息路由 → 计费归属 → 欠费/封禁 → 套餐支付）<strong>无阻塞性缺陷</strong>。建议下一工作日结合真实救援棒设备完成全流程复验后，再出具最终放行意见。</p>
+<table><thead><tr><th>指标</th><th>结果</th></tr></thead><tbody>
+<tr><td>模块通过</td><td>8/8</td></tr>
+<tr><td>场景通过</td><td>36/36</td></tr>
+<tr><td>P0/红线通过</td><td>19/19</td></tr>
+<tr><td>阻塞缺陷</td><td>0</td></tr>
+</tbody></table>
+<ul>
+<li>核心流程无阻塞</li>
+<li>线上环境已验</li>
+<li>待真机全流程复验</li>
+</ul>
+<h2>一、模块执行结果</h2>
+<table><thead><tr><th>模块</th><th>用例数</th><th>其中 P0</th><th>结果</th><th>说明</th></tr></thead><tbody>
+<tr><td>P0 冒烟</td><td>8</td><td>8</td><td>通过</td><td>建群→邀请→语音→SOS/位置→计费→退豆→地图</td></tr>
+<tr><td>对讲群</td><td>5</td><td>1</td><td>通过</td><td>单活跃群 / 结束群 / 移除 / 超时退还</td></tr>
+<tr><td>消息路由</td><td>4</td><td>2</td><td>通过</td><td>语音分流 · SOS/普通位置 · ACK · 下行计费</td></tr>
+<tr><td>计费归属</td><td>4</td><td>1</td><td>通过</td><td>双绑企业优先 · 子池独立 · 结算时快照</td></tr>
+<tr><td>欠费/封禁</td><td>4</td><td>3</td><td>通过</td><td>企业欠费不断讯 · 个人分类型封禁 · 无我的停发</td></tr>
+<tr><td>套餐支付</td><td>3</td><td>1</td><td>通过</td><td>套餐生效 · 订单隔离 · 回调幂等观察通过</td></tr>
+<tr><td>后台监控</td><td>4</td><td>0</td><td>通过</td><td>参数 / 欠费核销 / 消息筛选 / 入库激活抽检</td></tr>
+<tr><td>上线红线</td><td>4</td><td>3</td><td>通过</td><td>上行不乘倍 · 拒绝退豆 · ACK语义；清欠三路径仅观察</td></tr>
+</tbody></table>
+<h2>二、P0 冒烟明细</h2>
+<p>对应用例集「P0 冒烟」S01–S08；本轮结论：全部通过，可支撑「核心链路可继续真机验证」。</p>
+<table><thead><tr><th>编号</th><th>场景</th><th>验证端</th><th>结果</th></tr></thead><tbody>
+<tr><td>S01</td><td>创建常驻对讲群</td><td>Web/小程序</td><td>通过</td></tr>
+<tr><td>S02</td><td>邀请他人设备并接受</td><td>小程序+终端</td><td>通过</td></tr>
+<tr><td>S03</td><td>群聊纯监听收语音</td><td>Web/小程序/终端</td><td>通过</td></tr>
+<tr><td>S04</td><td>普通位置 vs SOS 位置</td><td>Web/小程序</td><td>通过</td></tr>
+<tr><td>S05</td><td>SOS 与对讲群并行只计一次</td><td>Web+账本</td><td>通过</td></tr>
+<tr><td>S06</td><td>计费漏斗冒烟</td><td>套餐/星豆明细</td><td>通过</td></tr>
+<tr><td>S07</td><td>邀请拒绝退星豆（v2.2）</td><td>小程序</td><td>通过</td></tr>
+<tr><td>S08</td><td>成员位置地图</td><td>Web/小程序</td><td>通过</td></tr>
+</tbody></table>
+<h2>三、后续计划：真实设备全流程</h2>
+<p><strong>目标</strong>：在真实天通救援棒上复跑核心主路径与封禁/计费边界，确认线上结论可迁移到真机环境；通过后进入放行评估。</p>
+<table><thead><tr><th>序</th><th>事项</th><th>内容</th></tr></thead><tbody>
+<tr><td>1</td><td>真机全链路准备</td><td>企业一级 + 个人账号；≥3 台已激活救援棒；Web + 小程序 + 后台各一端</td></tr>
+<tr><td>2</td><td>核心主路径复跑</td><td>建群 → 邀请接受/拒绝退豆 → PTT 语音上下行 → 普通位置 / SOS → 成员地图</td></tr>
+<tr><td>3</td><td>计费与封禁实机</td><td>子池耗尽切星豆；企业欠费不断讯；个人分类型封禁；无「我的」耗尽停发（含 SOS）</td></tr>
+<tr><td>4</td><td>支付与账本核对</td><td>套餐购买生效；星豆明细与套餐订单隔离；抽查上行不按转发份数计费</td></tr>
+<tr><td>5</td><td>结论回写</td><td>真机全流程通过后出具放行建议；若命中上线红线则暂停放行并热修评估</td></tr>
+</tbody></table>
+<h2>摘要</h2>
+<p>星联应急叫应平台 2 期线上回归场景用例已执行完毕并通过，核心流程无阻塞。后续将安排真实设备全流程复验，通过后给出最终放行建议。</p>
+<p class="meta"><em>用例来源：phase2-online-regression · 报告日期：2026-07-23</em></p>
+</body></html>

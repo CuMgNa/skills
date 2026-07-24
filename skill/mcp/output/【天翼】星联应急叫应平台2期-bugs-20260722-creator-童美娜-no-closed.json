@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "projectId": 1278,
+    "projectName": "【天翼】星联应急叫应平台2期"
+  },
+  "total": 6,
+  "bugs": [
+    {
+      "id": 3719,
+      "title": "【我的订单】套餐信息报位误显为次/小时",
+      "status": "active",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-22T03:33:26Z",
+      "assignedTo": "pglpk",
+      "type": "codeerror"
+    },
+    {
+      "id": 3711,
+      "title": "【聊天消息-对讲群】群主结束群聊后，被邀请成员侧状态误显示“已退出”且无法查看历史消息",
+      "status": "active",
+      "pri": 2,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-21T09:17:06Z",
+      "assignedTo": "pgoyc",
+      "type": "codeerror"
+    },
+    {
+      "id": 3672,
+      "title": "【聊天消息】数据不足一屏仍显示没有更多了",
+      "status": "confirmed",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-21T06:07:40Z",
+      "assignedTo": "pgpxy",
+      "type": "codeimprovement"
+    },
+    {
+      "id": 3666,
+      "title": "【求救群聊】账号与卡号一致时，终端上报报警消息显示在聊天室右侧",
+      "status": "confirmed",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-20T09:28:01Z",
+      "assignedTo": "pgpxy",
+      "type": "codeerror"
+    },
+    {
+      "id": 3485,
+      "title": "【求救群聊】星豆余额与套餐报位剩余均为0时，终端上报的SOS位置报位仍正常入群未被拦截",
+      "status": "postponed",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-03T02:04:15Z",
+      "assignedTo": "closed",
+      "type": "codeerror"
+    },
+    {
+      "id": 3370,
+      "title": "【设备列表】纯个人账号无星豆无套餐时终端上下行未封禁，套餐进入欠费累加状态",
+      "status": "postponed",
+      "pri": 2,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-25T06:21:55Z",
+      "assignedTo": "closed",
+      "type": "codeerror"
+    }
+  ]
+}

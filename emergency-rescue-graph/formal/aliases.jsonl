@@ -1,0 +1,15 @@
+{"id": "starbean", "aliases": ["星豆", "星豆余额", "星豆账户"]}
+{"id": "stick", "aliases": ["救援棒", "天通棒", "TT_RESCUE_STICK", "应急救援棒"]}
+{"id": "ptt_group", "aliases": ["对讲群", "常驻对讲群", "群组"]}
+{"id": "sos_group", "aliases": ["SOS群", "求救群", "求救群聊"]}
+{"id": "billing_funnel", "aliases": ["计费漏斗", "计费"]}
+{"id": "short_voice_pool", "aliases": ["短音", "短音套餐", "短音子池"]}
+{"id": "location_pool", "aliases": ["报位", "报位子池", "位置点"]}
+{"id": "invite_rejected", "aliases": ["拒绝邀请", "邀请拒绝"]}
+{"id": "read_ack", "aliases": ["已读", "终端已读"]}
+{"id": "ack", "aliases": ["ACK", "回执"]}
+{"id": "no_owner_stop", "aliases": ["无我的", "无扣费主体"]}
+{"id": "enterprise_debt", "aliases": ["企业欠费", "欠费"]}
+{"id": "package_recharge", "aliases": ["套餐充值", "对应套餐"]}
+{"id": "offline_writeoff", "aliases": ["线下核销", "核销"]}
+{"id": "message_router", "aliases": ["消息路由", "终端消息路由"]}

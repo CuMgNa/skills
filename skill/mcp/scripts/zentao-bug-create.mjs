@@ -446,6 +446,7 @@ function parseArgs(argv) {
       if (!args.attach) args.attach = [];
       args.attach.push(argv[++i]);
     }
+    else if (a === "--attach-section" && argv[i + 1]) args.attachSection = argv[++i];
     else if (a === "--help" || a === "-h") args.help = true;
   }
   return args;
@@ -565,95 +566,222 @@ function stepsToHtml(s) {
   return parts.join("\r\n");
 }
 
+/** IPD/经典站：网页 session（zentaosid），用于富文本截图上传。与 REST Token 并行。 */
+let webCookieJar = [];
+let webSessionId = null;
+
+function mergeSetCookies(jar, setCookieList) {
+  const next = [...jar];
+  for (const sc of setCookieList || []) {
+    const kv = String(sc).split(";")[0];
+    if (!kv || !kv.includes("=")) continue;
+    const name = kv.split("=")[0];
+    for (let i = next.length - 1; i >= 0; i--) {
+      if (next[i].startsWith(name + "=")) next.splice(i, 1);
+    }
+    next.push(kv);
+  }
+  return next;
+}
+
+function cookieHeader(jar) {
+  return (jar || []).join("; ");
+}
+
+function mimeByName(fileName) {
+  const ext = String(fileName).split(".").pop()?.toLowerCase();
+  if (ext === "png") return "image/png";
+  if (ext === "jpg" || ext === "jpeg") return "image/jpeg";
+  if (ext === "gif") return "image/gif";
+  if (ext === "webp") return "image/webp";
+  if (ext === "bmp") return "image/bmp";
+  return "application/octet-stream";
+}
+
 /**
- * 禅道 v22+：POST /api.php/v2/files（multipart）。
- * 官方文档请求头为 **token**（小写）；v1 接口常用 **Token**（首字母大写），部分实例只认其一。
- * 若仍失败：可能是版本低于 22、未开放 v2、或需 token 拼在 URL 上。
+ * 网页登录：api-getsessionid → user-login。
+ * IPD 4.6 实测：富文本截图必须走 session + imgFile，不能依赖 /api.php/v2/files。
  */
-async function uploadBugAttachments(bugId, paths) {
-  if (!paths?.length || !bugId) return;
-  if (!token) await login();
+async function ensureWebSession() {
+  if (webSessionId && webCookieJar.length) return;
 
-  for (const p of paths) {
-    const fp = resolve(p);
-    if (!existsSync(fp)) {
-      console.error(`附件跳过（文件不存在）: ${fp}`);
-      continue;
-    }
-    const buf = readFileSync(fp);
-    const blob = new Blob([buf]);
-    const fileName = basename(fp);
+  const sidRes = await fetch(joinUrl(ZENTAO_URL, "/api-getsessionid.json"));
+  const sidText = await sidRes.text();
+  if (!sidRes.ok) throw new Error(`获取 zentaosid 失败 (${sidRes.status}): ${sidText.slice(0, 300)}`);
+  const sidJson = JSON.parse(sidText);
+  const sidData = typeof sidJson.data === "string" ? JSON.parse(sidJson.data) : sidJson.data;
+  const sessionName = sidData?.sessionName || "zentaosid";
+  const sessionID = sidData?.sessionID;
+  if (!sessionID) throw new Error(`获取 zentaosid 失败：响应无 sessionID：${sidText.slice(0, 300)}`);
 
-    const baseUrl = joinUrl(ZENTAO_URL, "/api.php/v2/files");
-    const attempts = [
-      {
-        name: "header token（v2 文档）",
-        run: () => {
-          const form = new FormData();
-          form.append("file", blob, fileName);
-          form.append("objectType", "bug");
-          form.append("objectID", String(bugId));
-          return fetch(baseUrl, {
-            method: "POST",
-            headers: { token },
-            body: form,
-          });
-        },
-      },
-      {
-        name: "header Token（v1 兼容）",
-        run: () => {
-          const form = new FormData();
-          form.append("file", blob, fileName);
-          form.append("objectType", "bug");
-          form.append("objectID", String(bugId));
-          return fetch(baseUrl, {
-            method: "POST",
-            headers: { Token: token },
-            body: form,
-          });
-        },
-      },
-      {
-        name: "URL ?token=（部分环境 multipart 需走查询串）",
-        run: () => {
-          const form = new FormData();
-          form.append("file", blob, fileName);
-          form.append("objectType", "bug");
-          form.append("objectID", String(bugId));
-          const u = new URL(baseUrl);
-          u.searchParams.set("token", token);
-          return fetch(u, { method: "POST", body: form });
-        },
-      },
-    ];
+  webCookieJar = mergeSetCookies(
+    webCookieJar,
+    typeof sidRes.headers.getSetCookie === "function"
+      ? sidRes.headers.getSetCookie()
+      : sidRes.headers.get("set-cookie")
+        ? [sidRes.headers.get("set-cookie")]
+        : []
+  );
+  webCookieJar = mergeSetCookies(webCookieJar, [`${sessionName}=${sessionID}`]);
+  webSessionId = sessionID;
 
-    let lastStatus = 0;
-    let lastBody = "";
-    let ok = false;
-    for (const a of attempts) {
-      const res = await a.run();
-      const text = await res.text();
-      if (res.ok) {
-        try {
-          const j = JSON.parse(text);
-          console.error(`已上传附件: ${fileName}（${a.name}）→ ${j.url || j.id || j.status || "ok"}`);
-        } catch {
-          console.error(`已上传附件: ${fileName}（${a.name}）`);
-        }
-        ok = true;
-        break;
-      }
-      lastStatus = res.status;
-      lastBody = text;
-    }
-    if (!ok) {
-      console.error(
-        `附件上传失败 (${fileName}): HTTP ${lastStatus} ${lastBody.slice(0, 500)}\n` +
-          `提示：若 404/501 多为禅道版本未提供 v2/files；401/403 多为 token 与 v2 不兼容，请在禅道界面手动上传附件。`
-      );
+  const pageRes = await fetch(joinUrl(ZENTAO_URL, `/user-login.json?zentaosid=${sessionID}`), {
+    headers: { Cookie: cookieHeader(webCookieJar) },
+  });
+  webCookieJar = mergeSetCookies(
+    webCookieJar,
+    typeof pageRes.headers.getSetCookie === "function"
+      ? pageRes.headers.getSetCookie()
+      : pageRes.headers.get("set-cookie")
+        ? [pageRes.headers.get("set-cookie")]
+        : []
+  );
+  const pageJson = JSON.parse(await pageRes.text());
+  const pageData = typeof pageJson.data === "string" ? JSON.parse(pageJson.data) : pageJson.data;
+  const verifyRand = String(pageData?.rand || pageData?.verifyRand || "");
+
+  const body = new URLSearchParams({
+    account: ZENTAO_ACCOUNT,
+    password: ZENTAO_PASSWORD,
+    passwordStrength: "1",
+    referer: "/zentao/",
+    verifyRand,
+    keepLogin: "0",
+  });
+  const loginRes = await fetch(joinUrl(ZENTAO_URL, `/user-login.json?zentaosid=${sessionID}`), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Cookie: cookieHeader(webCookieJar),
+    },
+    body: body.toString(),
+  });
+  webCookieJar = mergeSetCookies(
+    webCookieJar,
+    typeof loginRes.headers.getSetCookie === "function"
+      ? loginRes.headers.getSetCookie()
+      : loginRes.headers.get("set-cookie")
+        ? [loginRes.headers.get("set-cookie")]
+        : []
+  );
+  const loginText = await loginRes.text();
+  if (!loginRes.ok || !/"user"\s*:/.test(loginText)) {
+    throw new Error(`网页登录失败 (${loginRes.status}): ${loginText.slice(0, 400)}`);
+  }
+}
+
+/**
+ * 上传截图到禅道富文本图床（IPD 4.6 实测字段必须为 imgFile，file 会报格式不在范围）。
+ * @returns {string} 可写入 steps 的相对/绝对 img src，如 /zentao/file-read-123.png
+ */
+async function uploadStepsImage(localPath) {
+  await ensureWebSession();
+  const fp = resolve(localPath);
+  if (!existsSync(fp)) throw new Error(`截图不存在: ${fp}`);
+  const fileName = basename(fp);
+  const buf = readFileSync(fp);
+  const form = new FormData();
+  form.append("imgFile", new Blob([buf], { type: mimeByName(fileName) }), fileName);
+
+  const url = new URL(joinUrl(ZENTAO_URL, "/file-ajaxUpload.json"));
+  url.searchParams.set("zentaosid", webSessionId);
+  url.searchParams.set("uid", String(Date.now()));
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Cookie: cookieHeader(webCookieJar) },
+    body: form,
+  });
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error(`截图上传响应非 JSON (${fileName}): ${text.slice(0, 300)}`);
+  }
+  // 成功形态：{"error":0,"url":"/zentao/file-read-xxxx.png"}
+  if (json.error === 0 && json.url) return String(json.url);
+  if (json.result === "success" && json.url) return String(json.url);
+  throw new Error(
+    `截图上传失败 (${fileName}): ${json.message || json.error || text.slice(0, 300)}`
+  );
+}
+
+/**
+ * 把已上传图片插入「实际结果」小节之后（与线上习惯一致：steps 内 <img>，不是 bug.files 附件栏）。
+ * sectionHint 默认匹配 实际结果/实际/现象。
+ */
+function insertImagesIntoSection(stepsHtml, imageUrls, sectionHint = "实际结果") {
+  if (!imageUrls?.length) return stepsHtml;
+  const imgs = imageUrls
+    .map((u) => {
+      const src = String(u).replace(/"/g, "&quot;");
+      return `<p><img src="${src}" alt="screenshot" /></p>`;
+    })
+    .join("\r\n");
+
+  const labels = ["实际结果", "实际", "现象", "预期结果", "预期", "期望", "前置条件", "重现步骤", "操作步骤", "复现步骤", "步骤"];
+  // 优先用户指定章节
+  const preferred = [sectionHint, "实际结果", "实际", "现象"].filter(Boolean);
+  const html = String(stepsHtml || "");
+
+  const findSection = (name) => {
+    const re = new RegExp(
+      `<p><strong>\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*：\\s*</strong></p>`,
+      "i"
+    );
+    return html.search(re);
+  };
+
+  let start = -1;
+  let matchedLabel = null;
+  for (const name of preferred) {
+    const idx = findSection(name);
+    if (idx >= 0) {
+      start = idx;
+      matchedLabel = name;
+      break;
     }
   }
+
+  if (start < 0) {
+    // 无「实际结果」标题时，追加一整块，避免截图丢失
+    return (
+      html +
+      `\r\n<p><strong>实际结果：</strong></p>\r\n${imgs}`
+    );
+  }
+
+  const afterHead = html.indexOf("</p>", start);
+  const insertAt = afterHead >= 0 ? afterHead + 4 : start;
+
+  // 找到下一个分节标题，插在该分节内容末尾、下一节之前
+  let nextSection = html.length;
+  for (const name of labels) {
+    if (matchedLabel && name === matchedLabel) continue;
+    const idx = findSection(name);
+    if (idx > insertAt && idx < nextSection) nextSection = idx;
+  }
+
+  return html.slice(0, nextSection) + (html.slice(0, nextSection).endsWith("\r\n") ? "" : "\r\n") + imgs + "\r\n" + html.slice(nextSection);
+}
+
+/**
+ * 上传 --attach 截图并嵌入 steps HTML。
+ * 失败抛错（避免创建「无图」缺陷还当成功）。
+ */
+async function embedAttachedScreenshots(stepsHtml, paths, sectionHint = "实际结果") {
+  if (!paths?.length) return { html: stepsHtml, urls: [] };
+  const urls = [];
+  for (const p of paths) {
+    const url = await uploadStepsImage(p);
+    urls.push(url);
+    console.error(`已上传截图并嵌入步骤: ${basename(resolve(p))} → ${url}`);
+  }
+  return {
+    html: insertImagesIntoSection(stepsHtml, urls, sectionHint),
+    urls,
+  };
 }
 
 /**
@@ -748,7 +876,11 @@ function persistBugSemantic({ bugId, title, severity, pri, type, stepsText, proj
 
 const args = parseArgs(process.argv);
 
-if (args.help || process.argv.length <= 2) {
+const isMain =
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isMain && (args.help || process.argv.length <= 2)) {
   console.log(`禅道创建缺陷
 
   node mcp/scripts/zentao-bug-create.mjs \\
@@ -770,9 +902,11 @@ if (args.help || process.argv.length <= 2) {
   --dry-run      只打印 JSON，不创建
   --update-bug-id <数字>  仅更新已有缺陷的 steps（需配合 --steps / --steps-file）
   --list-products [关键词]  列出产品 id 与名称，可选关键词过滤名称
-  --attach <路径>  可多次；创建成功后上传到该缺陷（需禅道 v22+，POST /api.php/v2/files）
+  --attach <路径>  可多次；上传截图并嵌入「实际结果」HTML（IPD：session + imgFile → file-read-*.png）
+  --attach-section <名>  截图插入分节，默认「实际结果」
 
 禅道 API：POST /api.php/v1/products/{产品ID}/bugs
+截图上传：POST /file-ajaxUpload.json（字段 imgFile；与线上 steps 内 <img> 习惯一致）
 `);
   process.exit(args.help ? 0 : 1);
 }
@@ -833,12 +967,25 @@ async function main() {
   steps = normalizePunctuation(steps);
   args.title = normalizePunctuation(args.title || "").replace(/[。]$/, "");
 
+  let stepsHtml = stepsToHtml(steps.trim());
+  const attachSection = args.attachSection || "实际结果";
+
+  if (args.attach?.length && !args.dryRun) {
+    const embedded = await embedAttachedScreenshots(stepsHtml, args.attach, attachSection);
+    stepsHtml = embedded.html;
+  } else if (args.attach?.length && args.dryRun) {
+    console.error(
+      `[dry-run] 将上传 ${args.attach.length} 张截图并插入「${attachSection}」：\n` +
+        args.attach.map((p) => `  - ${resolve(p)}`).join("\n")
+    );
+  }
+
   const body = {
     title: args.title,
     severity,
     pri,
     type,
-    steps: stepsToHtml(steps.trim()),
+    steps: stepsHtml,
     openedBuild,
   };
   if (Number.isFinite(args.execution)) body.execution = args.execution;
@@ -854,14 +1001,14 @@ async function main() {
     warn.length
       ? warn.forEach((w) => console.error("[encoding-warn] " + w))
       : console.error("[encoding-check] 通过（未检测到 U+FFFD）");
-    console.log(JSON.stringify({ path: `/api.php/v1/products/${productId}/bugs`, body, attach: args.attach || [] }, null, 2));
+    console.log(JSON.stringify({ path: `/api.php/v1/products/${productId}/bugs`, body, attach: args.attach || [], attachSection }, null, 2));
     return;
   }
 
   if (Number.isFinite(args.updateBugId) && args.updateBugId > 0) {
     const updated = await api(`/api.php/v1/bugs/${args.updateBugId}`, {
       method: "PUT",
-      body: { steps: body.steps },
+      body: { steps: stepsHtml },
     });
     console.log(JSON.stringify(updated, null, 2));
     console.error(`已更新缺陷 ID: ${args.updateBugId} 的重现步骤`);
@@ -889,13 +1036,14 @@ async function main() {
       projectId: projectForBody && Number.isFinite(Number(projectForBody.id)) ? Number(projectForBody.id) : null,
       productId,
     });
-    if (args.attach?.length) {
-      await uploadBugAttachments(bugId, args.attach);
-    }
   }
 }
 
-main().catch((e) => {
-  console.error(e.message || e);
-  process.exit(1);
-});
+export { embedAttachedScreenshots, insertImagesIntoSection, uploadStepsImage };
+
+if (isMain) {
+  main().catch((e) => {
+    console.error(e.message || e);
+    process.exit(1);
+  });
+}
