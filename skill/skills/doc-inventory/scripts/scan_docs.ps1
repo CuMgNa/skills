@@ -66,8 +66,17 @@
     盘点本月内文件名含"测试"或"验收"的文档
 
 .EXAMPLE
-    .\scan_docs.ps1 -Path "C:\repo" -TimeFilter "2026-07-01~2026-07-14" -OutFile result.json
-    按绝对区间筛,结果写文件
+    .\scan_docs.ps1 -Path "D:\项目文档" -TimeFilter "本月"
+    本月内、仅文档白名单、带四类分类
+
+.EXAMPLE
+    .\scan_docs.ps1 -Path "D:\项目文档" -AllFiles
+    关闭白名单，扫全部后缀（旧行为，噪声大）
+
+.NOTES
+    默认 -DocOnly：只统计 md/docx/doc/pdf/xlsx/xls/pptx/ppt/txt/xmind/mm
+    summary.focusCounts：计划/方案、报告、说明书、XMind、项目总结（可为0）
+    默认同名去重；-KeepDuplicates 关闭
 #>
 [CmdletBinding()]
 param(
@@ -83,7 +92,16 @@ param(
 
     [string]$RulesFile = "",
 
-    [string]$OutFile = ""
+    [string]$OutFile = "",
+
+    # 默认开启同名去重；-KeepDuplicates 保留全部同名文件
+    [switch]$KeepDuplicates,
+
+    # 默认只扫「人看的文档」白名单；-AllFiles 关闭白名单(旧行为,含代码/素材)
+    [switch]$AllFiles,
+
+    # 自定义白名单(逗号分隔扩展名,不含点)。空=用内置文档白名单
+    [string]$DocExts = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -104,7 +122,19 @@ $Path = (Resolve-Path -LiteralPath $Path).Path
 # ---------- 默认排除规则 ----------
 $ExcludeDirs = @('node_modules','.git','output','dist','build','__pycache__','.venv','venv','target','.idea','.vscode','bin','obj')
 # 文件级排除:支持通配
-$ExcludeFilePatterns = @('文档盘点报告-*','~$*','Thumbs.db','desktop.ini','.DS_Store','*.tmp')
+$ExcludeFilePatterns = @('文档盘点报告-*','文档盘点数据-*','~$*','Thumbs.db','desktop.ini','.DS_Store','*.tmp')
+
+# ---------- 文档扩展名白名单(实用化默认:只扫人看的文档) ----------
+$DefaultDocExts = @('md','markdown','docx','doc','pdf','xlsx','xls','pptx','ppt','txt','xmind','mm')
+$DocExtWhitelist = @()
+$DocOnly = -not $AllFiles.IsPresent
+if ($DocOnly) {
+    if ($DocExts -and $DocExts.Trim() -ne "") {
+        $DocExtWhitelist = @($DocExts -split '[,，]' | ForEach-Object { $_.Trim().TrimStart('.').ToLower() } | Where-Object { $_ -ne "" })
+    } else {
+        $DocExtWhitelist = $DefaultDocExts
+    }
+}
 
 # ---------- 分类规则加载(可选) ----------
 # 规则来自 classification-rules.json(可改词加类)。匹配用的中文关键词来自JSON,不在脚本里写死,
@@ -248,7 +278,7 @@ try {
 $TimeSource = if ($IsGitRepo) { "git" } else { "filesystem" }
 
 # ---------- 扫描 ----------
-$AllFiles = New-Object System.Collections.ArrayList
+$ScannedFiles = New-Object System.Collections.ArrayList
 $Skipped = New-Object System.Collections.ArrayList
 
 function Test-Excluded($relativePath, $name) {
@@ -262,6 +292,15 @@ function Test-Excluded($relativePath, $name) {
     foreach ($pat in $ExcludeFilePatterns) {
         if ($name -like $pat) { return $true }
     }
+    # 文档白名单:不在白名单内的扩展名直接排除(默认开启)
+    if ($DocOnly -and $DocExtWhitelist.Count -gt 0) {
+        $extNoDot = ""
+        if ($name -match '\.') {
+            $extNoDot = ([System.IO.Path]::GetExtension($name)).TrimStart('.').ToLower()
+            if ($extNoDot -eq 'markdown') { $extNoDot = 'md' }
+        }
+        if (-not ($DocExtWhitelist -contains $extNoDot)) { return $true }
+    }
     return $false
 }
 
@@ -272,7 +311,7 @@ try {
         try {
             $rel = $_.FullName.Substring($Path.Length).TrimStart('\','/')
             if (Test-Excluded $rel $_.Name) { return }
-            [void]$AllFiles.Add($_)
+            [void]$ScannedFiles.Add($_)
         } catch {
             [void]$Skipped.Add(@{ path = $_.FullName; reason = "枚举异常" })
         }
@@ -316,7 +355,7 @@ $Records = New-Object System.Collections.ArrayList
 $EmptyFiles = New-Object System.Collections.ArrayList
 $HugeFiles = New-Object System.Collections.ArrayList
 
-foreach ($fi in $AllFiles) {
+foreach ($fi in $ScannedFiles) {
     try {
         # 关键词过滤
         $hitKw = Match-Keyword $fi.Name
@@ -332,6 +371,7 @@ foreach ($fi in $AllFiles) {
         $ext = ""
         if ($fi.Name -match '\.') {
             $ext = ([System.IO.Path]::GetExtension($fi.Name)).ToLower()
+            if ($ext -eq '.markdown') { $ext = '.md' }
         }
 
         # 分类(可选):互斥按优先级归类
@@ -368,12 +408,60 @@ foreach ($fi in $AllFiles) {
     }
 }
 
-# ---------- 重复同名文件检测 ----------
-$DupGroups = $Records | Group-Object -Property name | Where-Object { $_.Count -gt 1 }
-$Duplicates = @()
-foreach ($g in $DupGroups) {
-    $Duplicates += ,@{ name = $g.Name; paths = @($g.Group | ForEach-Object { $_.path }) }
+# ---------- 同名去重(默认开启):同文件名只保留「创建/修改时间里更新的那份」----------
+# 比较键 = Max(创建时间, 修改时间)；并列时优先修改时间更新者
+$DedupEnabled = -not $KeepDuplicates.IsPresent
+$DedupDropped = New-Object System.Collections.ArrayList
+$DuplicatesBefore = @()
+
+if ($DedupEnabled -and $Records.Count -gt 0) {
+    $nameGroups = $Records | Group-Object -Property { $_.name.ToLowerInvariant() }
+    $kept = New-Object System.Collections.ArrayList
+    foreach ($g in $nameGroups) {
+        $items = @($g.Group)
+        if ($items.Count -eq 1) {
+            [void]$kept.Add($items[0])
+            continue
+        }
+        $ranked = $items | Sort-Object `
+            @{ Expression = { $c=[datetime]$_.created; $m=[datetime]$_.modified; if ($c -gt $m) { $c } else { $m } }; Descending = $true }, `
+            @{ Expression = { [datetime]$_.modified }; Descending = $true }, `
+            @{ Expression = { [datetime]$_.created }; Descending = $true }
+        $winner = @($ranked)[0]
+        [void]$kept.Add($winner)
+        $droppedPaths = @()
+        foreach ($loser in @($ranked | Select-Object -Skip 1)) {
+            $droppedPaths += $loser.path
+            [void]$DedupDropped.Add([ordered]@{
+                name = $loser.name
+                path = $loser.path
+                created = $loser.created
+                modified = $loser.modified
+                keptPath = $winner.path
+                keptCreated = $winner.created
+                keptModified = $winner.modified
+            })
+        }
+        $DuplicatesBefore += ,@{
+            name = $winner.name
+            kept = $winner.path
+            dropped = $droppedPaths
+            count = $items.Count
+        }
+    }
+    $Records = $kept
 }
+
+# 去重后重算空文件/超大(基于保留集)
+$EmptyFiles = New-Object System.Collections.ArrayList
+$HugeFiles = New-Object System.Collections.ArrayList
+foreach ($rec in $Records) {
+    if ($rec.size -eq 0) { [void]$EmptyFiles.Add($rec.path) }
+    if ($rec.size -gt 50MB) { [void]$HugeFiles.Add($rec) }
+}
+
+# 兼容旧字段: duplicates = 去重前同名组摘要(便于报告说明「去重了哪些」)
+$Duplicates = $DuplicatesBefore
 
 # ---------- 陈旧文档(>6个月未更新) ----------
 $staleThreshold = (Get-Date).AddMonths(-6)
@@ -439,12 +527,30 @@ $query = [ordered]@{
     timeField = $TimeField
     timeRange = $timeRangeStr
 }
+# 四类焦点统计(对话交付用,缺类补0)
+$FocusLabels = @('计划/方案','报告','说明书','XMind','项目总结')
+$FocusCounts = [ordered]@{}
+foreach ($fl in $FocusLabels) { $FocusCounts[$fl] = 0 }
+foreach ($bc in $ByCategory) {
+    if ($FocusCounts.Contains($bc.category)) { $FocusCounts[$bc.category] = $bc.count }
+}
+$focusList = @()
+foreach ($fl in $FocusLabels) {
+    $focusList += [ordered]@{ category = $fl; count = $FocusCounts[$fl] }
+}
+
 $summary = [ordered]@{
     total = $total
     byExt = $ByExt
     extCount = $ByExt.Count
     byCategory = $ByCategory
     categoryEnabled = $categoryEnabled
+    focusCounts = $focusList
+    docOnly = $DocOnly
+    docExtWhitelist = @($DocExtWhitelist)
+    dedupEnabled = $DedupEnabled
+    dedupDroppedCount = $DedupDropped.Count
+    dedupGroupCount = $DuplicatesBefore.Count
     rulesFile = $RulesFileLoaded
     isGitRepo = $IsGitRepo
     gitRoot = $GitRoot
@@ -453,12 +559,17 @@ $summary = [ordered]@{
 $excludeRules = [ordered]@{
     dirs = $ExcludeDirs
     files = $ExcludeFilePatterns
+    docOnly = $DocOnly
+    docExtWhitelist = @($DocExtWhitelist)
+    dedupEnabled = $DedupEnabled
+    dedupRule = "same file name (case-insensitive): keep latest of max(created,modified)"
 }
 $warnings = [ordered]@{
     skipped = @($Skipped)
     emptyFiles = @($EmptyFiles)
     hugeFiles = @($HugeFiles | ForEach-Object { $_.path })
     duplicates = @($Duplicates)
+    dedupDropped = @($DedupDropped)
     stale = @($Stale)
 }
 
