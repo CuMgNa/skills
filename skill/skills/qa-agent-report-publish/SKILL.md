@@ -22,35 +22,39 @@
 
 ---
 
-## 允许引用的技能（6个）
+## 关联技能与角色（6个）
+
+> **角色说明**：v2 标准管线下，渲染与写入已统一由 `mcp/scripts/publish_report.py` + `lib/` 完成。下表区分「执行」（Agent 真正调用其脚本 / MCP 工具）与「规格」（仅提供口径定义、格式模板、校验规则，**不再被 Agent 单独执行**，渲染由 publish_report.py 完成）。Agent 看到「规格」角色，不应尝试"运行"它产出文件。
 
 <table header-row="true">
-<tr><td>序号</td><td>技能</td><td>职责</td></tr>
-<tr><td>1</td><td>`zentao-bug-summary`</td><td>拉取禅道缺陷汇总 MD/JSON</td></tr>
-<tr><td>2</td><td>`bug-stats`</td><td>生成单一统计事实源 bugStats.json</td></tr>
-<tr><td>3</td><td>`test-report`</td><td>编写钉钉三节简版报告（排版 bugStats）</td></tr>
-<tr><td>4</td><td>`dingtalk-test-report`</td><td>写入钉钉文档 + webhook 推送</td></tr>
-<tr><td>5</td><td>`test-report-notion`</td><td>编排 Notion 富格式 Markdown（可选）</td></tr>
-<tr><td>6</td><td>`notion-test-report`</td><td>写入 Notion 页（含校验闸门，可选）</td></tr>
+<tr><td>序号</td><td>技能</td><td>角色</td><td>实际职责</td></tr>
+<tr><td>1</td><td>`zentao-bug-summary`</td><td>**执行**</td><td>拉取禅道缺陷汇总 MD/JSON</td></tr>
+<tr><td>2</td><td>`bug-stats`</td><td>**执行**</td><td>生成单一统计事实源 bugStats.json</td></tr>
+<tr><td>3</td><td>`test-report`</td><td>规格（钉钉口径）</td><td>定义钉钉三节格式；实际渲染由 publish_report.py + lib/conclusion_builder 完成，不单独执行</td></tr>
+<tr><td>4</td><td>`dingtalk-test-report`</td><td>**执行（拆分）**</td><td>钉钉文档创建走 MCP（create_document）；机器人推送走 publish_report.py --mode dingtalk</td></tr>
+<tr><td>5</td><td>`test-report-notion`</td><td>规格（Notion 口径）</td><td>定义五节结构 / 模块别名 / 风险判定矩阵；实际渲染由 publish_report.py + lib/report_templates 完成，不落盘</td></tr>
+<tr><td>6</td><td>`notion-test-report`</td><td>规格（写入校验）</td><td>定义 C1-C10 / F1-F4 校验规则与安全断言；实际写入由 publish_report.py 直连 Notion REST API 强类型 block 完成</td></tr>
 </table>
 
-**禁止引用**：`defect-screenshot-bug-ticket`、`bug-report-and-create`、`qa-agent-defect-intake`（除非仅读 handoff）。
+**禁止 / 允许边界**：
+- **禁止**：调用 `defect-screenshot-bug-ticket` / `bug-report-and-create` / `qa-agent-defect-intake` 的【写操作】（创建缺陷、提单）。
+- **允许（只读）**：读取 `bug-report-and-create` 持久化的 `mcp/output/bug-semantic/*.jsonl`，用于报告语义增强（由 `lib/bug_semantic_context.py` 消费）；报告阶段**绝不触发**缺陷创建。
+- `qa-agent-defect-intake` 仅允许只读 `handoff/latest.json`。
 
 ---
 
 ## 固定配置
 
-```yaml
-notion:
-  defaultParentPageId: "36c5667c-6d3a-80d5-93bc-f38311cf751d"  # 测试报告汇总页（第一轮功能测试报告）
-  materialPageId: "3585667c-6d3a-807b-8757-d831c8cd84cd"       # 测试方案（只读辅助资料，非报告父页）
-  templatePageId: "c1b23699-3b3b-4b06-b2ac-0ec9ede194b6"       # 样板页（禁止写入）
-dingtalk:
-  atResponsibles:
-    - { name: "lunu", mobile: "13250703582" }
-  atUserIds: []
-  isAtAll: false
-```
+> ⚠️ **配置统一归宿**：所有 Notion / 钉钉配置（page id、@手机号、webhook 凭证等）由 `mcp/scripts/lib/qa_config.py` 统一读取，**不在本文件明文存放**。优先级：环境变量 → `~/.cursor/mcp.json` → 内置默认值。如需轮换或迁移，改环境变量或 mcp.json，**不要改 SKILL.md**。
+
+| 配置项 | 常量 / 读取方式 | 用途 |
+| --- | --- | --- |
+| 测试报告汇总页 ID | `qa_config.NOTION_DEFAULT_PARENT_PAGE_ID` | 报告作为子页面挂在这里 |
+| SaaS1期测试方案页 ID | `qa_config.NOTION_MATERIAL_GUARD_PAGE_ID` | 仅 `notion_client` 禁写保护断言用，**非**通用默认资料源 |
+| 样板页 ID | `qa_config.NOTION_TEMPLATE_PAGE_ID` | 禁止写入（安全断言） |
+| @负责人 | `qa_config.get_at_mobiles()`；默认 lunu | 钉钉推送 @ |
+
+> 具体值见 `qa_config.py`。下方流程示例中的 `<本项目测试方案 Notion 页 ID>` 等占位符由用户 / handoff 显式传入，**不得**默认带入样板页或资料页 ID。
 
 ---
 
@@ -99,9 +103,8 @@ python mcp/scripts/bugstats.py --input "mcp/output/{项目}-bugs-{日期}.json"
 
 - 严格按 `test-report` 技能输出**三节**：一、测试结果 / 二、未解决问题汇总 / 三、待回归清单（已解决，与未解决不重复）
 - **数字全取 `bugStats`**，不许重算
-- **必须落盘两份文件**（供钉钉文档写入与机器人推送共用，确保内容一致）：
+- **必须落盘完整报告**（供钉钉文档写入）：
 	- 完整报告：`mcp/output/{项目}-report-{日期}.md`
-	- 第一节摘录：`mcp/output/{项目}-section1-{日期}.md`（与完整报告「一、测试结果」**逐字一致**，可含 `### 一、测试结果` 标题行，脚本会自动剥离）
 
 ---
 
@@ -111,11 +114,10 @@ python mcp/scripts/bugstats.py --input "mcp/output/{项目}-bugs-{日期}.json"
 - **机器人推送 + @**：统一用脚本，签名/重试/限流/@校验全部内置，**不要再手写签名或 requests.post**：
 
 ```powershell
-python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "【{项目}】测试报告 {YYYY-MM-DD}" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}" --summary-file "mcp/output/{项目}-section1-{日期}.md"
+python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "【{项目}】测试报告 {YYYY-MM-DD}" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}"
 ```
 
-- 推送消息**仅摘录「一、测试结果」**，内容**必须**来自 `--summary-file`（或与钉钉文档第一节逐字一致）；**禁止**使用脚本内一句话模板摘要。
-- 也可传 `--report-file` 代替 `--summary-file`，脚本自动从完整报告截取第一节。
+- 推送消息**仅摘录测试结论**，内容由脚本从 `conclusion_builder.format_conclusion`（消费 `keyIssues` + `metrics`）算法生成，钉钉 / Notion / 钉钉文档三端同源；**禁止**手写结论注入。
 - **@ 负责人**：脚本推送前强制校验正文含每个 `@手机号`，否则直接报错（`@` 不会静默失效）；遇钉钉限流码自动退避重试。被 @ 的人须为目标群成员且手机号为其钉钉绑定号。
 - **推送后校验**：脚本返回 `ok / errcode / at_effective / attempts`；`errcode==0` 且 `at_effective==true` 才算成功。
 
@@ -146,12 +148,12 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 <tr><td>读取测试方案</td><td>传 `--material-page-id`（按项目显式指定）；`--material-auto` 需<strong>同时</strong>配合 `--material-page-id`</td><td>禁止把 `materialPageId` 当报告父页；禁止单独传 `--material-auto`（将降级为精简表）</td></tr>
 </table>
 
-**两个 Notion 页面 ID 不可混淆**：
+**两个 Notion 页面 ID 不可混淆**（具体值见 `qa_config.py` 常量）：
 
-| ID | 用途 |
+| 常量 | 用途 |
 |----|------|
-| `36c5667c-6d3a-80d5-93bc-f38311cf751d` | 测试报告**汇总页**（报告作为子页面挂在这里） |
-| `3585667c-6d3a-807b-8757-d831c8cd84cd` | **SaaS1期专用**测试方案页（仅 `notion_client` 禁写保护断言用，**非**通用默认资料源） |
+| `NOTION_DEFAULT_PARENT_PAGE_ID` | 测试报告**汇总页**（报告作为子页面挂在这里） |
+| `NOTION_MATERIAL_GUARD_PAGE_ID` | **SaaS1期专用**测试方案页（仅 `notion_client` 禁写保护断言用，**非**通用默认资料源） |
 
 **标准命令（每次新建子页）**：
 
@@ -159,11 +161,13 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode notion --title "【{项目}】测试报告 {YYYY-MM-DD}" --tester "童美娜" --coverage "2026-05-21~2026-06-03" --material-page-id "<本项目测试方案 Notion 页 ID>"
 ```
 
-> 测试结论由 `lib/conclusion_builder.format_conclusion` 算法生成（消费 `keyIssues`），**无需**传 `--summary-file`。`--summary-file` 仅写入 meta 供审计对比，不参与结论生成。
+> 测试结论由 `lib/conclusion_builder.format_conclusion` 算法生成（消费 `keyIssues` + `metrics`），钉钉 / Notion / 钉钉文档三端同源，**无需也不接受**外部文件注入结论。
 
 > 默认在 `defaultParentPageId` 下新建；**不要**加 `--notion-page-id`，除非用户明确要求覆盖已有报告。
 
 ### 校验闸门（C1-C10）
+
+> ⚠️ **权威定义声明**：本表为 C1-C10 的**唯一权威定义**。代码实现：`mcp/scripts/lib/report_context.validate_report_context`（C1'-C_conclusion，阻断级 errors）+ `mcp/scripts/publish_report.py` 写入前断言（C1-C10 数据一致性）。修改本表必须**同步改代码**并跑 `mcp/scripts/tests/test_report_context.py`，杜绝文档与代码漂移。下游技能（如 `notion-test-report`）只读引用本表，**不得另存可独立漂移的副本**。
 
 全部以 `bugStats` 为基准，任一不过 → **硬阻断**，钉钉与 Notion 均不外发：
 
@@ -224,15 +228,15 @@ python mcp/scripts/publish_report.py --bugstats "...bugstats.json" --mode notion
 - **幂等清空**：`--notion-page-id` 复用页时先 `clear_page` 删除旧 children，再写入，杜绝半写入/翻倍。
 - **回读校验**：写入后 `count_blocks` 回读顶层块数，为 0 视为写入失败（兜底 F1）。
 - **数字全取 bugStats**：第一/二/三/四/五节所有数字来自 bugStats，脚本不接受硬编码数字。
-- **辅助资料 → 完整执行表（v2 标准管线）**：解析层已由 `lib/material_context.py` 承接（旧 `lib/test_plan_material.py` 转为兼容 shim，仅委托不再含逻辑）。多级锚点扫描（强锚点：1.4.1 / 2.1 范围 / 范围全景表；弱锚点：测试方案 / 测试计划 / 逻辑大纲 / 功能清单 / 模块清单 / 用例矩阵）+ 同义表头识别 + 资料类型自识别 + **多资料合并**（`--material-file`/`--material-page-id` 均可多次）。解析失败时降级为精简表并在第二节顶部补黄色 callout 标注原因（不再静默返回空 rows）。
-- **缺陷语义产物（只读消费）**：报告阶段读取 `mcp/output/bug-semantic/*.jsonl`（由 `bug-report-and-create` 创建缺陷成功后写入）构建 `BugSemanticContext`；缺失时降级为「禅道 steps / 标题级」语义分析并在附录如实标注。**报告阶段绝不触发缺陷创建**。
+- **辅助资料 → 完整执行表（v2 标准管线）**：解析层由 `lib/material_context.py` 承接。多级锚点扫描（强锚点：1.4.1 / 2.1 范围 / 范围全景表；弱锚点：测试方案 / 测试计划 / 逻辑大纲 / 功能清单 / 模块清单 / 用例矩阵）+ 同义表头识别 + 资料类型自识别 + **多资料合并**（`--material-file`/`--material-page-id` 均可多次）。解析失败时降级为精简表并在第二节顶部补黄色 callout 标注原因（不再静默返回空 rows）。
+- **缺陷语义产物（只读消费）**：报告阶段读取 `mcp/output/bug-semantic/*.jsonl`（由 `bug-report-and-create` 创建缺陷成功后写入）构建 `BugSemanticContext`；缺失时降级为「标题级」语义分析并在附录如实标注。**报告阶段绝不触发缺陷创建**。
 - **动态重点问题**：「重点问题」方向由缺陷 `impactSignals`（资金/计费、权限/安全、数据一致性、消息/通信、界面/体验）动态聚类，而非写死分类；不可溯源的业务影响标注「（影响待复核）」。
 - **标准报告模板（多语言）**：`lib/report_templates/standard.py` 渲染「结论 / 指标看板 / 重点问题 / 范围聚合 / 模块明细 / 风险 / 清单 / 附录」八段，Notion blocks 与钉钉投影同源（数字一致）；`--locale zh-CN|en-US`、`--template standard`。
 - **集中配置**：阈值 / severity 映射 / impactSignals 词典 / 模块别名集中在 `lib/report_config.py`，支持 `--project-config <json>` 项目级覆盖（新项目接入只改配置不改代码）。
 - **级别口径**：展示级别（一/二/三/四级）**只来自 bugStats**，禅道 severity 仅作语义参考，**不反向污染**展示数字（severity 与 bugStats 级别冲突时记入附录冲突清单）。
-- **测试结论单源**：`lib/conclusion_builder.format_conclusion` 从 `keyIssues` + `metrics` 生成第一节结论，钉钉 / Notion / 钉钉文档三端同源；禁止手写 section1 注入。
+- **测试结论单源**：`lib/conclusion_builder.format_conclusion` 从 `keyIssues` + `metrics` 生成第一节结论，钉钉 / Notion / 钉钉文档三端同源；禁止手写结论文案注入。
 - **新增 CLI 参数**：`--report-kind smoke|functional|regression|auto`、`--material-engine legacy|context|shadow`（shadow 仅 diff 对照，不改发布结果）、`--locale`、`--template`、`--project-config`、`--semantic-dir`/`--semantic-key`、`--dry`（只构建不发布）。
-- **Markdown 加粗**：`notion_client.rich_text_from_markdown` 将 section1 等文案中的 `**...**` 转为 Notion `annotations.bold`；与钉钉共用 Markdown 时无需去掉星号。
+- **Markdown 加粗**：`notion_client.rich_text_from_markdown` 将结论文案中的 `**...**` 转为 Notion `annotations.bold`；与钉钉共用 Markdown 时无需去掉星号。
 
 ### 失败处置
 

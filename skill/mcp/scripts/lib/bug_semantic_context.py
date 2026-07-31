@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """BugSemanticContext：缺陷语义整合层。
 
-三来源（按 report_config.FIELD_SOURCE_PRIORITY 的语义字段优先级 reconcile）：
-  1. semantic    —— bug-report-and-create 持久化产物 mcp/output/bug-semantic/*.jsonl（最权威）
-  2. zentao_steps —— 禅道缺陷 steps（HTML，规则解析为前置/步骤/实际/预期）
-  3. title        —— bugStats 标题（兜底）
+两来源（按 report_config.FIELD_SOURCE_PRIORITY 的语义字段优先级 reconcile）：
+  1. semantic —— bug-report-and-create 持久化产物 mcp/output/bug-semantic/*.jsonl（最权威）
+  2. title    —— bugStats 标题（兜底）
 
 强不变量：
   - 展示级别 / 状态 / 模块 **只来自 bugStats**，severity 仅作语义参考，绝不反写展示数字。
@@ -13,7 +12,6 @@
 性能与成本：规则解析优先；预留 enrich_with_llm（默认关闭）+ 文件缓存接口。
 """
 import json
-import re
 from pathlib import Path
 
 try:
@@ -48,60 +46,6 @@ def load_persisted_semantics(semantic_dir, project_key=None):
             if bug_id:
                 out[bug_id] = rec
     return out
-
-
-# ── 禅道 steps（HTML）规则解析 ────────────
-_STEP_SECTIONS = {
-    "preconditions": ["前置条件", "前提", "预置条件"],
-    "steps": ["重现步骤", "操作步骤", "步骤", "复现步骤"],
-    "actual": ["实际结果", "实际", "现象"],
-    "expected": ["预期结果", "预期", "期望"],
-}
-
-
-def _html_to_text(html):
-    if not html:
-        return ""
-    t = re.sub(r"</(p|li|ol|ul|div|br)>", "\n", html, flags=re.IGNORECASE)
-    t = re.sub(r"<br\s*/?>", "\n", t, flags=re.IGNORECASE)
-    t = re.sub(r"<[^>]+>", "", t)
-    from html import unescape
-    t = unescape(t)
-    return re.sub(r"\n{3,}", "\n\n", t).strip()
-
-
-def parse_zentao_steps(steps_html):
-    """把禅道 steps 富文本解析为 {preconditions, steps, actual, expected}。"""
-    text = _html_to_text(steps_html)
-    if not text:
-        return {}
-    result = {}
-    # 按"标签：内容"切分
-    lines = text.splitlines()
-    current = None
-    buf = []
-
-    def flush():
-        if current and buf:
-            result.setdefault(current, "\n".join(buf).strip())
-
-    for line in lines:
-        matched = None
-        for field, labels in _STEP_SECTIONS.items():
-            for lb in labels:
-                if re.match(rf"^\s*{re.escape(lb)}\s*[:：]", line):
-                    matched = (field, re.sub(rf"^\s*{re.escape(lb)}\s*[:：]\s*", "", line))
-                    break
-            if matched:
-                break
-        if matched:
-            flush()
-            current, first = matched
-            buf = [first] if first else []
-        elif current:
-            buf.append(line)
-    flush()
-    return {k: v for k, v in result.items() if v}
 
 
 # ── impactSignals（启发式多标签，用于重点问题/风险，不参与范围合计） ────────────
@@ -154,23 +98,21 @@ def _bug_iter(bs):
         yield item
 
 
-def build_bug_semantic_context(bs, persisted=None, zentao_steps=None, config=None):
+def build_bug_semantic_context(bs, persisted=None, config=None):
     """构建 BugSemanticContext。
 
     persisted: {bugId: record}（结构化语义持久化产物）
-    zentao_steps: {bugId: steps_html}（可选）
     返回：
       {"bugs": [bugSemantic...], "conflicts": [...], "sourceSummary": {...}}
     """
     config = config or report_config.get_config()
     persisted = persisted or {}
-    zentao_steps = zentao_steps or {}
     priority = config["fieldSourcePriority"]
     sev_map = config["severityToLevel"]
 
     bugs = []
     all_conflicts = []
-    source_summary = {"semantic": 0, "zentao_steps": 0, "title": 0}
+    source_summary = {"semantic": 0, "title": 0}
 
     for item in _bug_iter(bs):
         bid = str(item.get("id"))
@@ -181,27 +123,23 @@ def build_bug_semantic_context(bs, persisted=None, zentao_steps=None, config=Non
         title = item.get("标题", "")
 
         rec = persisted.get(bid, {})
-        steps_parsed = parse_zentao_steps(zentao_steps.get(bid, "")) if zentao_steps.get(bid) else {}
 
         # 来源标签
         if rec:
             source = "semantic"
-        elif steps_parsed:
-            source = "zentao_steps"
         else:
             source = "title"
         source_summary[source] += 1
 
-        # 语义字段 reconcile（semantic > zentao_steps > title）
+        # 语义字段 reconcile（semantic > title）
         sem_fields = {}
         bug_conflicts = []
         for field in ("preconditions", "steps", "actual", "expected", "rootProblem", "userImpact"):
             candidates = {
                 "semantic": rec.get(field),
-                "zentao_steps": steps_parsed.get(field),
                 "title": None,  # 标题不直接填这些结构字段
             }
-            chosen, conflict = _reconcile_field(field, candidates, priority.get(field, ["semantic", "zentao_steps", "title"]))
+            chosen, conflict = _reconcile_field(field, candidates, priority.get(field, ["semantic", "title"]))
             if chosen:
                 sem_fields[field] = chosen
             if conflict:
@@ -244,7 +182,7 @@ def build_bug_semantic_context(bs, persisted=None, zentao_steps=None, config=Non
             "impactSignals": signals,
             "evidenceRef": rec.get("evidenceRef") or f"zentao#{bid}",
             "source": source,
-            "sourceConfidence": {"semantic": "high", "zentao_steps": "medium", "title": "low"}[source],
+            "sourceConfidence": {"semantic": "high", "title": "low"}[source],
             "conflicts": bug_conflicts,
         })
         all_conflicts.extend(bug_conflicts)

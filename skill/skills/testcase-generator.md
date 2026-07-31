@@ -282,9 +282,8 @@ cat CLAUDE.md
 
 ### Step 6: 生成完毕后统一校验
 
-- 每个测试项（ITEM）生成完毕后，调用校验脚本检查格式
-- 全部测试项生成完毕后，再次调用校验脚本进行整体检查
-- 校验脚本路径：`.claude/skills/testcase-generator/scripts/validate.py`
+- 每个测试项（ITEM）生成完毕后，逐项检查格式是否符合第 5 节规范
+- 全部测试项生成完毕后，整体检查重复用例和格式一致性
 
 ---
 
@@ -382,38 +381,6 @@ cat CLAUDE.md
 
 ---
 
-## 8. 检验流程
-
-### Step 1: 每个测试项生成完毕后
-
-调用校验脚本检查格式：
-
-```bash
-uv run .claude/skills/testcase-generator/scripts/validate.py \
-  --single "test-case/{模块}/{测试点}.md"
-```
-
-脚本会输出日志，指出格式问题（如优先级错误、字段缺失等）。AI 分析日志，决定是否需要修改。
-
-### Step 2: 全部生成完毕后
-
-再次调用校验脚本进行整体检查：
-
-```bash
-uv run .claude/skills/testcase-generator/scripts/validate.py "test-case/" --check-duplicates
-```
-
-脚本会检查重复用例、格式一致性等。脚本只提供日志，不直接修改文件。AI 分析日志，决定是否需要调整。
-
-### Step 3: 生成质量报告
-
-- 统计用例数量（按 ITEM、按优先级）
-- 统计等价类覆盖率
-- 统计边界值覆盖率
-- 列出重复用例（如果有）
-
----
-
 ## 9. 检查清单
 
 ### 生成前检查
@@ -436,57 +403,14 @@ uv run .claude/skills/testcase-generator/scripts/validate.py "test-case/" --chec
 
 ### 治理阶段检查
 
-- [ ] 执行了全局校验脚本
 - [ ] 检查了重复用例
-- [ ] 格式符合规范（已通过 validate.py 检查）
+- [ ] 格式符合第 5 节规范
 - [ ] 已生成 all_cases.md
-- [ ] 无重复用例（已通过 validate.py --check-duplicates 检查）
 - [ ] 已生成质量报告
 
 ---
 
-## 10. 脚本接口
-
-### validate.py
-
-```bash
-# 单文件校验
-uv run .claude/skills/testcase-generator/scripts/validate.py \
-  --single "test-case/{模块}/{测试点}.md"
-
-# 全局校验
-uv run .claude/skills/testcase-generator/scripts/validate.py "test-case/"
-
-# 全局校验 + 重复检测
-uv run .claude/skills/testcase-generator/scripts/validate.py "test-case/" --check-duplicates
-
-# 仅重复检测
-uv run .claude/skills/testcase-generator/scripts/validate.py "test-case/" --duplicates-only
-```
-
-**校验项**:
-- Schema格式
-- 必填字段(优先级、测试类型、测试步骤、预期结果)
-- 测试类型枚举(12种)
-- 步骤编号连续性
-- 步骤与预期结果数量一致性
-- 等价类覆盖检查(`--check-equivalence`)
-- 边界值覆盖检查(`--check-boundary`)
-- 重复检测(`--check-duplicates`)
-
-### to_excel.py
-
-```bash
-# 从目录导出
-uv run .claude/skills/testcase-generator/scripts/to_excel.py "test-case/" -o "test-case/export.xlsx"
-
-# 从单个文件导出
-uv run .claude/skills/testcase-generator/scripts/to_excel.py "test-case/{模块}/{测试点}.md" -o "output.xlsx"
-```
-
----
-
-## 11. 异常处理
+## 10. 异常处理
 
 | 错误 | 处理方式 |
 |------|----------|
@@ -497,7 +421,6 @@ uv run .claude/skills/testcase-generator/scripts/to_excel.py "test-case/{模块}
 | 步骤编号不连续 | 报错并要求修正 |
 | 测试类型不在枚举 | 报错并要求修正 |
 | 步骤与预期数量不一致 | 报错并要求修正 |
-| 导出失败 | 检查openpyxl依赖 |
 
 ---
 

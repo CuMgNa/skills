@@ -1,13 +1,13 @@
 {
-  "at": "2026-07-24T02:56:25.002849+00:00",
-  "changed_pages": 1,
+  "at": "2026-07-30T10:03:52.861433+00:00",
+  "changed_pages": 12,
   "missing_or_deleted": 0,
   "edges": {
-    "stale_marked": 5,
+    "stale_marked": 3,
     "orphan_marked": 0
   },
   "nodes": {
-    "stale_marked": 5,
+    "stale_marked": 2,
     "orphan_marked": 0
   },
   "decisions": {

@@ -33,7 +33,7 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 
 ### 第一步：安全断言（必须先执行）
 
-**目标页安全断言**：写入目标页 ID 必须 ≠ `templatePageId`（`c1b23699-3b3b-4b06-b2ac-0ec9ede194b6`），防止误覆盖样板页。
+**目标页安全断言**：写入目标页 ID 必须 ≠ `templatePageId`（见 `qa_config.NOTION_TEMPLATE_PAGE_ID`），防止误覆盖样板页。
 
 若相等 → 终止并返回错误：“禁止写入样板页”。
 
@@ -52,6 +52,8 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 
 ### 第三步：校验闸门（写入前强制校验）
 
+> ⚠️ **校验闸门权威定义**：本技能「校验闸门（C1-C10）」为**唯一权威定义**；代码实现位于 `mcp/scripts/lib/report_context.validate_report_context`（阻断级 errors）与 `mcp/scripts/publish_report.py` 写入前断言。修改本表必须**同步改代码**并跑 `mcp/scripts/tests/test_report_context.py`，杜绝副本漂移。
+
 **全部以 `bugStats` 为基准**，任一不过 → **硬阻断**，钉钉与 Notion 均不外发。
 
 <table header-row="true">
@@ -67,6 +69,8 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 <tr><td>C9</td><td>缺陷标题 / ID 与数字逐条溯源</td><td>每个缺陷标题 / ID 必须在 `bugStats.未关闭列表 / 待回归列表` 找到完全一致项，且每个数字 == bugStats 对应字段</td></tr>
 <tr><td>C10</td><td>「五、风险与遗留影响评估」溯源</td><td>每条风险引用的缺陷均存在于 `bugStats.未关闭列表 / 已延期列表`，风险等级与级别 / 状态映射一致，且无 bugStats 之外的风险项（未通过仅阻断 Notion 写入，不影响钉钉）</td></tr>
 </table>
+
+> 📌 **校验闸门完整定义**以 `qa-agent-report-publish` 的「校验闸门（C1-C10）」为唯一权威来源，代码实现见 `mcp/scripts/lib/report_context.validate_report_context`。本表仅作 C10 的 Notion 专属判定（仅阻断 Notion 写入）说明，不再维护完整副本——避免与权威定义漂移。
 
 **失败处置**：
 

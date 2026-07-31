@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """辅助资料解析层 → MaterialContext（健壮化、可多资料合并）。
 
-替代旧 test_plan_material 的"写死 1.4.1 全景表"实现。用户上传的辅助资料可能是：
+用户上传的辅助资料可能是：
   - 标准《测试方案》→ 1.4.1 / 2.1 测试范围全景表
   - 《二期逻辑大纲》/《PRD》→ 范围表 / 模块清单 / 功能清单 / 用例矩阵
   - 《测试计划》→ 范围全景表 / 测试范围表 / 阶段任务表
@@ -244,8 +244,8 @@ def parse_panorama_table(text):
             return [], title, kind, "no_header"
         return [], title, kind, "no_table"
 
-    # 第三遍：兜底全文扫描
-    if tables:
+    # 第三遍：兜底全文扫描（仅当资料已识别为测试类文档，避免抽到修订记录/术语表等无关表格）
+    if tables and kind != "unknown":
         for tkind, _pos, body in tables:
             rows = _try_parse_table_rows(body, tkind == "html")
             if rows:

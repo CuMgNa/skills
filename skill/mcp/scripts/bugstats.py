@@ -120,26 +120,29 @@ def build_stats(data):
 
 
 def self_validate(s):
-    """数字内部一致性自校验（C3/C4/C5/C6 数字部分）。返回 (ok, errors)。"""
+    """数字内部一致性自校验。返回 (ok, errors, warnings)。
+    errors 非空 → 硬阻断（数字对不上，禁止发布）。
+    warnings 非空 → 仅提示（如未分类缺陷占比高，不阻断）。"""
     errors = []
-    # C3: byLevel 合计 == total
+    warnings = []
+    # byLevel 合计 == total
     if sum(s["byLevel"].values()) != s["total"]:
-        errors.append(f"C3 byLevel合计({sum(s['byLevel'].values())}) != total({s['total']})")
-    # C4: byStatus 各项之和 == total
+        errors.append(f"byLevel合计({sum(s['byLevel'].values())}) != total({s['total']})")
+    # byStatus 各项之和 == total
     status_sum = sum(s["byStatus"].values())
     if status_sum != s["total"]:
-        errors.append(f"C4 byStatus合计({status_sum}) != total({s['total']})")
-    # C2/C5: 列表长度 == 对应状态计数
+        errors.append(f"byStatus合计({status_sum}) != total({s['total']})")
+    # 列表长度 == 对应状态计数
     if len(s["未关闭列表"]) != s["byStatus"]["未关闭"]:
         errors.append(f"未关闭列表({len(s['未关闭列表'])}) != byStatus.未关闭({s['byStatus']['未关闭']})")
     if len(s["待回归列表"]) != s["byStatus"]["已修复待回归"]:
         errors.append(f"待回归列表({len(s['待回归列表'])}) != byStatus.已修复待回归({s['byStatus']['已修复待回归']})")
     if len(s["已延期列表"]) != s["byStatus"]["已延期"]:
         errors.append(f"已延期列表({len(s['已延期列表'])}) != byStatus.已延期({s['byStatus']['已延期']})")
-    # C6: byModule 未关闭之和 == byStatus.未关闭
+    # byModule 未关闭之和 == byStatus.未关闭
     module_unclosed = sum(m["未关闭"] for m in s["byModule"].values())
     if module_unclosed != s["byStatus"]["未关闭"]:
-        errors.append(f"C6 byModule未关闭合计({module_unclosed}) != byStatus.未关闭({s['byStatus']['未关闭']})")
+        errors.append(f"byModule未关闭合计({module_unclosed}) != byStatus.未关闭({s['byStatus']['未关闭']})")
     # 回归不通过一致性
     module_regfail = sum(m["回归不通过"] for m in s["byModule"].values())
     if module_regfail != s["回归不通过"]:
@@ -163,7 +166,17 @@ def self_validate(s):
         errors.append("lists.deferred 与 已延期列表 长度不一致")
     if sum(s["byLevelCode"].values()) != s["total"]:
         errors.append("byLevelCode 合计与 total 不一致")
-    return (len(errors) == 0, errors)
+    # 未分类缺陷告警（不阻断）：标题不带【模块】前缀的缺陷归入"未分类"，
+    # 占比过高说明禅道标题格式不规范，可能导致下游模块分析失真。
+    unclassified = s["byModule"].get("未分类", {})
+    unclassified_count = sum(unclassified.values()) if isinstance(unclassified, dict) else 0
+    if unclassified_count > 0:
+        pct = round(unclassified_count / s["total"] * 100, 1) if s["total"] else 0
+        warnings.append(
+            f"未分类缺陷 {unclassified_count} 个（占 {pct}%），标题缺少【模块】前缀，"
+            f"建议检查禅道标题格式或更新模块别名映射表"
+        )
+    return (len(errors) == 0, errors, warnings)
 
 
 def main():
@@ -193,12 +206,15 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(stats, f, ensure_ascii=False, indent=2)
 
-    ok, errors = self_validate(stats)
+    ok, errors, warnings = self_validate(stats)
     print(f"项目: {stats['projectName']}")
     print(f"总数: {stats['total']} | 未关闭: {stats['byStatus']['未关闭']}（回归不通过 {stats['回归不通过']}）"
           f" | 待回归: {stats['byStatus']['已修复待回归']} | 已延期: {stats['byStatus']['已延期']} | 已关闭: {stats['byStatus']['已关闭']}")
     print(f"按级别: {stats['byLevel']}")
     print(f"输出: {out_path}")
+
+    for w in warnings:
+        print(f"[WARN] {w}")
 
     if ok:
         print("[VALIDATE] 数字自校验通过 ✅")

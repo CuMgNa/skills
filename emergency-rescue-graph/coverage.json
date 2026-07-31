@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-24",
+  "generated_at": "2026-07-30",
   "root_page_id": "87d5667c-6d3a-83c0-955f-01b64a8c844a",
   "audit": {
-    "source_pages": 50,
+    "source_pages": 51,
     "truncated_pages": 0,
     "pages_with_unknown_blocks": 0,
     "included_pages": 50,
@@ -15,16 +15,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "f7e99a1582d65c92b97e4e17291bca5eb6b1855aed148df782030f9693fc413c",
+      "content_sha256": "a9be4fd5af817d3db1de2ebc307711c063cb95025faea8ece0902b6ad4b02083",
       "anchors": [
         {
           "anchor": "h1:应急救援平台",
-          "content_sha256": "0ce69ac173307ff7e2c199f150cc1d5c13fa1348a9c172dc347a4cc0bde22071",
+          "content_sha256": "6e0087ae86217cfb56ffdae84e61b63f53af5017767fe1c090e8e0ef5bc11651",
           "title": "应急救援平台"
         }
       ],
       "local_path": "sources/pages/87d5667c-6d3a-83c0-955f-01b64a8c844a.md",
-      "last_synced_at": "2026-07-24T02:56:24.904575+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.755101+00:00"
     },
     {
       "id": "50e5667c-6d3a-8397-b052-0175142c6b5b",
@@ -32,16 +32,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "76a7926638e96d6d4b07c9c850bd49e7379d410002e1184f5ba4763cc27d0838",
+      "content_sha256": "de606306562540161afa35e049077a09cc6965dcc96c560cb5bb5ad6d089f026",
       "anchors": [
         {
           "anchor": "h1:救援棒逻辑",
-          "content_sha256": "5b2be90016ac09c005329775161184911db573de085b7ab052760e05c3cc0565",
+          "content_sha256": "2858f6dcc91665657dceec48573ba78dd4f3c1ebb61f36b8324a64f0ab094bb3",
           "title": "救援棒逻辑"
         }
       ],
       "local_path": "sources/pages/50e5667c-6d3a-8397-b052-0175142c6b5b.md",
-      "last_synced_at": "2026-07-24T02:56:24.897567+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.748133+00:00"
     },
     {
       "id": "fd05667c-6d3a-8382-8044-01c07a8ce56b",
@@ -58,7 +58,7 @@
         }
       ],
       "local_path": "sources/pages/fd05667c-6d3a-8382-8044-01c07a8ce56b.md",
-      "last_synced_at": "2026-07-24T02:56:24.930724+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.783951+00:00"
     },
     {
       "id": "62c5667c-6d3a-83e0-9bee-81d04f9ac0c4",
@@ -75,7 +75,7 @@
         }
       ],
       "local_path": "sources/pages/62c5667c-6d3a-83e0-9bee-81d04f9ac0c4.md",
-      "last_synced_at": "2026-07-24T02:56:24.900571+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.751132+00:00"
     },
     {
       "id": "a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7",
@@ -92,7 +92,7 @@
         }
       ],
       "local_path": "sources/pages/a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7.md",
-      "last_synced_at": "2026-07-24T02:56:24.905574+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.757201+00:00"
     },
     {
       "id": "c3c5667c-6d3a-82d4-82ec-814ba4460a5b",
@@ -109,7 +109,7 @@
         }
       ],
       "local_path": "sources/pages/c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
-      "last_synced_at": "2026-07-24T02:56:24.913605+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.766321+00:00"
     },
     {
       "id": "1055667c-6d3a-82a1-8e3c-81430348cb6a",
@@ -126,7 +126,7 @@
         }
       ],
       "local_path": "sources/pages/1055667c-6d3a-82a1-8e3c-81430348cb6a.md",
-      "last_synced_at": "2026-07-24T02:56:24.887053+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.734905+00:00"
     },
     {
       "id": "a2b5667c-6d3a-82b7-938a-81324c9d05c6",
@@ -143,7 +143,7 @@
         }
       ],
       "local_path": "sources/pages/a2b5667c-6d3a-82b7-938a-81324c9d05c6.md",
-      "last_synced_at": "2026-07-24T02:56:24.906575+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.758201+00:00"
     },
     {
       "id": "a8b5667c-6d3a-82aa-9f9d-01cbb8a25317",
@@ -280,7 +280,7 @@
         }
       ],
       "local_path": "sources/pages/a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
-      "last_synced_at": "2026-07-24T02:56:24.910081+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.761200+00:00"
     },
     {
       "id": "2fd5667c-6d3a-838c-9ecc-8150e9c5ae68",
@@ -497,7 +497,7 @@
         }
       ],
       "local_path": "sources/pages/2fd5667c-6d3a-838c-9ecc-8150e9c5ae68.md",
-      "last_synced_at": "2026-07-24T02:56:24.892559+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.741000+00:00"
     },
     {
       "id": "2145667c-6d3a-82af-a181-01d7495066c4",
@@ -659,7 +659,7 @@
         }
       ],
       "local_path": "sources/pages/2145667c-6d3a-82af-a181-01d7495066c4.md",
-      "last_synced_at": "2026-07-24T02:56:24.888053+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.735913+00:00"
     },
     {
       "id": "e285667c-6d3a-8375-90be-01c3ce90b0ff",
@@ -946,7 +946,7 @@
         }
       ],
       "local_path": "sources/pages/e285667c-6d3a-8375-90be-01c3ce90b0ff.md",
-      "last_synced_at": "2026-07-24T02:56:24.922659+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.775340+00:00"
     },
     {
       "id": "df55667c-6d3a-8300-8ffa-81aacbc85f26",
@@ -1033,7 +1033,7 @@
         }
       ],
       "local_path": "sources/pages/df55667c-6d3a-8300-8ffa-81aacbc85f26.md",
-      "last_synced_at": "2026-07-24T02:56:24.921427+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.774332+00:00"
     },
     {
       "id": "6ca5667c-6d3a-8207-910d-019405bc311f",
@@ -1180,7 +1180,7 @@
         }
       ],
       "local_path": "sources/pages/6ca5667c-6d3a-8207-910d-019405bc311f.md",
-      "last_synced_at": "2026-07-24T02:56:24.901335+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.752140+00:00"
     },
     {
       "id": "0645667c-6d3a-8283-963b-8175854514bb",
@@ -1297,7 +1297,7 @@
         }
       ],
       "local_path": "sources/pages/0645667c-6d3a-8283-963b-8175854514bb.md",
-      "last_synced_at": "2026-07-24T02:56:24.886053+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.733902+00:00"
     },
     {
       "id": "c815667c-6d3a-82a9-b868-013db98652e8",
@@ -1389,7 +1389,7 @@
         }
       ],
       "local_path": "sources/pages/c815667c-6d3a-82a9-b868-013db98652e8.md",
-      "last_synced_at": "2026-07-24T02:56:24.915877+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.767322+00:00"
     },
     {
       "id": "2c65667c-6d3a-820b-9788-01838378c4f3",
@@ -1496,7 +1496,7 @@
         }
       ],
       "local_path": "sources/pages/2c65667c-6d3a-820b-9788-01838378c4f3.md",
-      "last_synced_at": "2026-07-24T02:56:24.889052+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.736992+00:00"
     },
     {
       "id": "34f5667c-6d3a-822b-a7ef-01e619786259",
@@ -1613,7 +1613,7 @@
         }
       ],
       "local_path": "sources/pages/34f5667c-6d3a-822b-a7ef-01e619786259.md",
-      "last_synced_at": "2026-07-24T02:56:24.894567+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.742002+00:00"
     },
     {
       "id": "00d5667c-6d3a-830d-84e3-014a48de2608",
@@ -1730,7 +1730,7 @@
         }
       ],
       "local_path": "sources/pages/00d5667c-6d3a-830d-84e3-014a48de2608.md",
-      "last_synced_at": "2026-07-24T02:56:24.885054+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.732406+00:00"
     },
     {
       "id": "6015667c-6d3a-8398-a5e7-015cc92b4e3c",
@@ -1787,7 +1787,7 @@
         }
       ],
       "local_path": "sources/pages/6015667c-6d3a-8398-a5e7-015cc92b4e3c.md",
-      "last_synced_at": "2026-07-24T02:56:24.900571+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.751132+00:00"
     },
     {
       "id": "d345667c-6d3a-8275-b77e-01df63808736",
@@ -1904,7 +1904,7 @@
         }
       ],
       "local_path": "sources/pages/d345667c-6d3a-8275-b77e-01df63808736.md",
-      "last_synced_at": "2026-07-24T02:56:24.918608+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.772324+00:00"
     },
     {
       "id": "d6d5667c-6d3a-8271-a791-01876788a072",
@@ -1976,7 +1976,7 @@
         }
       ],
       "local_path": "sources/pages/d6d5667c-6d3a-8271-a791-01876788a072.md",
-      "last_synced_at": "2026-07-24T02:56:24.920656+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.773322+00:00"
     },
     {
       "id": "3305667c-6d3a-8281-b7e8-8145fe82fd34",
@@ -2098,7 +2098,7 @@
         }
       ],
       "local_path": "sources/pages/3305667c-6d3a-8281-b7e8-8145fe82fd34.md",
-      "last_synced_at": "2026-07-24T02:56:24.893568+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.742002+00:00"
     },
     {
       "id": "7035667c-6d3a-83b5-806e-81211959442f",
@@ -2150,7 +2150,7 @@
         }
       ],
       "local_path": "sources/pages/7035667c-6d3a-83b5-806e-81211959442f.md",
-      "last_synced_at": "2026-07-24T02:56:24.902574+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.753140+00:00"
     },
     {
       "id": "90a5667c-6d3a-834d-ab03-8144953f606d",
@@ -2237,7 +2237,7 @@
         }
       ],
       "local_path": "sources/pages/90a5667c-6d3a-834d-ab03-8144953f606d.md",
-      "last_synced_at": "2026-07-24T02:56:24.904575+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.756202+00:00"
     },
     {
       "id": "a8b5667c-6d3a-8298-b2e6-0187ca27e5a8",
@@ -2314,7 +2314,7 @@
         }
       ],
       "local_path": "sources/pages/a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
-      "last_synced_at": "2026-07-24T02:56:24.908577+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.760200+00:00"
     },
     {
       "id": "c555667c-6d3a-83d0-a00d-81403f5fd393",
@@ -2471,7 +2471,7 @@
         }
       ],
       "local_path": "sources/pages/c555667c-6d3a-83d0-a00d-81403f5fd393.md",
-      "last_synced_at": "2026-07-24T02:56:24.914920+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.767322+00:00"
     },
     {
       "id": "a335667c-6d3a-83aa-8180-01943cc89aef",
@@ -2653,7 +2653,7 @@
         }
       ],
       "local_path": "sources/pages/a335667c-6d3a-83aa-8180-01943cc89aef.md",
-      "last_synced_at": "2026-07-24T02:56:24.907575+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.759201+00:00"
     },
     {
       "id": "2f05667c-6d3a-8261-8850-81ba3c550429",
@@ -2745,7 +2745,7 @@
         }
       ],
       "local_path": "sources/pages/2f05667c-6d3a-8261-8850-81ba3c550429.md",
-      "last_synced_at": "2026-07-24T02:56:24.891568+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.740010+00:00"
     },
     {
       "id": "f4d5667c-6d3a-8333-a6de-01d90454e650",
@@ -2753,16 +2753,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "ce12e2d53db5dbda68fea58e3a9c7982b994547d68b3be485e7f121cee25af7a",
+      "content_sha256": "b07ddc1464d933df0147ecc433e175486d61872c884000d0977fc2c586f5619f",
       "anchors": [
         {
           "anchor": "h1:封禁能力体验",
-          "content_sha256": "4bb787c764803c89a1825fe1ad94eb49651bffe80f5480d61b49823aa176c66d",
+          "content_sha256": "391c745fad30bc3d56d19181c52f65a82fc68c613b62010f663caf1af32fc5e0",
           "title": "封禁能力体验"
         }
       ],
       "local_path": "sources/pages/f4d5667c-6d3a-8333-a6de-01d90454e650.md",
-      "last_synced_at": "2026-07-24T02:56:24.925659+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.778912+00:00"
     },
     {
       "id": "ceb5667c-6d3a-83d2-af71-8138d7b0c00a",
@@ -2770,16 +2770,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "a745b4849cc60bb0d86a8bcbd163f0666357d7a3bacb67fd5247b515f9cf44ad",
+      "content_sha256": "e372535d673635d95dd14e86d8979ce3972fa37eefa8e391c01f52698708a596",
       "anchors": [
         {
           "anchor": "h1:成员位置 UI",
-          "content_sha256": "7f39599063792d00e05fb62c14c34ed7874e15dc308ce0ea1b37437d77e9cc4e",
+          "content_sha256": "b1b507c5104aa3a6aa80b8c93258d445b54e475db3162a1b39b01cbcb27bac26",
           "title": "成员位置 UI"
         }
       ],
       "local_path": "sources/pages/ceb5667c-6d3a-83d2-af71-8138d7b0c00a.md",
-      "last_synced_at": "2026-07-24T02:56:24.918608+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.770321+00:00"
     },
     {
       "id": "e815667c-6d3a-83a2-a66c-81dd61809c34",
@@ -2787,16 +2787,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "ce25f2b2c6d830880e6a92a6d58bb481b1096f848c07403a456cee2061e2d209",
+      "content_sha256": "1348cbcde5b0b5cfaae2f54f09094d7558c9561079bfcd210a4206c6530acb5e",
       "anchors": [
         {
           "anchor": "h1:聊天消息 UI",
-          "content_sha256": "0f4e06b564b7767c313f2e5ef731351354902f51e9292402f5d1c17ca4a090d6",
+          "content_sha256": "c77fab84621362ea27d112e586e2cd40d634b5865a772026377dba00a59ef3b1",
           "title": "聊天消息 UI"
         }
       ],
       "local_path": "sources/pages/e815667c-6d3a-83a2-a66c-81dd61809c34.md",
-      "last_synced_at": "2026-07-24T02:56:24.923817+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.776904+00:00"
     },
     {
       "id": "4565667c-6d3a-8367-aa35-01fac664a6d4",
@@ -2804,16 +2804,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "ec2e7ef6f6e32d388d0e259b7552d6eecf941925900c0557ce5b5c517632bbbb",
+      "content_sha256": "c05ef28523558231d82a673df846e083ed155874246ec90586b4423764415989",
       "anchors": [
         {
           "anchor": "h1:群邀请 UI",
-          "content_sha256": "465da4aa1bd4206751a72e1a51ec635ac666d548796ed8e4aadb4f5b854d2e0c",
+          "content_sha256": "ebd929f59e83402eaeb14a782444363578a06e94a832ec4eacbf95a25369c2f4",
           "title": "群邀请 UI"
         }
       ],
       "local_path": "sources/pages/4565667c-6d3a-8367-aa35-01fac664a6d4.md",
-      "last_synced_at": "2026-07-24T02:56:24.895558+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.745133+00:00"
     },
     {
       "id": "f515667c-6d3a-83a1-b1df-81fe12cfdf55",
@@ -2821,16 +2821,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "bc8d4271dd1ee8913fbf6efb8c8fc08af49bcddabf7e749bc12ef9e4ff462dc9",
+      "content_sha256": "a42054537eb9aa9bcdb920638582f201fe6c2dbe880c4c43a19792ed89bd930e",
       "anchors": [
         {
           "anchor": "h1:添加成员 UI",
-          "content_sha256": "ea7080bb329ae6a5f2911cbdbda92116a4b35cc8528e74e3e21356a1df0c1916",
+          "content_sha256": "12f88e0b8b2d636e3101fcf644d145697e6c1668f028d7d19397955e69df77a7",
           "title": "添加成员 UI"
         }
       ],
       "local_path": "sources/pages/f515667c-6d3a-83a1-b1df-81fe12cfdf55.md",
-      "last_synced_at": "2026-07-24T02:56:24.926661+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.779903+00:00"
     },
     {
       "id": "0195667c-6d3a-820e-ada0-01a509e0c85a",
@@ -2838,16 +2838,16 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "66747a683d8edd825c91e7f92c795f5a6ff0c1bbc7f882196cfdc36055d98788",
+      "content_sha256": "e976d73edb67cbd96844a6a7804757b5cf9a0343d34addb0433c7fe14272fcae",
       "anchors": [
         {
           "anchor": "h1:我的信息 UI",
-          "content_sha256": "d7612cefe8926335e5024769e24b2d5f4b0ed7a0a9ce8aea30af39c4ad1f1c0f",
+          "content_sha256": "9e42c70a6966b7948917580e1b6e496119e4215154bae0d80d8052f76f1089ae",
           "title": "我的信息 UI"
         }
       ],
       "local_path": "sources/pages/0195667c-6d3a-820e-ada0-01a509e0c85a.md",
-      "last_synced_at": "2026-07-24T02:56:24.886053+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.733902+00:00"
     },
     {
       "id": "8375667c-6d3a-8341-8af2-8148964e9b01",
@@ -3059,7 +3059,7 @@
         }
       ],
       "local_path": "sources/pages/8375667c-6d3a-8341-8af2-8148964e9b01.md",
-      "last_synced_at": "2026-07-24T02:56:24.903574+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.754197+00:00"
     },
     {
       "id": "afc5667c-6d3a-82f5-b597-81cafc86f207",
@@ -3067,7 +3067,7 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "41053544576485a76d3d00b3f7786bfc2fe979ec022bb9d3140c453dfcdc9cc4",
+      "content_sha256": "fe498d78a6dea02c852fc25608e2714644aacb85d819690f41efb20c04c86390",
       "anchors": [
         {
           "anchor": "h1:需求变更 v1.2",
@@ -3116,7 +3116,7 @@
         },
         {
           "anchor": "h2:扣费总览（图1）",
-          "content_sha256": "3e121004b671588be8f65263d8ebb4147da865b8a1915c7ff34f96e48bd02514",
+          "content_sha256": "3bc9331846c21fbcd465bf1a069497f1bc3d7a24a998709943b372f8ac8bc8e2",
           "title": "扣费总览（图1）"
         },
         {
@@ -3151,7 +3151,7 @@
         },
         {
           "anchor": "h2:图1通信扣费总览",
-          "content_sha256": "80d530d927628339a0c2c320c443e95cd65093307bd579d36d0a498d23a5046a",
+          "content_sha256": "580292334168a8dffaeefe7a361f4b4f979929e8737d3fd7c42fffdb61cf8837",
           "title": "图1通信扣费总览"
         },
         {
@@ -3231,7 +3231,7 @@
         }
       ],
       "local_path": "sources/pages/afc5667c-6d3a-82f5-b597-81cafc86f207.md",
-      "last_synced_at": "2026-07-24T02:56:24.910598+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.762201+00:00"
     },
     {
       "id": "2d95667c-6d3a-8293-b3a3-812656c75481",
@@ -4168,7 +4168,7 @@
         }
       ],
       "local_path": "sources/pages/2d95667c-6d3a-8293-b3a3-812656c75481.md",
-      "last_synced_at": "2026-07-24T02:56:24.890555+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.738994+00:00"
     },
     {
       "id": "4975667c-6d3a-82de-bf5e-81df8412feae",
@@ -4390,7 +4390,7 @@
         }
       ],
       "local_path": "sources/pages/4975667c-6d3a-82de-bf5e-81df8412feae.md",
-      "last_synced_at": "2026-07-24T02:56:24.897567+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.747134+00:00"
     },
     {
       "id": "f805667c-6d3a-8213-bcdd-818575659208",
@@ -5277,7 +5277,7 @@
         }
       ],
       "local_path": "sources/pages/f805667c-6d3a-8213-bcdd-818575659208.md",
-      "last_synced_at": "2026-07-24T02:56:24.930724+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.781907+00:00"
     },
     {
       "id": "f185667c-6d3a-82e1-9124-81d6142ca035",
@@ -5285,11 +5285,11 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "5e0b01fa24d970b652337d4f2c49492b40481162463377aa7f884cc65aeb1b67",
+      "content_sha256": "1eec4aff0cb67c3028e732ac942e236fe26995172a4ecc31645f960964dd4364",
       "anchors": [
         {
           "anchor": "h1:S1 产品规格 v1.4",
-          "content_sha256": "3ada39373c8f44d35d206c7fdb2034baf75f8603e95826e093d4c24573da61cf",
+          "content_sha256": "19e6c9b541def9414f328b1b61c7dc64b75b13b09e3d2c752ed15ce645522a42",
           "title": "S1 产品规格 v1.4"
         },
         {
@@ -5299,7 +5299,7 @@
         },
         {
           "anchor": "h2:**核心产品特性**",
-          "content_sha256": "8451c5dde67ce7e981a53a77ced29fbea5e9490734ca7253770ae270fd01f871",
+          "content_sha256": "c97dffb8c385039087a5139c07c93b0b8a24accfbbb88f7732a807df13f1adca",
           "title": "**核心产品特性**"
         },
         {
@@ -5349,7 +5349,7 @@
         },
         {
           "anchor": "h2:**尺寸结构**",
-          "content_sha256": "a19012edd7c6247b396c74f6db8cafdab81973c46aef7c35b5c736c0f62dd8eb",
+          "content_sha256": "23febdff10d479c78ff3a03ca8a43616e862bf89fe8f05a46015b97d0a713a62",
           "title": "**尺寸结构**"
         },
         {
@@ -5359,7 +5359,7 @@
         }
       ],
       "local_path": "sources/pages/f185667c-6d3a-82e1-9124-81d6142ca035.md",
-      "last_synced_at": "2026-07-24T02:56:24.924659+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.777903+00:00"
     },
     {
       "id": "c275667c-6d3a-8321-af26-016edd020891",
@@ -5367,11 +5367,11 @@
       "truncated": false,
       "unknown_block_ids": [],
       "included_in_graph": true,
-      "content_sha256": "05b13e7766b80aa5a32aeb17848c7a7230d28781dbbc73fcc9601bb647cb5f09",
+      "content_sha256": "ce9e361b807ed5df33229801a165c319389d949117639fd53646339d048cbd90",
       "anchors": [
         {
           "anchor": "h1:S1 产品规格 v1.5",
-          "content_sha256": "4673ff45e08523d8bfdd9f33b221e4cdfa353547ad101da6c69070afc6f22022",
+          "content_sha256": "6157bf4e47299ebd900e9cac6aabc2e436175d0a3191eace3857c0dc30fdacd0",
           "title": "S1 产品规格 v1.5"
         },
         {
@@ -5381,7 +5381,7 @@
         },
         {
           "anchor": "h2:**核心产品特性**",
-          "content_sha256": "1d54f4d2527664f90521ba165d291001032e1d6fafd5406b4bddab35295371c2",
+          "content_sha256": "0fa0636fdcb530df8e56b37a9985efa08beba0c6659e0a193c64387cecc94a9c",
           "title": "**核心产品特性**"
         },
         {
@@ -5426,7 +5426,7 @@
         },
         {
           "anchor": "h2:**尺寸结构**",
-          "content_sha256": "58661971880ce5078f72cd77c42afddab8e0125782c21bf7578d864dd051f63f",
+          "content_sha256": "12d895cfcb87d9050dd5826d0942bfd23733d76aa6a321dbb3e69730220e9149",
           "title": "**尺寸结构**"
         },
         {
@@ -5436,7 +5436,7 @@
         }
       ],
       "local_path": "sources/pages/c275667c-6d3a-8321-af26-016edd020891.md",
-      "last_synced_at": "2026-07-24T02:56:24.912605+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.764317+00:00"
     },
     {
       "id": "c395667c-6d3a-8288-8c55-81aac6a686b7",
@@ -5558,7 +5558,7 @@
         }
       ],
       "local_path": "sources/pages/c395667c-6d3a-8288-8c55-81aac6a686b7.md",
-      "last_synced_at": "2026-07-24T02:56:24.913605+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.765321+00:00"
     },
     {
       "id": "e495667c-6d3a-8362-8b9b-811e4cb605a8",
@@ -5680,7 +5680,7 @@
         }
       ],
       "local_path": "sources/pages/e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
-      "last_synced_at": "2026-07-24T02:56:24.922659+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.775894+00:00"
     },
     {
       "id": "b7c5667c-6d3a-82fe-a474-81698e4422ab",
@@ -5792,7 +5792,7 @@
         }
       ],
       "local_path": "sources/pages/b7c5667c-6d3a-82fe-a474-81698e4422ab.md",
-      "last_synced_at": "2026-07-24T02:56:24.911614+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.763203+00:00"
     },
     {
       "id": "cc05667c-6d3a-8331-9995-81fc50f9055c",
@@ -6174,7 +6174,7 @@
         }
       ],
       "local_path": "sources/pages/cc05667c-6d3a-8331-9995-81fc50f9055c.md",
-      "last_synced_at": "2026-07-24T02:56:24.917614+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.769323+00:00"
     },
     {
       "id": "5d95667c-6d3a-82b4-aa39-0185314eae82",
@@ -6191,7 +6191,7 @@
         }
       ],
       "local_path": "sources/pages/5d95667c-6d3a-82b4-aa39-0185314eae82.md",
-      "last_synced_at": "2026-07-24T02:56:24.898558+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.750132+00:00"
     },
     {
       "id": "5685667c-6d3a-8345-a9b7-81ccd1bcf71c",
@@ -6238,7 +6238,7 @@
         }
       ],
       "local_path": "sources/pages/5685667c-6d3a-8345-a9b7-81ccd1bcf71c.md",
-      "last_synced_at": "2026-07-24T02:56:24.898558+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.749133+00:00"
     },
     {
       "id": "f6b5667c-6d3a-8271-b8a8-81adcbf2127f",
@@ -6320,7 +6320,7 @@
         }
       ],
       "local_path": "sources/pages/f6b5667c-6d3a-8271-b8a8-81adcbf2127f.md",
-      "last_synced_at": "2026-07-24T02:56:24.927670+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.780902+00:00"
     },
     {
       "id": "3db5667c-6d3a-82ad-9a5c-01a5b4b8194d",
@@ -6412,19 +6412,48 @@
         }
       ],
       "local_path": "sources/pages/3db5667c-6d3a-82ad-9a5c-01a5b4b8194d.md",
-      "last_synced_at": "2026-07-24T02:56:24.895558+00:00"
+      "last_synced_at": "2026-07-30T10:03:52.744129+00:00"
+    },
+    {
+      "id": "3aa5667c-6d3a-8154-ac91-fad8c8ef9921",
+      "title": "3aa5667c-6d3a-8154-ac91-fad8c8ef9921",
+      "truncated": false,
+      "unknown_block_ids": [],
+      "included_in_graph": true,
+      "content_sha256": "936bf2d0c09e66119b85d5b22ac66ac27f430185de5cf10c6c2abc3085d9c8b4",
+      "anchors": [
+        {
+          "anchor": "h1:3aa5667c-6d3a-8154-ac91-fad8c8ef9921",
+          "content_sha256": "1e433c4a2bbb58384c13679cbfe91010694476052ee4cc97b187455d18b9c8ac",
+          "title": "3aa5667c-6d3a-8154-ac91-fad8c8ef9921"
+        }
+      ],
+      "local_path": "sources/pages/3aa5667c-6d3a-8154-ac91-fad8c8ef9921.md",
+      "last_synced_at": "2026-07-30T10:03:52.743519+00:00"
     }
   ],
   "uncovered": [],
   "last_sync": {
-    "at": "2026-07-24T02:56:24.931729+00:00",
+    "at": "2026-07-30T10:03:52.783951+00:00",
     "mode": "import",
     "changed": [
-      "0645667c-6d3a-8283-963b-8175854514bb"
-    ],
-    "initialized": [
-      "00d5667c-6d3a-830d-84e3-014a48de2608",
       "0195667c-6d3a-820e-ada0-01a509e0c85a",
+      "3aa5667c-6d3a-8154-ac91-fad8c8ef9921",
+      "4565667c-6d3a-8367-aa35-01fac664a6d4",
+      "50e5667c-6d3a-8397-b052-0175142c6b5b",
+      "87d5667c-6d3a-83c0-955f-01b64a8c844a",
+      "afc5667c-6d3a-82f5-b597-81cafc86f207",
+      "c275667c-6d3a-8321-af26-016edd020891",
+      "ceb5667c-6d3a-83d2-af71-8138d7b0c00a",
+      "e815667c-6d3a-83a2-a66c-81dd61809c34",
+      "f185667c-6d3a-82e1-9124-81d6142ca035",
+      "f4d5667c-6d3a-8333-a6de-01d90454e650",
+      "f515667c-6d3a-83a1-b1df-81fe12cfdf55"
+    ],
+    "initialized": [],
+    "unchanged": [
+      "00d5667c-6d3a-830d-84e3-014a48de2608",
+      "0645667c-6d3a-8283-963b-8175854514bb",
       "1055667c-6d3a-82a1-8e3c-81430348cb6a",
       "2145667c-6d3a-82af-a181-01d7495066c4",
       "2c65667c-6d3a-820b-9788-01838378c4f3",
@@ -6434,9 +6463,7 @@
       "3305667c-6d3a-8281-b7e8-8145fe82fd34",
       "34f5667c-6d3a-822b-a7ef-01e619786259",
       "3db5667c-6d3a-82ad-9a5c-01a5b4b8194d",
-      "4565667c-6d3a-8367-aa35-01fac664a6d4",
       "4975667c-6d3a-82de-bf5e-81df8412feae",
-      "50e5667c-6d3a-8397-b052-0175142c6b5b",
       "5685667c-6d3a-8345-a9b7-81ccd1bcf71c",
       "5d95667c-6d3a-82b4-aa39-0185314eae82",
       "6015667c-6d3a-8398-a5e7-015cc92b4e3c",
@@ -6444,36 +6471,27 @@
       "6ca5667c-6d3a-8207-910d-019405bc311f",
       "7035667c-6d3a-83b5-806e-81211959442f",
       "8375667c-6d3a-8341-8af2-8148964e9b01",
-      "87d5667c-6d3a-83c0-955f-01b64a8c844a",
       "90a5667c-6d3a-834d-ab03-8144953f606d",
       "a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7",
       "a2b5667c-6d3a-82b7-938a-81324c9d05c6",
       "a335667c-6d3a-83aa-8180-01943cc89aef",
       "a8b5667c-6d3a-8298-b2e6-0187ca27e5a8",
       "a8b5667c-6d3a-82aa-9f9d-01cbb8a25317",
-      "afc5667c-6d3a-82f5-b597-81cafc86f207",
       "b7c5667c-6d3a-82fe-a474-81698e4422ab",
-      "c275667c-6d3a-8321-af26-016edd020891",
       "c395667c-6d3a-8288-8c55-81aac6a686b7",
       "c3c5667c-6d3a-82d4-82ec-814ba4460a5b",
       "c555667c-6d3a-83d0-a00d-81403f5fd393",
       "c815667c-6d3a-82a9-b868-013db98652e8",
       "cc05667c-6d3a-8331-9995-81fc50f9055c",
-      "ceb5667c-6d3a-83d2-af71-8138d7b0c00a",
       "d345667c-6d3a-8275-b77e-01df63808736",
       "d6d5667c-6d3a-8271-a791-01876788a072",
       "df55667c-6d3a-8300-8ffa-81aacbc85f26",
       "e285667c-6d3a-8375-90be-01c3ce90b0ff",
       "e495667c-6d3a-8362-8b9b-811e4cb605a8",
-      "e815667c-6d3a-83a2-a66c-81dd61809c34",
-      "f185667c-6d3a-82e1-9124-81d6142ca035",
-      "f4d5667c-6d3a-8333-a6de-01d90454e650",
-      "f515667c-6d3a-83a1-b1df-81fe12cfdf55",
       "f6b5667c-6d3a-8271-b8a8-81adcbf2127f",
       "f805667c-6d3a-8213-bcdd-818575659208",
       "fd05667c-6d3a-8382-8044-01c07a8ce56b"
     ],
-    "unchanged": [],
     "new": [],
     "deleted": [],
     "missing_local": []

@@ -2,12 +2,14 @@
 
 ## 固定配置
 
-| 配置项 | 值 |
+> ⚠️ **凭证统一归宿**：webhook token / secret / @手机号均由 `mcp/scripts/lib/qa_config.py` 统一读取，**不在本文件明文存放**。优先级：环境变量 → `~/.cursor/mcp.json` → 内置默认值。如需轮换，改环境变量或 mcp.json，**不要改 SKILL.md**。
+
+| 配置项 | 读取方式 |
 | --- | --- |
-| webhook access_token | 6bf732946c8873abc98b35d2d82deb6e987a4cd687076549e0d79cddf3a3dbc2 |
-| webhook secret | SEC2fa2956f6facd9270222bb93eb76460f3d564f72c4671528ea7cd14b2c7de888 |
-| @手机号 | 13250703582(lunu) |
-| 默认目标文件夹 | 测试报告 |
+| webhook access_token | `qa_config.get_dingtalk_webhook()`；环境变量 `DINGTALK_ACCESS_TOKEN` 覆盖 |
+| webhook secret | `qa_config.get_dingtalk_webhook()`；环境变量 `DINGTALK_SECRET` 覆盖 |
+| @手机号 | `qa_config.get_at_mobiles()`；环境变量 `DINGTALK_AT_MOBILES`（逗号分隔）覆盖；默认 lunu |
+| 默认目标文件夹 | 测试报告（名称匹配，非机密） |
 
 ## 流程步骤
 
@@ -58,23 +60,21 @@ update_document(
 **统一使用 `publish_report.py`**（签名/重试/限流/@校验已内置，禁止手写 requests.post）：
 
 ```powershell
-python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "文档标题" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}" --summary-file "mcp/output/{项目}-section1-{日期}.md"
+python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "文档标题" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}"
 ```
 
-- `--summary-file`：**必填**（或与钉钉文档第一节逐字一致的 `{项目}-section1-{日期}.md` 放在 bugStats 同目录供自动发现）
-- 也可用 `--report-file` 传完整报告，脚本自动截取「一、测试结果」
-- 推送内容必须与钉钉文档第一节**完全一致**，不得使用脚本内一句话模板摘要
+- 推送内容由脚本从 `conclusion_builder.format_conclusion`（消费 `keyIssues` + `metrics`）算法生成，钉钉 / Notion / 钉钉文档三端同源，**禁止**手写结论注入。
 
 ## 消息模板
 ```markdown
 ## 文档标题
 
-### 一、测试结果
+### 一、测试结论
 
-[与钉钉文档「一、测试结果」逐字一致的内容，来自 --summary-file]
+[由脚本算法生成的测试结论，消费 keyIssues + metrics]
 
 ---
-**负责人**:@13250703582 请关注并优先跟进(正文里的 @手机号 必须与 at.atMobiles 一致,否则 @ 不生效)
+**负责人**:@{默认 @手机号，见 qa_config.get_at_mobiles()} 请关注并优先跟进(正文里的 @手机号 必须与 at.atMobiles 一致,否则 @ 不生效)
 
 ### 附件
 

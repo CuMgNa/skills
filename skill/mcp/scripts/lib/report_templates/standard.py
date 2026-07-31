@@ -14,7 +14,7 @@ from report_templates.strings import get_strings  # noqa: E402
 
 
 def _conclusion_text(ctx, S):
-    return ctx["conclusion"].strip(), True
+    return ctx["conclusion"].strip()
 
 
 def build_notion_blocks(ctx, locale="zh-CN"):
@@ -35,7 +35,7 @@ def build_notion_blocks(ctx, locale="zh-CN"):
 
     # 1) 测试结论
     B.append(nc.heading2(S["sec_conclusion"]))
-    conclusion, _custom = _conclusion_text(ctx, S)
+    conclusion = _conclusion_text(ctx, S)
     for line in conclusion.splitlines():
         line = line.rstrip()
         if not line:
@@ -151,7 +151,7 @@ def build_notion_blocks(ctx, locale="zh-CN"):
     appendix_children.append(nc.paragraph(f"【{S['appendix_source']}】"))
     src = ctx["bugContext"].get("sourceSummary", {})
     appendix_children.append(nc.bullet(
-        f"semantic(持久化)={src.get('semantic', 0)}、zentao_steps={src.get('zentao_steps', 0)}、title={src.get('title', 0)}"
+        f"semantic(持久化)={src.get('semantic', 0)}、title={src.get('title', 0)}"
     ))
     appendix_children.append(nc.paragraph(f"【{S['appendix_conflict']}】"))
     if ctx["conflicts"]:
@@ -187,7 +187,7 @@ def build_dingtalk_summary(ctx, locale="zh-CN", doc_url=None, mention_line=None,
     不影响校验闸门（闸门查 Notion 全量 + bugStats，不查钉钉简版）。
     """
     S = get_strings(locale)
-    conclusion, _custom = _conclusion_text(ctx, S)
+    conclusion = _conclusion_text(ctx, S)
 
     parts = []
     if title:

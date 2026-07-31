@@ -174,7 +174,7 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 - `rootProblem` 兜底取「实际结果」或标题去【模块】前缀。
 - `userImpact`（业务影响）**默认留空**，需人工/LLM 补全后才可作为确定性业务影响结论；报告阶段对未补全项标注「（影响待复核）」，不臆造。
 
-**消费方**：`qa-agent-report-publish` 报告阶段通过 `lib/bug_semantic_context.py` **只读**加载该目录构建 `BugSemanticContext`（持久化产物 → 禅道 steps → 标题，三来源按优先级 reconcile）。**报告阶段绝不触发缺陷创建**；产物缺失时降级为禅道 steps / 标题级语义分析并在报告附录如实标注。写入失败不影响缺陷创建（仅打印告警）。
+**消费方**：`qa-agent-report-publish` 报告阶段通过 `lib/bug_semantic_context.py` **只读**加载该目录构建 `BugSemanticContext`（持久化产物 → 标题，两来源按优先级 reconcile）。**报告阶段绝不触发缺陷创建**；产物缺失时降级为标题级语义分析并在报告附录如实标注。写入失败不影响缺陷创建（仅打印告警）。
 
 ### 指派成员额外处理
 

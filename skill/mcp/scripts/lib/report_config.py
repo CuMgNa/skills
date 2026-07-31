@@ -28,13 +28,13 @@ FIELD_SOURCE_PRIORITY = {
     "level": ["bugStats"],
     "status": ["bugStats"],
     "module": ["bugStats"],
-    # 语义字段：优先用结构化持久化产物，其次禅道步骤，最后标题。
-    "preconditions": ["semantic", "zentao_steps", "title"],
-    "steps": ["semantic", "zentao_steps", "title"],
-    "actual": ["semantic", "zentao_steps", "title"],
-    "expected": ["semantic", "zentao_steps", "title"],
-    "rootProblem": ["semantic", "zentao_steps", "title"],
-    "userImpact": ["semantic", "zentao_steps", "title"],
+    # 语义字段：优先用结构化持久化产物，其次标题。
+    "preconditions": ["semantic", "title"],
+    "steps": ["semantic", "title"],
+    "actual": ["semantic", "title"],
+    "expected": ["semantic", "title"],
+    "rootProblem": ["semantic", "title"],
+    "userImpact": ["semantic", "title"],
     # severity 仅参考，不参与展示。
     "severity": ["zentao", "semantic"],
 }

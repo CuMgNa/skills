@@ -12,3 +12,8 @@ skill/mcp/output/handoff/*.json
 skill/mcp/output/notion-*.py
 skill/mcp/output/dingtalk_push_*.py
 skill/mcp/output/*_push_*.py
+
+# Python bytecode cache (auto-generated, not source)
+__pycache__/
+*.pyc
+*.pyo

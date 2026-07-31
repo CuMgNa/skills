@@ -46,7 +46,7 @@
 项目:{projectName}
 未关闭缺陷:{noClosed}
 同步 Notion:{publishNotion}
-Notion 父页面 ID:{notionParentPageId}   # 未指定则默认:36c5667c6d3a80d593bcf38311cf751d
+Notion 父页面 ID:{notionParentPageId}   # 未指定则默认 qa_config.NOTION_DEFAULT_PARENT_PAGE_ID
 不要创建新禅道 Bug。
 ```
 

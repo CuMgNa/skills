@@ -211,21 +211,19 @@ def validate_report_context(ctx):
     bs = ctx["_bs"]
     m = ctx["metrics"]
 
-    # C1 合计一致
-    if sum(m["byLevel"].values()) != m["total"]:
-        errors.append(f"C1 级别分布合计({sum(m['byLevel'].values())}) != 总数({m['total']})")
-    if sum(m["byStatus"].values()) != m["total"]:
-        errors.append(f"C1 状态分布合计({sum(m['byStatus'].values())}) != 总数({m['total']})")
-
-    # C2 唯一归并 + 执行表合计
+    # C2 唯一归并 + 执行表合计（完整表与精简表均校验）
     cov = ctx["coverage"]
     if cov["mode"] == "full":
         open_sum = sum(int(r[5]) for r in cov["execRows"])
         pend_sum = sum(int(r[6]) for r in cov["execRows"])
-        if open_sum != m["open"]:
-            errors.append(f"C2 执行表未关闭合计({open_sum}) != bugStats未关闭({m['open']})（疑似重复或漏计）")
-        if pend_sum != m["pending"]:
-            errors.append(f"C2 执行表待回归合计({pend_sum}) != bugStats待回归({m['pending']})")
+    else:
+        # 精简表 5 列：[mod, status, 未关闭, 已修复, remark]
+        open_sum = sum(int(r[2]) for r in cov["simpleRows"])
+        pend_sum = sum(int(r[3]) for r in cov["simpleRows"])
+    if open_sum != m["open"]:
+        errors.append(f"C2 执行表未关闭合计({open_sum}) != bugStats未关闭({m['open']})（疑似重复或漏计）")
+    if pend_sum != m["pending"]:
+        errors.append(f"C2 执行表待回归合计({pend_sum}) != bugStats待回归({m['pending']})")
 
     # C3 重点问题可溯源（id 必须在 bugStats 中）
     valid_ids = {str(x["id"]) for x in (ctx["lists"]["open"] + ctx["lists"]["pending"] + ctx["lists"]["deferred"])}
@@ -234,18 +232,26 @@ def validate_report_context(ctx):
             if str(it["id"]) not in valid_ids:
                 errors.append(f"C3 重点问题引用了不存在的缺陷 #{it['id']}（{g['category']}）")
 
-    # C4 级别分布一致（展示级别只来自 bugStats，severity 不得反向污染）
-    if m["byLevel"] != bs["byLevel"]:
-        errors.append("C4 报告级别分布与 bugStats 不一致（疑似 severity 污染）")
-
     # 告警级
     for note in cov.get("notices", []):
         warnings.append(f"资料解析：{note}")
     if cov.get("belowThreshold"):
         warnings.append(f"资料覆盖率 {cov.get('ratio')} 低于阈值 {ctx['config']['thresholds']['coverage_min_ratio']}，已并行展示模块明细")
+    # 归并失效告警：禅道模块未命中资料模块（别名表与资料模块名不一致时静默失效）
+    bs_keys = list(ctx["_bs"].get("byModule", {}).keys())
+    mapped_keys = list(ctx.get("coverageMapping", {}).keys())
+    if bs_keys:
+        unmatched = [k for k in bs_keys if k not in mapped_keys]
+        if unmatched:
+            pct = round(len(unmatched) / len(bs_keys) * 100, 1)
+            preview = "、".join(unmatched[:3]) + ("…" if len(unmatched) > 3 else "")
+            warnings.append(
+                f"模块归并失效：{len(unmatched)}/{len(bs_keys)} 个禅道模块未命中资料模块（{pct}%），"
+                f"未命中：{preview}——可能因别名表与资料模块名不一致"
+            )
     src = ctx["bugContext"].get("sourceSummary", {})
     if src.get("semantic", 0) == 0:
-        warnings.append("缺陷语义持久化产物缺失（bug-semantic/*.jsonl），已降级为禅道 steps / 标题级语义分析")
+        warnings.append("缺陷语义持久化产物缺失（bug-semantic/*.jsonl），已降级为标题级语义分析")
     tr = ctx["keyIssues"].get("traceableRatio", 0)
     if tr < 1.0:
         warnings.append(f"重点问题业务影响可溯源率 {tr}，不可溯源项已标注「（影响待复核）」")

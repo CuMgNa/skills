@@ -1,7 +1,7 @@
 # Notion 富格式测试报告编排
 > 本技能输出**增强 Markdown**（含 Notion 特有标记），由下游 `notion-test-report` 写入 Notion 页。
 
-> **v2 标准管线（已落地）**：实际 Notion 写入由 `mcp/scripts/publish_report.py` + `lib/report_templates/standard.py` 完成，渲染**八段标准模板**：①测试结论 ②指标看板 ③重点问题（动态聚类）④功能测试范围与执行情况 ⑤模块明细 ⑥风险评估 ⑦未解决与待回归清单 ⑧附录（解析详情/冲突/阈值，toggle 折叠）。本文档下述各节规则作为模板内容口径来源；解析层为 `lib/material_context.py`（旧 `lib/test_plan_material.py` 已转兼容 shim），缺陷语义来自 `lib/bug_semantic_context.py`（读 `mcp/output/bug-semantic/*.jsonl`）。集中配置见 `lib/report_config.py`，多语言见 `lib/report_templates/strings.py`（`--locale zh-CN|en-US`）。展示级别只认 bugStats，severity 仅作语义参考、不反向污染数字。
+> **v2 标准管线（已落地）**：实际 Notion 写入由 `mcp/scripts/publish_report.py` + `lib/report_templates/standard.py` 完成，渲染**八段标准模板**：①测试结论 ②指标看板 ③重点问题（动态聚类）④功能测试范围与执行情况 ⑤模块明细 ⑥风险评估 ⑦未解决与待回归清单 ⑧附录（解析详情/冲突/阈值，toggle 折叠）。本文档下述各节规则作为模板内容口径来源；解析层为 `lib/material_context.py`，缺陷语义来自 `lib/bug_semantic_context.py`（读 `mcp/output/bug-semantic/*.jsonl`）。集中配置见 `lib/report_config.py`，多语言见 `lib/report_templates/strings.py`（`--locale zh-CN|en-US`）。展示级别只认 bugStats，severity 仅作语义参考、不反向污染数字。
 
 ## 输入
 
@@ -14,12 +14,7 @@
 
 ## 固定配置
 
-```yaml
-notion:
-  templatePageId: "c1b23699-3b3b-4b06-b2ac-0ec9ede194b6"  # 样板页
-  materialRootPageId: "3585667c-6d3a-8084-bb07-d7a30a3945d9"  # 测试资料
-  outlineParentPageId: "3665667c-6d3a-8079-85ff-ec1a76e55946"  # 测试大纲
-```
+> Notion 页面 ID 统一由 `mcp/scripts/lib/qa_config.py` 管理（`NOTION_TEMPLATE_PAGE_ID` 等），**不在本文件明文存放**。本技能为「规格」角色，渲染由 `publish_report.py` 完成。
 
 ## 输出格式（严格四节）
 
@@ -95,7 +90,7 @@ notion:
 
 ### 解析失败原因枚举（决定降级提示文案）
 
-解析层 `lib/material_context.py`（旧 `lib/test_plan_material.py` 兼容 shim 委托）内部识别 7 种解析状态，最终由 `render_parse_notice(reason)` 渲染：
+解析层 `lib/material_context.py` 内部识别 7 种解析状态，最终由 `render_parse_notice(reason)` 渲染：
 
 <table header-row="true">
 <tr><td>reason</td><td>触发条件</td><td>渲染档位</td><td>用户可读提示</td></tr>
@@ -292,4 +287,4 @@ notion:
 10. **辅助资料解析必须健壮**：脚本不再写死 1.4.1 全景表。多级锚点扫描（强锚点 + 弱锚点）+ 同义表头识别 + 资料类型自识别；解析失败时必须把失败原因（reason）和资料类型（kind）显式标注到降级 callout，不得静默返回空 rows。
 11. **禅道 key 归并必须唯一**：同一禅道 key 只能贡献给一个资料模块行，否则会出现数字虚高。`build_execution_rows` 通过"先建立 zentao_to_plan 映射、取最长 plan_module 命中"保证唯一性。
 12. **重点问题动态聚类**：第②段「重点问题」由 `lib/key_issues.py` 按缺陷 `impactSignals`（资金/计费、权限/安全、数据一致性、消息/通信、界面/体验）动态成组，而非写死分类；方向成立需满足支撑数阈值或含二级及以上。每条重点问题须带缺陷 ID 可溯源（C3'），不可溯源的业务影响标注「（影响待复核）」，不得作确定性结论输出。
-13. **缺陷语义只读消费、级别不被 severity 污染**：`BugSemanticContext` 三来源（持久化产物 → 禅道 steps → 标题）按固定优先级 reconcile，冲突写入附录；展示级别恒等于 `bugStats.byLevel`（C4'）。报告阶段**绝不触发**缺陷创建。
+13. **缺陷语义只读消费、级别不被 severity 污染**：`BugSemanticContext` 两来源（持久化产物 → 标题）按固定优先级 reconcile，冲突写入附录；展示级别恒等于 `bugStats.byLevel`（C4'）。报告阶段**绝不触发**缺陷创建。

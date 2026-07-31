@@ -39,7 +39,6 @@ STRINGS = {
         "th_plan_area": "归属测试方向",
         "no_risk": "本轮无未关闭/延期缺陷，无高风险遗留。",
         "degrade_title": "辅助资料降级通知",
-        "degrade_kind": "资料类型",
         "degrade_result": "解析结果",
         "degrade_action": "处置：第二节已降级为精简执行表（仅 bugStats.byModule，不推断、不占位）",
         "degrade_suggest": "建议：如需完整执行表，请提供含「测试模块 / 核心测试点 / 优先级」的标准表格",
@@ -59,8 +58,6 @@ STRINGS = {
             "待回归 {pending} 个，已延期 {deferred} 个。"
         ),
         "dt_conclusion": "一、测试结论",
-        "dt_metrics": "二、关键指标",
-        "dt_key_issues": "三、重点问题",
         "dt_doc": "完整测试报告",
         "dt_view": "点击查看",
     },
@@ -101,7 +98,6 @@ STRINGS = {
         "th_plan_area": "Mapped Area",
         "no_risk": "No open/deferred defects this round; no high risk remaining.",
         "degrade_title": "Auxiliary Material Degraded",
-        "degrade_kind": "Material Type",
         "degrade_result": "Parse Result",
         "degrade_action": "Action: section degraded to simplified table (bugStats.byModule only, no inference)",
         "degrade_suggest": "Tip: provide a table with Module / Core Test Points / Priority for the full table",
@@ -121,8 +117,6 @@ STRINGS = {
             "pending {pending}, deferred {deferred}."
         ),
         "dt_conclusion": "1. Conclusion",
-        "dt_metrics": "2. Key Metrics",
-        "dt_key_issues": "3. Key Issues",
         "dt_doc": "Full Report",
         "dt_view": "Open",
     },

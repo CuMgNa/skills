@@ -21,7 +21,6 @@
 """
 import argparse
 import json
-import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -40,59 +39,10 @@ import report_templates        # noqa: E402
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
-SECTION1_HEADING = re.compile(r"^#{1,3}\s*一[、.．]测试结果\s*$", re.MULTILINE)
-NEXT_SECTION_HEADING = re.compile(r"^#{1,3}\s*[二三四五][、.．]", re.MULTILINE)
-
 
 def load_bugstats(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
-
-
-# ── 第一节（测试结论）来源解析（沿用旧逻辑，保证钉钉与文档一致） ──────
-def extract_section1(md):
-    text = md.strip()
-    m1 = SECTION1_HEADING.search(text)
-    if not m1:
-        return text
-    start = m1.end()
-    m2 = NEXT_SECTION_HEADING.search(text, start)
-    body = text[start:m2.start() if m2 else len(text)].strip()
-    return re.sub(r"\n---\s*$", "", body).strip()
-
-
-def resolve_section1_paths(bugstats_path, summary_file=None, report_file=None):
-    if summary_file:
-        return Path(summary_file), "summary-file"
-    if report_file:
-        return Path(report_file), "report-file"
-    base = Path(bugstats_path)
-    auto_section1 = base.with_name(base.name.replace("-bugstats-", "-section1-").replace(".json", ".md"))
-    if auto_section1.is_file():
-        return auto_section1, "auto-section1"
-    auto_report = base.with_name(base.name.replace("-bugstats-", "-report-").replace(".json", ".md"))
-    if auto_report.is_file():
-        return auto_report, "auto-report"
-    parent = base.parent
-    generic = parent / "section1.md"
-    if generic.is_file():
-        return generic, "auto-section1"
-    candidates = sorted(parent.glob("*-section1-*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
-    if candidates:
-        return candidates[0], "auto-section1"
-    return None, None
-
-
-def load_section1_md(bugstats_path, summary_file=None, report_file=None):
-    path, source = resolve_section1_paths(bugstats_path, summary_file, report_file)
-    if not path:
-        return None, None
-    text = path.read_text(encoding="utf-8")
-    if source in ("report-file", "auto-report"):
-        text = extract_section1(text)
-    else:
-        text = extract_section1(text) if SECTION1_HEADING.search(text) else text.strip()
-    return text.strip() or None, source
 
 
 # ── 资料加载（多文件 / 多页） ────────────
@@ -236,10 +186,6 @@ def main():
     ap.add_argument("--tester")
     ap.add_argument("--test-type", dest="test_type")
     ap.add_argument("--coverage")
-    ap.add_argument("--summary-file", dest="summary_file",
-                    help="[deprecated] 仅写入 meta 供审计对比，不参与结论生成")
-    ap.add_argument("--report-file", dest="report_file",
-                    help="[deprecated] 仅写入 meta 供审计对比，不参与结论生成")
     ap.add_argument("--material-file", dest="material_file", action="append",
                     help="本地测试方案/计划/大纲 Markdown，可多次")
     ap.add_argument("--material-page-id", dest="material_page_id", action="append",
@@ -261,9 +207,6 @@ def main():
     config = report_config.get_config(project_config_path=args.project_config)
 
     bs = load_bugstats(args.bugstats)
-    section1_md, section1_source = load_section1_md(args.bugstats, args.summary_file, args.report_file)
-    if section1_md:
-        print(f"[section1] 来源={section1_source}，{len(section1_md)} 字（仅审计，不参与结论）")
 
     # 缺陷语义持久化产物（只读消费）
     semantic_dir = args.semantic_dir or str(Path(__file__).parent.parent / "output" / "bug-semantic")
@@ -295,7 +238,6 @@ def main():
         "tester": args.tester,
         "testType": args.test_type,
         "coverage": args.coverage,
-        "section1_md": section1_md,
     }
     ctx = rc.build_report_context(
         bs, material=material, bug_context=bug_context, key_issues=key_iss,

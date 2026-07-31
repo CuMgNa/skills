@@ -337,7 +337,16 @@ async function main() {
     console.error(`排除已关闭后：${bugs.length} 条`);
   }
 
-  const meta = { projectId, projectName };
+  // 数据新鲜度元信息（下游报告可据此标注数据时效）
+  const fetchedAt = new Date().toISOString();
+  const openedDates = bugs
+    .map((b) => b.openedDate)
+    .filter(Boolean)
+    .sort();
+  const dataRange = openedDates.length
+    ? { earliest: openedDates[0], latest: openedDates[openedDates.length - 1] }
+    : null;
+  const meta = { projectId, projectName, fetchedAt, dataRange, bugCount: bugs.length };
 
   // 输出目录
   const outDir = resolve(args.outDir || join(__dirname, "..", "output"));
