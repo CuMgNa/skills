@@ -1,0 +1,42 @@
+{
+  "id": "wxfb/bugs/3881",
+  "url": "http://wxfb.pg8.ink/console",
+  "steps": [
+    {
+      "type": "click",
+      "index": 0,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1487,
+      "y": 31,
+      "text": "中文",
+      "tag": "SPAN",
+      "selector": "span.lang-text.el-dropdown-selfdefine",
+      "ts": "2026-08-12T07:48:13.440Z"
+    },
+    {
+      "type": "click",
+      "index": 1,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1431,
+      "y": 90,
+      "text": "English",
+      "tag": "LI",
+      "selector": "ul#dropdown-menu-5076.el-dropdown-menu.el-popper > li.el-dropdown-menu__item",
+      "ts": "2026-08-12T07:48:14.598Z"
+    },
+    {
+      "type": "click",
+      "index": 2,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1847,
+      "y": 35,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-tongxin",
+      "ts": "2026-08-12T07:48:19.664Z"
+    }
+  ],
+  "recordedAt": "2026-08-12T07:48:26.357Z",
+  "projectKey": "wxfb",
+  "bugId": 3881
+}

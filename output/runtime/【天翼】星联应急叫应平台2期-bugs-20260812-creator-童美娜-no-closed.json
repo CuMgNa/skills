@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "projectId": 1278,
+    "projectName": "【天翼】星联应急叫应平台2期",
+    "fetchedAt": "2026-08-12T07:51:52.899Z",
+    "dataRange": {
+      "earliest": "2026-06-25T06:21:55Z",
+      "latest": "2026-08-12T07:47:56Z"
+    },
+    "bugCount": 12
+  },
+  "total": 12,
+  "bugs": [
+    {
+      "id": 3881,
+      "title": "【对讲群聊】英语下仍显示&quot;次/已结束&quot;等中文",
+      "status": "active",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-12T07:47:56Z",
+      "assignedTo": "",
+      "type": "others"
+    },
+    {
+      "id": 3880,
+      "title": "【对讲群聊】英语下仍显示&quot;次/已结束&quot;等中文",
+      "status": "active",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-12T07:47:45Z",
+      "assignedTo": "",
+      "type": "others"
+    },
+    {
+      "id": 3866,
+      "title": "【控制台】Cancel Select All按钮文本溢出",
+      "status": "confirmed",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-07T05:42:44Z",
+      "assignedTo": "pgtmn",
+      "type": "others"
+    },
+    {
+      "id": 3865,
+      "title": "【控制台】搜索框与消息框内置文案部分遮挡",
+      "status": "confirmed",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-07T03:52:17Z",
+      "assignedTo": "pgtmn",
+      "type": "others"
+    },
+    {
+      "id": 3864,
+      "title": "【消息管理】调度组下左侧列表选中态未生效",
+      "status": "confirmed",
+      "pri": 2,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-07T03:49:23Z",
+      "assignedTo": "pgtmn",
+      "type": "others"
+    },
+    {
+      "id": 3863,
+      "title": "【Console】语音消息已读态字体色与文本消息不一致",
+      "status": "confirmed",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-07T02:07:24Z",
+      "assignedTo": "pgtmn",
+      "type": "others"
+    },
+    {
+      "id": 3851,
+      "title": "【消息管理】聊天列表与会话内末条时间格式不一致",
+      "status": "active",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-08-05T03:08:12Z",
+      "assignedTo": "",
+      "type": "others"
+    },
+    {
+      "id": 3741,
+      "title": "【终端消息】iPhone12键盘弹起发消息气泡未入可视区",
+      "status": "active",
+      "pri": 3,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-23T08:28:30Z",
+      "assignedTo": "pgpxy",
+      "type": "codeimprovement"
+    },
+    {
+      "id": 3739,
+      "title": "【求救群聊天详情】SOS消息下方定位文案与”群内X人未读“未垂直对齐",
+      "status": "resolved",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-23T07:44:01Z",
+      "assignedTo": "pgtmn",
+      "type": "codeerror"
+    },
+    {
+      "id": 3672,
+      "title": "【聊天消息】数据不足一屏仍显示没有更多了",
+      "status": "resolved",
+      "pri": 4,
+      "severity": 4,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-21T06:07:40Z",
+      "assignedTo": "pgtmn",
+      "type": "codeimprovement"
+    },
+    {
+      "id": 3485,
+      "title": "【求救群聊】星豆余额与套餐报位剩余均为0时，终端上报的SOS位置报位仍正常入群未被拦截",
+      "status": "postponed",
+      "pri": 3,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-07-03T02:04:15Z",
+      "assignedTo": "closed",
+      "type": "codeerror"
+    },
+    {
+      "id": 3370,
+      "title": "【设备列表】纯个人账号无星豆无套餐时终端上下行未封禁，套餐进入欠费累加状态",
+      "status": "postponed",
+      "pri": 2,
+      "severity": 3,
+      "openedBy": "pgtmn",
+      "openedByName": "童美娜",
+      "openedDate": "2026-06-25T06:21:55Z",
+      "assignedTo": "closed",
+      "type": "codeerror"
+    }
+  ]
+}
