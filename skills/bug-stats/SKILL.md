@@ -1,3 +1,8 @@
+---
+name: bug-stats
+description: 缺陷统计事实源。从禅道缺陷汇总产出结构化 bugStats.json（总数/级别/状态/模块聚合），供钉钉与 Notion 报告只消费不重算。当需要统计项目缺陷分布、生成报告输入数据时使用。
+---
+
 # Bug 统计事实源
 
 > 本技能为 qa-agent-report-publish 的共享统计步骤,产出结构化事实对象 `bugStats.json`,钉钉报告与 Notion 报告**只消费、不重算**。
