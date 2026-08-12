@@ -1,0 +1,119 @@
+{
+    "query":  {
+                  "path":  "C:\\Users\\33606\\Desktop\\skills",
+                  "keyword":  "测试,周报",
+                  "keywords":  [
+                                   "测试",
+                                   "周报"
+                               ],
+                  "timeFilter":  "本月",
+                  "timeField":  "Modified",
+                  "timeRange":  {
+                                    "start":  "2026-07-01",
+                                    "end":  "2026-08-01"
+                                }
+              },
+    "summary":  {
+                    "total":  3,
+                    "byExt":  [
+                                  {
+                                      "ext":  ".md",
+                                      "count":  3,
+                                      "percent":  100
+                                  }
+                              ],
+                    "extCount":  1,
+                    "isGitRepo":  true,
+                    "gitRoot":  "C:\\Users\\33606\\Desktop\\skills",
+                    "timeSource":  "git"
+                },
+    "excludeRules":  {
+                         "dirs":  [
+                                      "node_modules",
+                                      ".git",
+                                      "output",
+                                      "dist",
+                                      "build",
+                                      "__pycache__",
+                                      ".venv",
+                                      "venv",
+                                      "target",
+                                      ".idea",
+                                      ".vscode",
+                                      "bin",
+                                      "obj"
+                                  ],
+                         "files":  [
+                                       "文档盘点报告-*",
+                                       "~$*",
+                                       "Thumbs.db",
+                                       "desktop.ini",
+                                       ".DS_Store",
+                                       "*.tmp"
+                                   ]
+                     },
+    "files":  [
+                  {
+                      "name":  "2026-AI驱动测试技术-公司内部调研报告.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-AI驱动测试技术-公司内部调研报告.md",
+                      "relPath":  "2026-AI驱动测试技术-公司内部调研报告.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-13T18:17:21",
+                      "modified":  "2026-07-14T13:44:05",
+                      "size":  24524,
+                      "sizeReadable":  "23.9 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "2026-AI驱动测试技术深潜调研报告.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-AI驱动测试技术深潜调研报告.md",
+                      "relPath":  "2026-AI驱动测试技术深潜调研报告.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-13T18:05:58",
+                      "modified":  "2026-07-14T13:44:05",
+                      "size":  25529,
+                      "sizeReadable":  "24.9 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  },
+                  {
+                      "name":  "2026-测试岗位AI技术地图与落地实践.md",
+                      "ext":  ".md",
+                      "path":  "C:\\Users\\33606\\Desktop\\skills\\2026-测试岗位AI技术地图与落地实践.md",
+                      "relPath":  "2026-测试岗位AI技术地图与落地实践.md",
+                      "dir":  "(根目录)",
+                      "created":  "2026-07-10T10:51:54",
+                      "modified":  "2026-07-10T10:51:54",
+                      "size":  13506,
+                      "sizeReadable":  "13.2 KB",
+                      "matchedBy":  [
+                                        "测试"
+                                    ],
+                      "timeSource":  "git"
+                  }
+              ],
+    "warnings":  {
+                     "skipped":  [
+
+                                 ],
+                     "emptyFiles":  [
+
+                                    ],
+                     "hugeFiles":  [
+
+                                   ],
+                     "duplicates":  [
+
+                                    ],
+                     "stale":  [
+
+                               ]
+                 }
+}

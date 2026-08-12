@@ -1,0 +1,6 @@
+{
+  "eval_id": 3,
+  "eval_name": "batch-report-generation-baseline",
+  "prompt": "为团队成员张三、李四各生成一份周报",
+  "assertions": []
+}

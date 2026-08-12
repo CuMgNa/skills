@@ -1,0 +1,23 @@
+{
+  "skill_name": "weekly-report",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "生成本周周报",
+      "expected_output": "应触发周报生成流程：先 listTools 发现 Teambition 和 Notion MCP 工具，再动态解析执行人 ID，拉取项目，查询任务，写入 Notion",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我生成 2026-06-16 到 2026-06-22 的周报，执行人是童美娜",
+      "expected_output": "应使用指定时间范围生成周报，时间范围参数应正确传递到 TQL 查询中",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "为团队成员张三、李四各生成一份周报",
+      "expected_output": "应支持 byExecutorIds 模式，对两名执行人分别生成独立周报，各自在 Notion 中创建独立页面",
+      "files": []
+    }
+  ]
+}

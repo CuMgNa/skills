@@ -1,8 +1,21 @@
+# Dependencies (npm)
+node_modules/
+**/node_modules/
+
 # QA pipeline handoff (runtime state, do not commit)
 skill/mcp/output/handoff/latest.json
 skill/mcp/output/handoff/*.json
+skill/mcp/output/handoff/*.mjs
+skill/mcp/output/handoff/regression/
 !skill/mcp/output/handoff/.gitkeep
 !skill/mcp/output/handoff/handoff.schema.json
+
+# Canvas runtime state (user interactions, not source)
+**/*.canvas.data.json
+**/*.canvas.status.json
+
+# Playwright MCP logs and page dumps
+.playwright-mcp/
 
 # Secrets and local config
 .env

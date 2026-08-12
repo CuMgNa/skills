@@ -1,0 +1,18 @@
+[
+  {"command":"set","path":"/","props":{"docDefaults.font":"微软雅黑","docDefaults.fontSize":"11pt"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"童美娜 · 2026 下半年学习计划","style":"Title","align":"center"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"岗位：软件测试工程师（SDET）　|　周期：2026 年 7 月 — 11 月　|　两条主线：考证突破 + 持续拥抱 AI","style":"Normal","align":"center","font.size":"10pt","color":"595959"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":" ","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"一、计划总纲","style":"Heading1"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"下半年聚焦两件事，不贪多、不铺面。每件事都有年底可对账的验收标准，不留虚词。","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"主线一 · 系统分析师（高级）备考：理论补全，红利随时兑，不赌一次性通过。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"主线二 · 持续拥抱 AI：过程软（保持 GitHub 手感），半年硬交付（至少 1 个新兵器进工作流）。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"两条主线之外，对上半年遗留与测试技术盲区做显式兜底，不让任何重要项以“装不下”为由静默消失。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":" ","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"二、主线一：系统分析师（高级）备考","style":"Heading1"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"定位与节奏","style":"Heading2"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"核心驱动：政策红利（钱 / 岗），且兑付无期限，早拿晚拿收益相同。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"执念修正：取消“争取 11 月一次通过”的伪约束。今年定位为练兵赛，过是赚的，不过摸清论文手感、明年专攻。不预留“顺延”作为心理退路，而是显式排序。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"弹药预算：每周稳定 8—10 小时（工作日 1—2h + 周末半天），三科同抓。此预算无法覆盖三科深度，明确接受论文为最短板。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"规则红线：系分高级三科必须在同一次考试全部 ≥45 分才算通过，单科成绩不保留。因此“分科过”在规则上不成立，“三科同抓”是唯一可行路径。","listStyle":"bullet"}}
+]

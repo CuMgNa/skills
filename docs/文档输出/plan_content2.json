@@ -1,0 +1,17 @@
+[
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"论文备考方法论闭环（不依赖押题）","style":"Heading2"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"论文是三科里最卡人的短板，阅卷主观、卡线高发。备考不靠押主题（主题随真题变、无法预测），而是建立一套与主题无关的稳定闭环：","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"① 拆阅卷标准：吃透“摘要 300 字（含背景/方法/结论）+ 正文 2000 字（含项目实例/理论结合）”的硬格式，先稳拿格式分，这是与主题无关的确定性收益。","listStyle":"ordered"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"② 建项目料库（主题无关资产）：把 graphify（应急救援平台 132 节点知识图谱）、jkpt_api_test（pytest+YAML+Allure 接口框架）、QA Skills 资产、browser-use（视觉回归采集器）等真项目，按“背景—我的角色—技术决策—难点—量化成果”五要素整理成可复用片段。不论真题考什么主题，这些料都能当骨架。","listStyle":"ordered"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"③ 结构化默写：每周练 1 段（不是整篇），练“限时 30 分钟搭出一篇论文骨架 + 摘要”，比闷头写整篇效率高。","listStyle":"ordered"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"④ AI 扮演阅卷官：写完丢给 AI 按软考阅卷标准打分并挑刺，迭代到稳定 45 分以上。","listStyle":"ordered"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"⑤ 临考前跟热点：考前 1 个月再扫当年流行话题做变形练习——这是最后一步，不是第一步。地基（料库 + 格式）稳了，押题才是锦上添花。","listStyle":"ordered"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":" ","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"考证三阶段路线图","style":"Heading2"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"阶段一 · 7—9 月 · 基础学习：《系统分析师教程》知识点笔记 + 知识体系思维导图。交付物：笔记成稿、知识体系图输出。同时启动项目料库整理。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"阶段二 · 9—10 月 · 真题攻坚：历年真题精练 + 案例分析专项 + 论文每周 1 段骨架默写。交付物：真题正确率摸到及格线、论文料库成稿、AI 阅卷稳定 45+。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"阶段三 · 10—11 月 · 冲刺参考：集中刷题 + 论文限时整篇练习 + 考前热点变形，参加 11 月考试。如未通过，2027 上半年专攻论文续考（不视为失败，视为练兵赛的下一局）。","listStyle":"bullet"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":" ","style":"Normal"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"删除的虚词","style":"Heading2"}},
+  {"command":"add","path":"/body","type":"paragraph","props":{"text":"原计划中的“将系统分析与需求工程方法反哺测试设计”删除。今年考证定位为纯理论补全，落地为资产是 2027 考后的事。不在今年计划里保留无法验收的口号，避免年底“说不清做没做”。","style":"Normal","color":"C00000"}}
+]
