@@ -19,6 +19,7 @@
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from "fs";
 import { basename, dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
+import { uploadImage as uploadStepsImageShared } from "./zentao-upload.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -671,40 +672,11 @@ async function ensureWebSession() {
 }
 
 /**
- * 上传截图到禅道富文本图床（IPD 4.6 实测字段必须为 imgFile，file 会报格式不在范围）。
- * @returns {string} 可写入 steps 的相对/绝对 img src，如 /zentao/file-read-123.png
+ * 上传截图到禅道富文本图床（委托 zentao-upload：按魔数识别真实格式，避免 .png 实为 JPEG）。
+ * @returns {string} 可写入 steps 的相对/绝对 img src
  */
 async function uploadStepsImage(localPath) {
-  await ensureWebSession();
-  const fp = resolve(localPath);
-  if (!existsSync(fp)) throw new Error(`截图不存在: ${fp}`);
-  const fileName = basename(fp);
-  const buf = readFileSync(fp);
-  const form = new FormData();
-  form.append("imgFile", new Blob([buf], { type: mimeByName(fileName) }), fileName);
-
-  const url = new URL(joinUrl(ZENTAO_URL, "/file-ajaxUpload.json"));
-  url.searchParams.set("zentaosid", webSessionId);
-  url.searchParams.set("uid", String(Date.now()));
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { Cookie: cookieHeader(webCookieJar) },
-    body: form,
-  });
-  const text = await res.text();
-  let json;
-  try {
-    json = JSON.parse(text);
-  } catch {
-    throw new Error(`截图上传响应非 JSON (${fileName}): ${text.slice(0, 300)}`);
-  }
-  // 成功形态：{"error":0,"url":"/zentao/file-read-xxxx.png"}
-  if (json.error === 0 && json.url) return String(json.url);
-  if (json.result === "success" && json.url) return String(json.url);
-  throw new Error(
-    `截图上传失败 (${fileName}): ${json.message || json.error || text.slice(0, 300)}`
-  );
+  return uploadStepsImageShared(localPath);
 }
 
 /**

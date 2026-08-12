@@ -158,7 +158,7 @@ node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
 | 截图分节 | `--attach-section` | 实际结果 | 一般无需改 |
 | 指派成员 | 通过 API 补充设置 | 当前登录用户 | 创建后再调分配接口 |
 | 严重程度 | `--severity` | 3 | 根据缺陷等级参考表自动判断 |
-| 优先级 | `--pri` | 3 | 根据影响面判断 |
+| 优先级 | `--pri` | 3 | 严重程度 × 影响范围交叉判定；矩阵与影响范围档位定义见 `defect-screenshot-bug-ticket` 3.3/3.4；影响范围判定依据不同：截图类看截图，本 skill（描述类）问用户 |
 
 ### 缺陷语义持久化产物（供报告阶段只读消费）
 

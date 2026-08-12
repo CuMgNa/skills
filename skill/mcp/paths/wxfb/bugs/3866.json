@@ -1,0 +1,66 @@
+{
+  "id": "wxfb/bugs/3866",
+  "url": "http://wxfb.pg8.ink/console",
+  "steps": [
+    {
+      "type": "click",
+      "index": 0,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1843,
+      "y": 34,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-tongxin",
+      "ts": "2026-08-07T05:45:45.425Z"
+    },
+    {
+      "type": "click",
+      "index": 1,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 630,
+      "y": 508,
+      "text": "[Voice]",
+      "tag": "DIV",
+      "selector": "div.el-tooltip.text-container.focusing",
+      "ts": "2026-08-07T05:45:49.297Z"
+    },
+    {
+      "type": "click",
+      "index": 2,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1436,
+      "y": 158,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-taocan1",
+      "ts": "2026-08-07T05:45:54.196Z"
+    },
+    {
+      "type": "click",
+      "index": 3,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 969,
+      "y": 714,
+      "text": "",
+      "tag": "DIV",
+      "selector": "div.theme-btn-info.flex_row",
+      "ts": "2026-08-07T05:45:57.273Z"
+    },
+    {
+      "type": "click",
+      "index": 4,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 513,
+      "y": 382,
+      "text": "",
+      "tag": "DIV",
+      "selector": "div.theme-btn-info.flex_row",
+      "ts": "2026-08-07T05:46:02.215Z"
+    }
+  ],
+  "recordedAt": "2026-08-07T05:46:09.601Z",
+  "projectKey": "wxfb",
+  "bugId": 3866,
+  "dedupedAt": "2026-08-07T05:46:33.391Z",
+  "dedupeNote": "collapsed consecutive identical clicks within 50ms (recorder multi-inject)"
+}

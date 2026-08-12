@@ -1,0 +1,64 @@
+{
+  "id": "wxfb/bugs/3863",
+  "url": "http://wxfb.pg8.ink/console",
+  "steps": [
+    {
+      "type": "click",
+      "index": 0,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1848,
+      "y": 31,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-tongxin",
+      "ts": "2026-08-07T02:07:59.872Z"
+    },
+    {
+      "type": "click",
+      "index": 1,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 627,
+      "y": 299,
+      "text": "SOS-2026062601-0011",
+      "tag": "SPAN",
+      "selector": "span.sos-name",
+      "ts": "2026-08-07T02:08:03.128Z"
+    },
+    {
+      "type": "click",
+      "index": 2,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 821,
+      "y": 311,
+      "text": "群内已读",
+      "tag": "SPAN",
+      "selector": "span.read-count",
+      "ts": "2026-08-07T02:08:08.143Z"
+    },
+    {
+      "type": "click",
+      "index": 3,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 825,
+      "y": 451,
+      "text": "群内已读",
+      "tag": "SPAN",
+      "selector": "span.read-unread-trigger.delivery-success.el-popover__reference",
+      "ts": "2026-08-07T02:08:09.328Z"
+    },
+    {
+      "type": "click",
+      "index": 4,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 825,
+      "y": 476,
+      "text": "2026-08-05 15:01:00",
+      "tag": "P",
+      "selector": "p.time",
+      "ts": "2026-08-07T02:08:11.408Z"
+    }
+  ],
+  "recordedAt": "2026-08-07T02:08:14.367Z",
+  "projectKey": "wxfb",
+  "bugId": 3863
+}

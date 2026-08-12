@@ -1,0 +1,64 @@
+{
+  "id": "wxfb/bugs/3865",
+  "url": "http://wxfb.pg8.ink/console",
+  "steps": [
+    {
+      "type": "click",
+      "index": 0,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1484,
+      "y": 29,
+      "text": "English",
+      "tag": "SPAN",
+      "selector": "span.lang-text.el-dropdown-selfdefine.focusing",
+      "ts": "2026-08-07T03:56:30.297Z"
+    },
+    {
+      "type": "click",
+      "index": 1,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1484,
+      "y": 29,
+      "text": "English",
+      "tag": "SPAN",
+      "selector": "span.lang-text.el-dropdown-selfdefine.focusing",
+      "ts": "2026-08-07T03:56:30.299Z"
+    },
+    {
+      "type": "click",
+      "index": 2,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1429,
+      "y": 81,
+      "text": "English",
+      "tag": "LI",
+      "selector": "li.el-dropdown-menu__item",
+      "ts": "2026-08-07T03:56:31.496Z"
+    },
+    {
+      "type": "click",
+      "index": 3,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1429,
+      "y": 81,
+      "text": "English",
+      "tag": "LI",
+      "selector": "li.el-dropdown-menu__item",
+      "ts": "2026-08-07T03:56:31.498Z"
+    },
+    {
+      "type": "click",
+      "index": 4,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1839,
+      "y": 34,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-tongxin",
+      "ts": "2026-08-07T03:56:35.713Z"
+    }
+  ],
+  "recordedAt": "2026-08-07T03:56:42.608Z",
+  "projectKey": "wxfb",
+  "bugId": 3865
+}

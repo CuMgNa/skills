@@ -1,0 +1,53 @@
+{
+  "id": "wxfb/bugs/3864",
+  "url": "http://wxfb.pg8.ink/console",
+  "steps": [
+    {
+      "type": "click",
+      "index": 0,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 1841,
+      "y": 34,
+      "text": "",
+      "tag": "I",
+      "selector": "i.iconfont.icon-tongxin",
+      "ts": "2026-08-07T03:49:37.690Z"
+    },
+    {
+      "type": "click",
+      "index": 1,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 681,
+      "y": 147,
+      "text": "调度组",
+      "tag": "DIV",
+      "selector": "div.nav-item",
+      "ts": "2026-08-07T03:49:41.232Z"
+    },
+    {
+      "type": "click",
+      "index": 2,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 550,
+      "y": 153,
+      "text": "",
+      "tag": "I",
+      "selector": "i.el-select__caret.el-input__icon.el-icon-arrow-up",
+      "ts": "2026-08-07T03:49:45.184Z"
+    },
+    {
+      "type": "click",
+      "index": 3,
+      "url": "http://wxfb.pg8.ink/console",
+      "x": 497,
+      "y": 240,
+      "text": "tmn一号牛马 08-05 13:53",
+      "tag": "DIV",
+      "selector": "div.glo_dividerColor_b.itemWal.flex-start",
+      "ts": "2026-08-07T03:49:47.673Z"
+    }
+  ],
+  "recordedAt": "2026-08-07T03:49:51.456Z",
+  "projectKey": "wxfb",
+  "bugId": 3864
+}
