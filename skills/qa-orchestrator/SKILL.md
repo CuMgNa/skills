@@ -14,8 +14,8 @@
 | 全流程 / 截图到报告 / 缺陷+报告一条龙 | **Agent1 → Agent2**(串行) |
 
 ## Handoff 契约
-- **路径**:`skill/mcp/output/handoff/latest.json`
-- **Schema**:`skill/mcp/output/handoff/handoff.schema.json`
+- **路径**:`output/runtime/handoff/latest.json`
+- **Schema**:（handoff.schema.json 实测不存在，字段以 latest.json 实际内容为准）
 - Agent1 **必须写入**;Agent2 **必须读取**(存在时优先用其中 `projectName`、`reportOptions`)
 - 已加入 `.gitignore`,勿提交仓库
 
@@ -36,13 +36,13 @@
 项目:{projectName}
 截图路径:{screenshotPaths}
 用户简述:{userNote}
-完成后必须写入 skill/mcp/output/handoff/latest.json。不要拉取禅道汇总、不要写测试报告、不要推钉钉。
+完成后必须写入 output/runtime/handoff/latest.json。不要拉取禅道汇总、不要写测试报告、不要推钉钉。
 ```
 
 **Agent2 子任务 prompt 模板:**
 ```text
 你是 QA Agent2(报告发布)。严格遵循 @skills/qa-agent-report-publish/SKILL.md。
-先读取 skill/mcp/output/handoff/latest.json(若存在)。
+先读取 output/runtime/handoff/latest.json(若存在)。
 项目:{projectName}
 未关闭缺陷:{noClosed}
 同步 Notion:{publishNotion}
@@ -54,7 +54,7 @@ Notion 父页面 ID:{notionParentPageId}   # 未指定则默认 qa_config.NOTION
 
 ## SDK 执行方式
 ```bash
-node skill/mcp/scripts/qa-pipeline.mjs \
+node services/qa-pipeline/regression/qa-pipeline.mjs \
   --project "【磐钴】位置监控平台-国际化" \
   --mode full \
   --screenshots "path1.png,path2.png" \

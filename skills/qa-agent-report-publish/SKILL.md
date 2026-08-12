@@ -24,7 +24,7 @@
 
 ## 关联技能与角色（6个）
 
-> **角色说明**：v2 标准管线下，渲染与写入已统一由 `mcp/scripts/publish_report.py` + `lib/` 完成。下表区分「执行」（Agent 真正调用其脚本 / MCP 工具）与「规格」（仅提供口径定义、格式模板、校验规则，**不再被 Agent 单独执行**，渲染由 publish_report.py 完成）。Agent 看到「规格」角色，不应尝试"运行"它产出文件。
+> **角色说明**：v2 标准管线下，渲染与写入已统一由 `services/qa-pipeline/reporting/publish_report.py` + `lib/` 完成。下表区分「执行」（Agent 真正调用其脚本 / MCP 工具）与「规格」（仅提供口径定义、格式模板、校验规则，**不再被 Agent 单独执行**，渲染由 publish_report.py 完成）。Agent 看到「规格」角色，不应尝试"运行"它产出文件。
 
 <table header-row="true">
 <tr><td>序号</td><td>技能</td><td>角色</td><td>实际职责</td></tr>
@@ -38,14 +38,14 @@
 
 **禁止 / 允许边界**：
 - **禁止**：调用 `defect-screenshot-bug-ticket` / `bug-report-and-create` / `qa-agent-defect-intake` 的【写操作】（创建缺陷、提单）。
-- **允许（只读）**：读取 `bug-report-and-create` 持久化的 `mcp/output/bug-semantic/*.jsonl`，用于报告语义增强（由 `lib/bug_semantic_context.py` 消费）；报告阶段**绝不触发**缺陷创建。
+- **允许（只读）**：读取 `bug-report-and-create` 持久化的 `output/runtime/bug-semantic/*.jsonl`，用于报告语义增强（由 `lib/bug_semantic_context.py` 消费）；报告阶段**绝不触发**缺陷创建。
 - `qa-agent-defect-intake` 仅允许只读 `handoff/latest.json`。
 
 ---
 
 ## 固定配置
 
-> ⚠️ **配置统一归宿**：所有 Notion / 钉钉配置（page id、@手机号、webhook 凭证等）由 `mcp/scripts/lib/qa_config.py` 统一读取，**不在本文件明文存放**。优先级：环境变量 → `~/.cursor/mcp.json` → 内置默认值。如需轮换或迁移，改环境变量或 mcp.json，**不要改 SKILL.md**。
+> ⚠️ **配置统一归宿**：所有 Notion / 钉钉配置（page id、@手机号、webhook 凭证等）由 `services/qa-pipeline/reporting/lib/qa_config.py` 统一读取，**不在本文件明文存放**。优先级：环境变量 → `~/.cursor/mcp.json` → 内置默认值。如需轮换或迁移，改环境变量或 mcp.json，**不要改 SKILL.md**。
 
 | 配置项 | 常量 / 读取方式 | 用途 |
 | --- | --- | --- |
@@ -60,7 +60,7 @@
 
 ## 输入
 
-1. **优先**读取 `skill/mcp/output/handoff/latest.json`（若存在）中的 `projectName`、`reportOptions`、`materialPageId`
+1. **优先**读取 `output/runtime/handoff/latest.json`（若存在）中的 `projectName`、`reportOptions`、`materialPageId`
 2. 用户可覆盖：项目名、`-no-closed`、`publishNotion`、`notionParentPageId`、`reportMode`
 3. `notionParentPageId` 未指定时使用 `defaultParentPageId`
 4. **handoff 禁止自动用于 Notion 写入**：`notion.pageId` 不得默认带入 `--notion-page-id`（除非用户明确要求「覆盖上次报告」）
@@ -71,15 +71,15 @@
 
 ### 步骤 1：拉取禅道缺陷
 
-> **路径约定**：工作区根目录即 `skill/`，所有脚本路径以 `mcp/scripts/...` 开头（**不要**写成 `skill/mcp/...`，会多一层）。**命令为 PowerShell（Windows）语法，多条命令用 `;` 串联，禁用 `&&`。**
+> **路径约定**：工作区根目录即仓库根（含 `pyproject.toml`），脚本在 `services/qa-pipeline/` 下按子系统分（`zentao/`、`reporting/`、`regression/`），产物在 `output/runtime/`。**命令为 PowerShell（Windows）语法，多条命令用 `;` 串联，禁用 `&&`。**
 
 ```powershell
-node mcp/scripts/zentao-bugs-summary.mjs --project-name "{项目名}" [--no-closed] [--creator "童美娜"]
+node services/qa-pipeline/zentao/zentao-bugs-summary.mjs --project-name "{项目名}" [--no-closed] [--creator "童美娜"]
 ```
 
 > ⚠️ **项目匹配（防拉错数据）**：`--project-name` 为模糊匹配。若关键词命中多个项目，脚本会**中止并列出候选**（不再静默取第一个）。此时必须改用精确 ID：`--project-id <id>`。例如"磐钴"命中 28 个项目，须用 `--project-id 1268`。
 
-记录输出：<br>- MD 路径：`mcp/output/{项目}-bugs-{日期}.md`<br>- JSON 路径：`mcp/output/{项目}-bugs-{日期}.json`
+记录输出：<br>- MD 路径：`output/runtime/reports/{项目}-bugs-{日期}.md`<br>- JSON 路径：`output/runtime/reports/{项目}-bugs-{日期}.json`
 
 ---
 
@@ -88,10 +88,10 @@ node mcp/scripts/zentao-bugs-summary.mjs --project-name "{项目名}" [--no-clos
 **统一用脚本生成，禁止人工手写 bugStats**（手写极易笔误，如 byStatus 与列表长度对不上）：
 
 ```powershell
-python mcp/scripts/bugstats.py --input "mcp/output/{项目}-bugs-{日期}.json"
+python services/qa-pipeline/reporting/bugstats.py --input "output/runtime/reports/{项目}-bugs-{日期}.json"
 ```
 
-- 输出：`mcp/output/{项目}-bugstats-{日期}.json`
+- 输出：`output/runtime/reports/{项目}-bugstats-{日期}.json`
 - 脚本内置 **数字自校验**（byLevel/byStatus/各列表长度/byModule 一致性），不过则 **非零退出（硬阻断）**，绝不据此发布。
 - **口径统一**：`byStatus.未关闭` = 激活(active)+回归不通过(confirmed)；`byStatus.已延期` 单独一列；`byStatus.待回归` = 已解决。
 
@@ -104,7 +104,7 @@ python mcp/scripts/bugstats.py --input "mcp/output/{项目}-bugs-{日期}.json"
 - 严格按 `test-report` 技能输出**三节**：一、测试结果 / 二、未解决问题汇总 / 三、待回归清单（已解决，与未解决不重复）
 - **数字全取 `bugStats`**，不许重算
 - **必须落盘完整报告**（供钉钉文档写入）：
-	- 完整报告：`mcp/output/{项目}-report-{日期}.md`
+	- 完整报告：`output/runtime/reports/{项目}-report-{日期}.md`
 
 ---
 
@@ -114,7 +114,7 @@ python mcp/scripts/bugstats.py --input "mcp/output/{项目}-bugs-{日期}.json"
 - **机器人推送 + @**：统一用脚本，签名/重试/限流/@校验全部内置，**不要再手写签名或 requests.post**：
 
 ```powershell
-python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode dingtalk --title "【{项目}】测试报告 {YYYY-MM-DD}" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}"
+python services/qa-pipeline/reporting/publish_report.py --bugstats "output/runtime/reports/{项目}-bugstats-{日期}.json" --mode dingtalk --title "【{项目}】测试报告 {YYYY-MM-DD}" --doc-url "https://alidocs.dingtalk.com/i/nodes/{nodeId}"
 ```
 
 - 推送消息**仅摘录测试结论**，内容由脚本从 `conclusion_builder.format_conclusion`（消费 `keyIssues` + `metrics`）算法生成，钉钉 / Notion / 钉钉文档三端同源；**禁止**手写结论注入。
@@ -158,7 +158,7 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 **标准命令（每次新建子页）**：
 
 ```powershell
-python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode notion --title "【{项目}】测试报告 {YYYY-MM-DD}" --tester "童美娜" --coverage "2026-05-21~2026-06-03" --material-page-id "<本项目测试方案 Notion 页 ID>"
+python services/qa-pipeline/reporting/publish_report.py --bugstats "output/runtime/reports/{项目}-bugstats-{日期}.json" --mode notion --title "【{项目}】测试报告 {YYYY-MM-DD}" --tester "童美娜" --coverage "2026-05-21~2026-06-03" --material-page-id "<本项目测试方案 Notion 页 ID>"
 ```
 
 > 测试结论由 `lib/conclusion_builder.format_conclusion` 算法生成（消费 `keyIssues` + `metrics`），钉钉 / Notion / 钉钉文档三端同源，**无需也不接受**外部文件注入结论。
@@ -167,7 +167,7 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 
 ### 校验闸门（C1-C10）
 
-> ⚠️ **权威定义声明**：本表为 C1-C10 的**唯一权威定义**。代码实现：`mcp/scripts/lib/report_context.validate_report_context`（C1'-C_conclusion，阻断级 errors）+ `mcp/scripts/publish_report.py` 写入前断言（C1-C10 数据一致性）。修改本表必须**同步改代码**并跑 `mcp/scripts/tests/test_report_context.py`，杜绝文档与代码漂移。下游技能（如 `notion-test-report`）只读引用本表，**不得另存可独立漂移的副本**。
+> ⚠️ **权威定义声明**：本表为 C1-C10 的**唯一权威定义**。代码实现：`services/qa-pipeline/reporting/lib/report_context.validate_report_context`（C1'-C_conclusion，阻断级 errors）+ `services/qa-pipeline/reporting/publish_report.py` 写入前断言（C1-C10 数据一致性）。修改本表必须**同步改代码**并跑 `services/qa-pipeline/tests/test_report_context.py`，杜绝文档与代码漂移。下游技能（如 `notion-test-report`）只读引用本表，**不得另存可独立漂移的副本**。
 
 全部以 `bugStats` 为基准，任一不过 → **硬阻断**，钉钉与 Notion 均不外发：
 
@@ -196,7 +196,7 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 <tr><td>C_conclusion</td><td>有未关闭缺陷时结论含「高优问题（二级及以上）」与业务方向分组</td><td>必须满足</td></tr>
 </table>
 
-告警级（提示不阻断）：资料解析降级原因、覆盖率低于阈值、缺陷语义产物缺失、业务影响不可溯源率、字段冲突计数——均写入 `mcp/output/report-debug/{项目}-report-debug-{日期}.json` 与报告附录。
+告警级（提示不阻断）：资料解析降级原因、覆盖率低于阈值、缺陷语义产物缺失、业务影响不可溯源率、字段冲突计数——均写入 `output/runtime/report-debug/{项目}-report-debug-{日期}.json` 与报告附录。
 
 ### 写入 Notion（统一用 publish_report.py，强类型 block）
 
@@ -204,13 +204,13 @@ python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{�
 
 ```powershell
 # 新建页（默认父页 = defaultParentPageId）；有测试方案时传 --material-page-id
-python mcp/scripts/publish_report.py --bugstats "mcp/output/{项目}-bugstats-{日期}.json" --mode notion --title "【{项目}】测试报告 {YYYY-MM-DD}" --tester "童美娜" --coverage "2026-05-21~2026-06-03" --material-page-id "<本项目测试方案 Notion 页 ID>"
+python services/qa-pipeline/reporting/publish_report.py --bugstats "output/runtime/reports/{项目}-bugstats-{日期}.json" --mode notion --title "【{项目}】测试报告 {YYYY-MM-DD}" --tester "童美娜" --coverage "2026-05-21~2026-06-03" --material-page-id "<本项目测试方案 Notion 页 ID>"
 
 # 或指定本地 Markdown（material-page-id 仅用于读测试方案，不是报告父页）
-python mcp/scripts/publish_report.py --bugstats "...bugstats.json" --mode notion --material-file "mcp/output/test-plan.md"
+python services/qa-pipeline/reporting/publish_report.py --bugstats "...bugstats.json" --mode notion --material-file "output/runtime/reports/test-plan.md"
 
 # 幂等覆盖已建页（仅当该页已是汇总页下的子页；脚本会校验 parent，否则硬阻断）
-python mcp/scripts/publish_report.py --bugstats "...bugstats.json" --mode notion --notion-page-id "<汇总页下已建子页ID>" --material-page-id "<本项目测试方案 Notion 页 ID>"
+python services/qa-pipeline/reporting/publish_report.py --bugstats "...bugstats.json" --mode notion --notion-page-id "<汇总页下已建子页ID>" --material-page-id "<本项目测试方案 Notion 页 ID>"
 ```
 
 > `--material-auto` 需配合 `--material-page-id` 才有效；单独传 `--material-auto` 将降级为精简执行表并打印警告。
@@ -229,7 +229,7 @@ python mcp/scripts/publish_report.py --bugstats "...bugstats.json" --mode notion
 - **回读校验**：写入后 `count_blocks` 回读顶层块数，为 0 视为写入失败（兜底 F1）。
 - **数字全取 bugStats**：第一/二/三/四/五节所有数字来自 bugStats，脚本不接受硬编码数字。
 - **辅助资料 → 完整执行表（v2 标准管线）**：解析层由 `lib/material_context.py` 承接。多级锚点扫描（强锚点：1.4.1 / 2.1 范围 / 范围全景表；弱锚点：测试方案 / 测试计划 / 逻辑大纲 / 功能清单 / 模块清单 / 用例矩阵）+ 同义表头识别 + 资料类型自识别 + **多资料合并**（`--material-file`/`--material-page-id` 均可多次）。解析失败时降级为精简表并在第二节顶部补黄色 callout 标注原因（不再静默返回空 rows）。
-- **缺陷语义产物（只读消费）**：报告阶段读取 `mcp/output/bug-semantic/*.jsonl`（由 `bug-report-and-create` 创建缺陷成功后写入）构建 `BugSemanticContext`；缺失时降级为「标题级」语义分析并在附录如实标注。**报告阶段绝不触发缺陷创建**。
+- **缺陷语义产物（只读消费）**：报告阶段读取 `output/runtime/bug-semantic/*.jsonl`（由 `bug-report-and-create` 创建缺陷成功后写入）构建 `BugSemanticContext`；缺失时降级为「标题级」语义分析并在附录如实标注。**报告阶段绝不触发缺陷创建**。
 - **动态重点问题**：「重点问题」方向由缺陷 `impactSignals`（资金/计费、权限/安全、数据一致性、消息/通信、界面/体验）动态聚类，而非写死分类；不可溯源的业务影响标注「（影响待复核）」。
 - **标准报告模板（多语言）**：`lib/report_templates/standard.py` 渲染「结论 / 指标看板 / 重点问题 / 范围聚合 / 模块明细 / 风险 / 清单 / 附录」八段，Notion blocks 与钉钉投影同源（数字一致）；`--locale zh-CN|en-US`、`--template standard`。
 - **集中配置**：阈值 / severity 映射 / impactSignals 词典 / 模块别名集中在 `lib/report_config.py`，支持 `--project-config <json>` 项目级覆盖（新项目接入只改配置不改代码）。

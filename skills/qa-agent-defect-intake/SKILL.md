@@ -13,7 +13,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
 
 1. `@skills/defect-screenshot-bug-ticket/SKILL.md` — 从截图提取 8 块 Bug 单
 2. `@skills/bug-report-and-create/SKILL.md` — 确认后 `--steps-file` 写入禅道
-3. `skill/mcp/scripts/record-path.mjs` — 创单后可选 CDP 路径录制（仅当用户要求录制时）
+3. `services/qa-pipeline/regression/record-path.mjs` — 创单后可选 CDP 路径录制（仅当用户要求录制时）
 
 ## 禁止引用
 
@@ -29,7 +29,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
    - 是否需要录制回归路径？（要录 / 不录）
    - 若要录：确认 `projectKey` 短码（如 `wxfb`，ascii，写入路径目录名）
 4. 用户确认正文后，按 `bug-report-and-create`：
-   a. 将正文四块以 UTF-8 无 BOM 写入 `skill/mcp/output/handoff/steps-<timestamp>.md`
+   a. 将正文四块以 UTF-8 无 BOM 写入 `output/runtime/handoff/steps-<timestamp>.md`
    b. 将聊天截图保存到本地（若尚无稳定路径），绝对路径写入待传列表
       - **画质注意**：Cursor 聊天里拖入的图常被压成小 JPEG（例如仅约 1024 宽、扩展名却是 `.png`）。上传前应用魔数识别真实格式；若体积明显偏小，优先改用：
         1. 用户本机原图路径，或
@@ -43,15 +43,15 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
    a. 确保本机 Chrome 已登录业务页且开了远程调试（CDP）
    b. 执行：
       ```
-      node skill/mcp/scripts/record-path.mjs --url <复现起始URL> --project <projectKey> --bug <bugId>
+      node services/qa-pipeline/regression/record-path.mjs --url <复现起始URL> --project <projectKey> --bug <bugId>
       ```
    c. 请用户在 Chrome 中点到复现现场，再点页面底部绿色 **DONE**
-   d. 确认生成：`skill/mcp/paths/{projectKey}/bugs/{bugId}.json`
+   d. 确认生成：`data/paths/{projectKey}/bugs/{bugId}.json`
    e. **说了要录但未成功落盘 → intake 未完成**，必须继续引导补录，不得当作成功收工
    f. 用户若改口「本次不录」，可结束并在 handoff 标 `pathRecorded: false`
 7. **写入 handoff**（必须）：
 
-路径：`skill/mcp/output/handoff/latest.json`
+路径：`output/runtime/handoff/latest.json`
 
 ```json
 {
@@ -81,7 +81,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
 
 8. 向用户汇报：已创建 Bug 列表 + handoff 路径；若已录路径，提示回归命令：
    ```
-   node skill/mcp/scripts/regress.mjs --project <projectKey>
+   node services/qa-pipeline/regression/regress.mjs --project <projectKey>
    ```
    核对禅道「实际结果」是否含截图。若编排层后续要跑 Agent2，提示可 `@qa-agent-report-publish` 或 `@qa-orchestrator 继续出报告`。
 
@@ -93,7 +93,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
 
 | 用途 | 路径 |
 |------|------|
-| 创单 | `skill/mcp/scripts/zentao-bug-create.mjs` |
-| 录路径 | `skill/mcp/scripts/record-path.mjs` |
-| 批量回归 | `skill/mcp/scripts/regress.mjs` |
-| 批量提交 | `skill/mcp/scripts/regress-submit.mjs` |
+| 创单 | `services/qa-pipeline/zentao/zentao-bug-create.mjs` |
+| 录路径 | `services/qa-pipeline/regression/record-path.mjs` |
+| 批量回归 | `services/qa-pipeline/regression/regress.mjs` |
+| 批量提交 | `services/qa-pipeline/regression/regress-submit.mjs` |

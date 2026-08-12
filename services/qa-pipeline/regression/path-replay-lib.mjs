@@ -6,7 +6,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const PATHS_ROOT = path.resolve(__dirname, '..', 'paths');
+// 定位仓库根：向上查找 pyproject.toml，paths 主资产在 data/paths/
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (fs.existsSync(path.join(dir, 'pyproject.toml'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return path.resolve(start, '..', '..');
+}
+export const PATHS_ROOT = path.join(findRepoRoot(__dirname), 'data', 'paths');
 
 export function resolvePathFile(pathIdOrFile) {
   if (path.isAbsolute(pathIdOrFile) && fs.existsSync(pathIdOrFile)) return pathIdOrFile;

@@ -13,13 +13,13 @@ paths/{module}/{scene}.json            # 可选模块路径，不进批量扫描
 
 ```bash
 # 提缺后录制（CDP，已登录 Chrome）
-node scripts/record-path.mjs --url http://wxfb.pg8.ink/console --project wxfb --bug 3847
+node services/qa-pipeline/regression/record-path.mjs --url http://wxfb.pg8.ink/console --project wxfb --bug 3847
 
 # 批量回归（本地有路径 ∩ 禅道 resolved）
-node scripts/regress.mjs --project wxfb
-node scripts/regress.mjs --project wxfb --dry-select
+node services/qa-pipeline/regression/regress.mjs --project wxfb
+node services/qa-pipeline/regression/regress.mjs --project wxfb --dry-select
 
 # 勾完 template 后批量提交
-node scripts/regress-submit.mjs --batch output/handoff/regression/batches/wxfb-…
-node scripts/regress-submit.mjs --batch … --yes
+node services/qa-pipeline/regression/regress-submit.mjs --batch output/runtime/handoff/regression/batches/wxfb-…
+node services/qa-pipeline/regression/regress-submit.mjs --batch … --yes
 ```

@@ -2,14 +2,14 @@
 /**
  * QA 双 Agent 编排 CLI（Cursor SDK）
  *
- * 依赖：npm i @cursor/sdk（在 skill/mcp 或仓库根目录）
+ * 依赖：npm i @cursor/sdk（在 services/qa-pipeline/mcp-server 或仓库根目录）
  * 环境：CURSOR_API_KEY
  *
  * 用法：
- *   node skill/mcp/scripts/qa-pipeline.mjs --help
- *   node skill/mcp/scripts/qa-pipeline.mjs --mode agent1 --project "【磐钴】位置监控平台-国际化" --screenshots "a.png,b.png"
- *   node skill/mcp/scripts/qa-pipeline.mjs --mode agent2 --project "【磐钴】位置监控平台-国际化" --no-closed
- *   node skill/mcp/scripts/qa-pipeline.mjs --mode full --project "【磐钴】位置监控平台-国际化" --screenshots "a.png" --no-closed
+ *   node services/qa-pipeline/regression/qa-pipeline.mjs --help
+ *   node services/qa-pipeline/regression/qa-pipeline.mjs --mode agent1 --project "【磐钴】位置监控平台-国际化" --screenshots "a.png,b.png"
+ *   node services/qa-pipeline/regression/qa-pipeline.mjs --mode agent2 --project "【磐钴】位置监控平台-国际化" --no-closed
+ *   node services/qa-pipeline/regression/qa-pipeline.mjs --mode full --project "【磐钴】位置监控平台-国际化" --screenshots "a.png" --no-closed
  */
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
 import { dirname, join, resolve } from "path";
@@ -17,8 +17,19 @@ import { fileURLToPath } from "url";
 import { spawnSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(__dirname, "..", "..", "..");
-const HANDOFF_PATH = join(REPO_ROOT, "skill", "mcp", "output", "handoff", "latest.json");
+// 定位仓库根：向上查找 pyproject.toml（仓库根标志），避免硬编码上溯层数
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (existsSync(join(dir, "pyproject.toml"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return resolve(start, "..", "..", ".."); // fallback
+}
+const REPO_ROOT = findRepoRoot(__dirname);
+const HANDOFF_PATH = join(REPO_ROOT, "output", "runtime", "handoff", "latest.json");
 const DEFAULT_PROJECT = "【磐钴】位置监控平台-国际化";
 
 function parseArgs(argv) {
@@ -130,9 +141,9 @@ function buildAgent1Prompt(args) {
   return `你是 QA Agent1（缺陷录入）。工作区根目录：${REPO_ROOT}
 
 必须完整阅读并执行：
-- skill/skills/qa-agent-defect-intake/SKILL.md
-- skill/skills/defect-screenshot-bug-ticket/SKILL.md
-- skill/skills/bug-report-and-create/SKILL.md
+- skills/qa-agent-defect-intake/SKILL.md
+- skills/defect-screenshot-bug-ticket/SKILL.md
+- skills/bug-report-and-create/SKILL.md
 
 禁止：拉取禅道汇总，写测试报告、钉钉推送。
 
@@ -142,9 +153,9 @@ function buildAgent1Prompt(args) {
 ${shots}
 3. 用户简述：${args.userNote || "无"}
 4. 从截图提取缺陷，按 8 块模板展示；获得用户确认逻辑在自动化场景下视为已确认，直接写入禅道。
-5. 使用 node skill/mcp/scripts/zentao-bug-create.mjs --steps 写入禅道。
+5. 使用 node services/qa-pipeline/zentao/zentao-bug-create.mjs --steps 写入禅道。
 6. 完成后必须写入 handoff 文件：${HANDOFF_PATH}
-   字段见 skill/mcp/output/handoff/handoff.schema.json
+   字段见 output/runtime/handoff/handoff.schema.json（若存在）
 
 返回：创建的 Bug ID、标题、禅道链接、handoff 是否写入成功。`;
 }
@@ -172,12 +183,12 @@ function buildAgent2Prompt(args) {
   return `你是 QA Agent2（报告发布 v3）。工作区根目录：${REPO_ROOT}
 
 必须完整阅读并执行（v3 升级）：
-- skill/skills/qa-agent-report-publish/SKILL.md（主流程）
-- skill/skills/bug-stats/SKILL.md（单一统计事实源）
-- skill/skills/test-report/SKILL.md（钉钉简版）
-- skill/skills/dingtalk-test-report/SKILL.md（钉钉推送）
-- skill/skills/test-report-notion/SKILL.md（Notion 富格式编排，publishNotion 时）
-- skill/skills/notion-test-report/SKILL.md（Notion 写入，含校验闸门，publishNotion 时）
+- skills/qa-agent-report-publish/SKILL.md（主流程）
+- skills/bug-stats/SKILL.md（单一统计事实源）
+- skills/test-report/SKILL.md（钉钉简版）
+- skills/dingtalk-test-report/SKILL.md（钉钉推送）
+- skills/test-report-notion/SKILL.md（Notion 富格式编排，publishNotion 时）
+- skills/notion-test-report/SKILL.md（Notion 写入，含校验闸门，publishNotion 时）
 
 禁止：创建新禅道 Bug、截图提取缺陷。
 
@@ -187,7 +198,7 @@ ${handoffBlock}
 
 2. 项目名：${args.project}
 3. 拉取缺陷：
-   node skill/mcp/scripts/zentao-bugs-summary.mjs --project-name "${args.project}"${args.noClosed ? " --no-closed" : ""}
+   node services/qa-pipeline/zentao/zentao-bugs-summary.mjs --project-name "${args.project}"${args.noClosed ? " --no-closed" : ""}
 4. 按 bug-stats 生成单一统计事实源 bugStats.json（数字只算一次，钉钉与 Notion 共用）
 5. 按 test-report 编写钉钉三节简版报告（数字全取 bugStats，不重算）
 6. 按 dingtalk-test-report 写入钉钉文档 + webhook 推送（仅摘录「一、测试结果」）${notionBlock}
@@ -200,7 +211,7 @@ async function loadSdk() {
     return await import("@cursor/sdk");
   } catch {
     console.error(
-      "未安装 @cursor/sdk。请在仓库根或 skill/mcp 下执行：npm i @cursor/sdk\n" +
+      "未安装 @cursor/sdk。请在仓库根或 services/qa-pipeline/mcp-server 下执行：npm i @cursor/sdk\n" +
         "或 Agent2 仅用脚本拉取：加 --agent2-script --mode agent2"
     );
     process.exit(1);
@@ -231,7 +242,7 @@ async function runAgentPrompt(prompt, args) {
 }
 
 function runAgent2ScriptOnly(args) {
-  const script = join(__dirname, "zentao-bugs-summary.mjs");
+  const script = join(__dirname, "..", "zentao", "zentao-bugs-summary.mjs");
   const cmdArgs = ["--project-name", args.project];
   if (args.noClosed) cmdArgs.push("--no-closed");
   console.error(`执行: node ${script} ${cmdArgs.join(" ")}`);

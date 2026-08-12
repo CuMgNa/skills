@@ -18,7 +18,7 @@
 import { readFileSync, existsSync, readdirSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
-import { loadZentaoConfig, uploadImage } from "./zentao-upload.mjs";
+import { loadZentaoConfig, uploadImage } from "../zentao/zentao-upload.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CFG = loadZentaoConfig();

@@ -2,13 +2,19 @@
 node_modules/
 **/node_modules/
 
-# QA pipeline handoff (runtime state, do not commit)
-skill/mcp/output/handoff/latest.json
-skill/mcp/output/handoff/*.json
-skill/mcp/output/handoff/*.mjs
-skill/mcp/output/handoff/regression/
-!skill/mcp/output/handoff/.gitkeep
-!skill/mcp/output/handoff/handoff.schema.json
+# QA pipeline runtime output (runtime state, do not commit)
+output/runtime/handoff/latest.json
+output/runtime/handoff/*.json
+output/runtime/handoff/*.mjs
+output/runtime/handoff/regression/
+!output/runtime/handoff/.gitkeep
+# 注：handoff.schema.json 实测不存在，已删除其保留规则
+output/runtime/reports/
+output/runtime/snapshots/
+output/runtime/bug-semantic/
+output/runtime/report-debug/
+output/runtime/_zt_projects.json
+output/runtime/_PENDING_MOVE.txt
 
 # Canvas runtime state (user interactions, not source)
 **/*.canvas.data.json
@@ -22,11 +28,15 @@ skill/mcp/output/handoff/regression/
 .mcp.json
 
 # One-off output scripts (may contain API tokens)
-skill/mcp/output/notion-*.py
-skill/mcp/output/dingtalk_push_*.py
-skill/mcp/output/*_push_*.py
+output/runtime/notion-*.py
+output/runtime/dingtalk_push_*.py
+output/runtime/*_push_*.py
 
 # Python bytecode cache (auto-generated, not source)
 __pycache__/
 *.pyc
 *.pyo
+services/**/__pycache__/
+
+# Word temporary lock files
+~$*

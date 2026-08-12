@@ -25,9 +25,20 @@ import sys
 import time
 from datetime import datetime
 
+def _find_repo_root(start):
+    d = start
+    for _ in range(10):
+        if os.path.exists(os.path.join(d, "pyproject.toml")):
+            return d
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return os.path.join(start, "..", "..")
+
 OUT_ROOT = os.environ.get(
     "REGRESSION_OUTPUT",
-    os.path.join(os.path.dirname(__file__), "..", "output", "handoff", "regression"),
+    os.path.join(_find_repo_root(os.path.dirname(__file__)), "output", "runtime", "handoff", "regression"),
 )
 
 

@@ -8,7 +8,7 @@
 - 或已内存传递的缺陷列表对象
 
 ## 输出
-落盘文件:`skill/mcp/output/{项目}-bugstats-{日期}.json`
+落盘文件:`output/runtime/reports/{项目}-bugstats-{日期}.json`
 ```json
 {
   "total": 30,
@@ -64,5 +64,5 @@
 1. 读取禅道汇总 JSON 文件(`{项目}-bugs-{日期}.json`)
 2. 解析每条缺陷的 `title` / `severity` / `status` 字段
 3. 按上述口径聚合生成 `bugStats` 对象
-4. 落盘到 `skill/mcp/output/{项目}-bugstats-{日期}.json`
+4. 落盘到 `output/runtime/reports/{项目}-bugstats-{日期}.json`
 5. 输出统计摘要供 Agent 确认数字

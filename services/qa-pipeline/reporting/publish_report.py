@@ -26,6 +26,18 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "lib"))
+
+
+def _find_repo_root(start: Path) -> Path:
+    d = start
+    for _ in range(10):
+        if (d / "pyproject.toml").exists():
+            return d
+        parent = d.parent
+        if parent == d:
+            break
+        d = parent
+    return start.parent.parent.parent
 import qa_config              # noqa: E402
 import dingtalk_client as dt  # noqa: E402
 import notion_client as nc    # noqa: E402
@@ -108,7 +120,7 @@ def build_material(args, sources, config):
 # ── 调试产物 ────────────
 def write_debug(ctx, validation, engine):
     try:
-        out_dir = Path(__file__).parent.parent / "output" / "report-debug"
+        out_dir = _find_repo_root(Path(__file__).parent) / "output" / "runtime" / "report-debug"
         out_dir.mkdir(parents=True, exist_ok=True)
         ymd = datetime.now().strftime("%Y%m%d")
         base = ctx["project"].replace("/", " ").replace("\\", " ")
@@ -209,7 +221,7 @@ def main():
     bs = load_bugstats(args.bugstats)
 
     # 缺陷语义持久化产物（只读消费）
-    semantic_dir = args.semantic_dir or str(Path(__file__).parent.parent / "output" / "bug-semantic")
+    semantic_dir = args.semantic_dir or str(_find_repo_root(Path(__file__).parent) / "output" / "runtime" / "bug-semantic")
     persisted = bsc.load_persisted_semantics(semantic_dir, args.semantic_key)
     print(f"[semantic] 持久化产物目录={semantic_dir}，命中 {len(persisted)} 条")
 

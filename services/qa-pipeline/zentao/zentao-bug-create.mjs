@@ -22,6 +22,17 @@ import { fileURLToPath } from "url";
 import { uploadImage as uploadStepsImageShared } from "./zentao-upload.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (existsSync(join(dir, "pyproject.toml"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return resolve(start, "..", "..", "..");
+}
+const REPO_ROOT = findRepoRoot(__dirname);
 
 // ── 读取配置（与 zentao-bugs-summary.mjs 一致）────────────────
 const MCP_JSON_CANDIDATES = [
@@ -813,7 +824,7 @@ function extractSemantic(stepsText, title) {
  */
 function persistBugSemantic({ bugId, title, severity, pri, type, stepsText, projectId, productId }) {
   try {
-    const outDir = join(__dirname, "..", "output", "bug-semantic");
+    const outDir = join(REPO_ROOT, "output", "runtime", "bug-semantic");
     mkdirSync(outDir, { recursive: true });
     const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const key = projectId || productId || "unknown";

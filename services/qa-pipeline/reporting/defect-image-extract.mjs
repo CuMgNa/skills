@@ -14,11 +14,22 @@
  *   OPENAI_BASE_URL     可选，默认 https://api.openai.com/v1
  *   OPENAI_VISION_MODEL 可选，默认 gpt-4o-mini
  */
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
-import { dirname, resolve, basename } from "path";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
+import { dirname, resolve, basename, join } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (existsSync(join(dir, "pyproject.toml"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return resolve(start, "..", "..", "..");
+}
+const REPO_ROOT = findRepoRoot(__dirname);
 
 const EXTRACTION_SYSTEM = `你是测试领域的文档结构化助手。用户会提供一张或多张与软件缺陷相关的截图（可能含：Bug 标题、前置条件、复现步骤、实际/预期结果、缺陷分析表、优化建议、严重等级等）。
 你必须只输出一个合法的 JSON 对象，不要 Markdown 代码围栏，不要前后解释文字。
@@ -258,7 +269,7 @@ if (!apiKey && !process.env.OPENAI_API_KEY_OPTIONAL) {
   process.exit(1);
 }
 
-const defaultOutDir = resolve(__dirname, "..", "output");
+const defaultOutDir = join(REPO_ROOT, "output", "runtime");
 const stamp = `${Date.now()}`;
 const defaultJson = resolve(defaultOutDir, `defect-extract-${stamp}.json`);
 

@@ -67,14 +67,14 @@ description: 结构化Bug报告并写入禅道（仅缺陷录入阶段，qa-agen
 
 ### 写入脚本
 
-`skills/skill/mcp/scripts/zentao-bug-create.mjs`
+`services/qa-pipeline/zentao/zentao-bug-create.mjs`
 
 ### 构建命令
 
 含中文标点的正文必须通过文件传入，避免 Windows Shell 编码转换：
 
 1. 将正文四块写入 UTF-8 无 BOM 临时文件，路径：
-   `skill/mcp/output/handoff/steps-<timestamp>.md`
+   `output/runtime/handoff/steps-<timestamp>.md`
 2. 文件格式：
 
    前置条件：
@@ -92,7 +92,7 @@ description: 结构化Bug报告并写入禅道（仅缺陷录入阶段，qa-agen
 3. 命令行只传文件路径（**有截图时必须带 `--attach`**）：
 
 ```bash
-node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
+node "services/qa-pipeline/zentao/zentao-bug-create.mjs" ^
   --project-name "{项目名称}" ^
   --title-file ./title.txt ^
   --steps-file ./steps-<timestamp>.md ^
@@ -102,7 +102,7 @@ node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
 ```
 
 截图会上传到禅道富文本图床，并自动插入 **「实际结果」** 分节（`steps` 内 `<img src="/zentao/file-read-*.png">`，与线上习惯一致）。  
-聊天框图片须先保存为本地文件（建议 `skill/mcp/output/handoff/img-<timestamp>.png`），再把绝对路径传给 `--attach`。
+聊天框图片须先保存为本地文件（建议 `output/runtime/handoff/img-<timestamp>.png`），再把绝对路径传给 `--attach`。
 
 4. Windows PowerShell 执行前建议：`chcp 65001`
 5. `--steps`（命令行直传）仅用于纯 ASCII 调试场景，含中文时禁用。
@@ -187,7 +187,7 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 1. 收集用户输入：项目名称 + 问题描述 + 可选参数（模块、版本、指派人）+ **截图**。  
 2. 按模板输出完整 Bug 报告，展示给用户确认。  
 3. 用户确认后，将正文整理为 `--steps-file` 文件（含四段）。  
-4. 若用户在聊天中上传了截图：将图片保存到 `skill/mcp/output/handoff/`（保留原扩展名），记录绝对路径。  
+4. 若用户在聊天中上传了截图：将图片保存到 `output/runtime/handoff/`（保留原扩展名），记录绝对路径。  
 5. 构造并执行 `zentao-bug-create.mjs`：`--steps-file` + 每个截图一个 `--attach`。  
 6. 若需指派成员，追加调用分配接口。  
 7. 反馈结果：Bug ID + 禅道链接 + 分配状态；确认「实际结果」中已出现截图。
@@ -208,12 +208,12 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 ### 示例命令
 
 ```bash
-node "skills/skill/mcp/scripts/zentao-bug-create.mjs" ^
+node "services/qa-pipeline/zentao/zentao-bug-create.mjs" ^
   --project-name "【磐钴】位置监控平台-国际化项目" ^
   --title "【通信记录-会话窗口】英文界面下错误提示中英混排" ^
-  --steps-file "skill/mcp/output/handoff/steps-tmp.md" ^
+  --steps-file "output/runtime/handoff/steps-tmp.md" ^
   --severity 3 ^
   --pri 3 ^
   --opened-build "V2.5.8" ^
-  --attach "skill/mcp/output/handoff/img-xxx.png"
+  --attach "output/runtime/handoff/img-xxx.png"
 ```

@@ -48,7 +48,7 @@ Fallback：<br>- `API-patch-block-children`：分批追加普通段落 / 列表 
 
 **幂等键**：`reportKey = 项目名 + 测试类型 + 覆盖期/报告日期`
 
-**留痕（覆盖前必做）**：覆盖前用 `API-retrieve-page-markdown` 读出旧内容，存 `skill/mcp/output/snapshots/{reportKey}-{timestamp}.md`。
+**留痕（覆盖前必做）**：覆盖前用 `API-retrieve-page-markdown` 读出旧内容，存 `output/runtime/snapshots/{reportKey}-{timestamp}.md`。
 
 ### 第三步：校验闸门（写入前强制校验）
 

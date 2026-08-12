@@ -15,10 +15,22 @@ import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { connectCdp, pickPage } from './cdp-connect.mjs';
 import { PATHS_ROOT, replayPathOnPage } from './path-replay-lib.mjs';
-import { loadZentaoConfig } from './zentao-upload.mjs';
+import { loadZentaoConfig } from '../zentao/zentao-upload.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BATCH_ROOT = path.resolve(__dirname, '..', 'output', 'handoff', 'regression', 'batches');
+// 定位仓库根：向上查找 pyproject.toml
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (fs.existsSync(path.join(dir, 'pyproject.toml'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return path.resolve(start, '..', '..');
+}
+const REPO_ROOT = findRepoRoot(__dirname);
+const BATCH_ROOT = path.join(REPO_ROOT, 'output', 'runtime', 'handoff', 'regression', 'batches');
 
 /**
  * 进程级互斥锁：防止多个 regress.mjs 并发跑。

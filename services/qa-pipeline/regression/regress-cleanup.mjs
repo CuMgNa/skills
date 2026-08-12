@@ -20,7 +20,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BATCH_ROOT = path.resolve(__dirname, '..', 'output', 'handoff', 'regression', 'batches');
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (fs.existsSync(path.join(dir, 'pyproject.toml'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return path.resolve(start, '..', '..');
+}
+const BATCH_ROOT = path.join(findRepoRoot(__dirname), 'output', 'runtime', 'handoff', 'regression', 'batches');
 
 function parseArgs() {
   const args = process.argv.slice(2);

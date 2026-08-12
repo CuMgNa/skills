@@ -16,11 +16,22 @@
  *
  * 配置：读取 mcp.json 中 zentao 的 ZENTAO_URL / ZENTAO_ACCOUNT / ZENTAO_PASSWORD
  */
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+function findRepoRoot(start) {
+  let dir = start;
+  for (let i = 0; i < 10; i++) {
+    if (existsSync(join(dir, "pyproject.toml"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return resolve(start, "..", "..", "..");
+}
+const REPO_ROOT = findRepoRoot(__dirname);
 
 function sanitizeFilePart(v) {
   return String(v || "")
@@ -349,7 +360,7 @@ async function main() {
   const meta = { projectId, projectName, fetchedAt, dataRange, bugCount: bugs.length };
 
   // 输出目录
-  const outDir = resolve(args.outDir || join(__dirname, "..", "output"));
+  const outDir = resolve(args.outDir || join(REPO_ROOT, "output", "runtime"));
   mkdirSync(outDir, { recursive: true });
 
   // 写 JSON

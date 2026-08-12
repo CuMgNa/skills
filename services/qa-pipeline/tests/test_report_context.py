@@ -3,7 +3,7 @@
 判定规则逐条写成断言。修改 SKILL.md 闸门表必须同步改代码并跑本测试，杜绝文档与代码漂移。
 
 运行：
-    cd skill/mcp/scripts
+    cd services/qa-pipeline
     python -m pytest tests/test_report_context.py -v
 或直接：
     python tests/test_report_context.py
@@ -12,8 +12,8 @@ import os
 import sys
 from pathlib import Path
 
-# 让测试可独立运行：把 lib 加到 sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
+# 让测试可独立运行：把 reporting/lib 加到 sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "reporting" / "lib"))
 
 import report_context as rc  # noqa: E402
 
