@@ -1,0 +1,156 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_dispatch_group_message_view",
+      "label": "调度组消息视图",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "消息弹窗顶部的“调度组”标签及其选中状态",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "label": "全部消息分类列表",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "消息弹窗左侧展开的“全部消息”导航列表",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_terminal_message_category",
+      "label": "终端消息分类",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "全部消息列表中的“终端消息”选项",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_intercom_group_chat_category",
+      "label": "对讲群聊分类",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "全部消息列表中的“对讲群聊”选项",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_rescue_group_chat_category",
+      "label": "求救群聊分类",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "全部消息列表中的“求救群聊”选项",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_message_category_selection_failure",
+      "label": "消息分类选项无法生效",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "红色标注文字：“切换至调度组，此时展开右侧的全部消息列表，列表选项选中无法生效”",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_10_57_conversation_detail_pane",
+      "label": "消息会话详情区",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "消息弹窗右侧展示聊天记录、输入框和发送按钮的区域",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_dispatch_group_message_view",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "调度组视图中展开了“全部消息”分类列表",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_terminal_message_category",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "展开列表直接显示“终端消息”",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_intercom_group_chat_category",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "展开列表直接显示“对讲群聊”",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_rescue_group_chat_category",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "展开列表直接显示“求救群聊”",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_dispatch_group_message_view",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_message_category_selection_failure",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "红色标注明确指出切换至调度组后出现分类选项无法生效的问题",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_message_category_selection_failure",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "红色标注明确说明全部消息列表的选项选中无法生效",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_10_57_all_messages_category_list",
+      "target": "assets_img_snipaste_2026_08_05_11_10_57_conversation_detail_pane",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-10-57.png",
+      "source_location": "分类列表与会话详情区构成同一消息弹窗的主从布局，分类选择应驱动右侧内容展示",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

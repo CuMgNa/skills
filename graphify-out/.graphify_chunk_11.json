@@ -1,0 +1,484 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_satellite_emergency_rescue_terminal_platform",
+      "label": "卫星应急救援终端平台",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_push_record_management",
+      "label": "推送记录管理",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_http_push_traceability",
+      "label": "HTTP推送记录查询与追溯",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "label": "推送记录筛选面板",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_terminal_id_filter",
+      "label": "终端ID筛选",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_event_type_filter",
+      "label": "事件类型筛选",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_push_result_filter",
+      "label": "推送结果筛选",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_time_range_filter",
+      "label": "开始与结束时间筛选",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "label": "推送记录表格",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_terminal_online_offline_event",
+      "label": "终端上下线事件",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_location_report_event",
+      "label": "位置上报事件",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_push_url",
+      "label": "推送URL",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_http_status_code",
+      "label": "HTTP状态码",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_retry_count",
+      "label": "重试次数",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_request_body",
+      "label": "推送请求体",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_repush_action",
+      "label": "重推操作",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_position_report_payload",
+      "label": "位置上报请求数据",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_position_timestamp",
+      "label": "位置时间posTime",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_event_timestamp",
+      "label": "事件时间eventTime",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_46_21_timestamp_alignment",
+      "label": "位置与事件时间对齐",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_satellite_emergency_rescue_terminal_platform",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_push_record_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_management",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_http_push_traceability",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_management",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_management",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_terminal_id_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_event_type_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_push_result_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_filter_panel",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_time_range_filter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_terminal_online_offline_event",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_location_report_event",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_push_url",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_http_status_code",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_retry_count",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_request_body",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_push_record_table",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_repush_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_location_report_event",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_position_report_payload",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_request_body",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_position_report_payload",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_position_report_payload",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_position_timestamp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_position_report_payload",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_event_timestamp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_position_timestamp",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_event_timestamp",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_position_timestamp",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_timestamp_alignment",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_event_timestamp",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_timestamp_alignment",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_http_status_code",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_repush_action",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_46_21_retry_count",
+      "target": "assets_img_snipaste_2026_08_05_10_46_21_repush_action",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "push_record_query_filters",
+      "label": "推送记录组合查询条件",
+      "nodes": [
+        "assets_img_snipaste_2026_08_05_10_46_21_terminal_id_filter",
+        "assets_img_snipaste_2026_08_05_10_46_21_event_type_filter",
+        "assets_img_snipaste_2026_08_05_10_46_21_push_result_filter",
+        "assets_img_snipaste_2026_08_05_10_46_21_time_range_filter"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-46-21.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

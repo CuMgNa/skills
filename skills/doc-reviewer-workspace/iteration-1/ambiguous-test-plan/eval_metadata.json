@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "ambiguous-test-plan",
+  "prompt": "Review eval 2 from the doc-reviewer eval set.",
+  "assertions": [
+    "Identifies the conflict between all devices/all languages and execution limited to one device with Chinese and English",
+    "Flags the phrases other scenarios handled flexibly and P0/P1 handled as ambiguous rather than precise criteria",
+    "Explains that P0/P1 should be retained but defined for non-testing readers",
+    "Shows cross-role restatements of scope, risk, and release criteria before listing readability findings",
+    "Does not enforce an unrelated fixed test-plan template"
+  ]
+}

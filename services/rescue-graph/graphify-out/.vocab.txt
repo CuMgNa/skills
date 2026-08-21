@@ -1,6 +1,7 @@
 ack
 addr
 api
+fad
 iccid
 prd
 socket

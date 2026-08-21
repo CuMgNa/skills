@@ -1,0 +1,234 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_english_locale",
+      "label": "English Locale",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_sos_rescue_group_chat",
+      "label": "SOS Rescue Group Chat",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_sos_alarm_event",
+      "label": "SOS Alarm Event",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_terminal_sos_alarm_message",
+      "label": "Terminal SOS Alarm Message",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_chat_history_english_translation",
+      "label": "Chat History English Translation",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_chat_list_latest_message_preview",
+      "label": "Chat List Latest Message Preview",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_latest_message_localization_defect",
+      "label": "Latest Message Localization Defect",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_sos_geographic_coordinates",
+      "label": "SOS Geographic Coordinates",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_29_57_device_alarm_notification",
+      "label": "Device Alarm Notification",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_sos_rescue_group_chat",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_chat_list_latest_message_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_sos_rescue_group_chat",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_chat_history_english_translation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_terminal_sos_alarm_message",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_sos_alarm_event",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_chat_history_english_translation",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_terminal_sos_alarm_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_chat_history_english_translation",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_sos_geographic_coordinates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_chat_list_latest_message_preview",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_terminal_sos_alarm_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_latest_message_localization_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_english_locale",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_latest_message_localization_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_chat_list_latest_message_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_latest_message_localization_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_chat_history_english_translation",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_device_alarm_notification",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_sos_alarm_event",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_29_57_device_alarm_notification",
+      "target": "assets_img_snipaste_2026_08_05_11_29_57_sos_geographic_coordinates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "sos_latest_message_localization_flow",
+      "label": "SOS Latest Message Localization Flow",
+      "nodes": [
+        "assets_img_snipaste_2026_08_05_11_29_57_english_locale",
+        "assets_img_snipaste_2026_08_05_11_29_57_sos_rescue_group_chat",
+        "assets_img_snipaste_2026_08_05_11_29_57_terminal_sos_alarm_message",
+        "assets_img_snipaste_2026_08_05_11_29_57_chat_list_latest_message_preview",
+        "assets_img_snipaste_2026_08_05_11_29_57_latest_message_localization_defect"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-29-57.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

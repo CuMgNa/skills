@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+      "passed": true,
+      "evidence": "AC-01 explicitly states that the two categories may overlap or use different counting objects, marks the issue Author confirmation required, and refuses to choose 3 or 4."
+    },
+    {
+      "text": "Identifies the contradiction between two issues still open and all residual issues resolved",
+      "passed": true,
+      "evidence": "AC-02 quotes both passages, explains that they cannot both be current without a time boundary, and marks the issue Blocker severity."
+    },
+    {
+      "text": "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+      "passed": true,
+      "evidence": "The cross-role comparison table separately records project-manager, product/business, and non-testing interpretations of current status and next action, including the resolved/follow-up divergence."
+    },
+    {
+      "text": "Pauses final factual revision until the author clarifies issue-count scope and current status",
+      "passed": true,
+      "evidence": "Section 5 asks four decision-critical author questions and explicitly states that no final factual rewrite will be provided before answers are received."
+    },
+    {
+      "text": "Provides safe suggested wording or placeholders without silently choosing a count",
+      "passed": true,
+      "evidence": "ER-01 supplies a placeholder-based structure example using unresolved time, status, action, role, and completion-standard fields without choosing a number or final state."
+    },
+    {
+      "text": "Avoids repeating the same root issue across multiple long sections",
+      "passed": true,
+      "evidence": "The 88-line report uses one comparison table, four root findings, one consolidated question list, and a short priority list; evidence is not repeated as separate role essays."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

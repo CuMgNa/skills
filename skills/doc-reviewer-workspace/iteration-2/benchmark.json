@@ -1,0 +1,159 @@
+{
+  "metadata": {
+    "skill_name": "doc-reviewer",
+    "skill_path": "C:\\Users\\33606\\Desktop\\skills\\skills\\doc-reviewer",
+    "executor_model": "gpt-5.6-sol",
+    "analyzer_model": "gpt-5.6-sol",
+    "timestamp": "2026-08-21T07:12:56Z",
+    "evals_run": [
+      3
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 636.594,
+        "tokens": 145059,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+          "passed": true,
+          "evidence": "AC-01 explicitly states that the two categories may overlap or use different counting objects, marks the issue Author confirmation required, and refuses to choose 3 or 4."
+        },
+        {
+          "text": "Identifies the contradiction between two issues still open and all residual issues resolved",
+          "passed": true,
+          "evidence": "AC-02 quotes both passages, explains that they cannot both be current without a time boundary, and marks the issue Blocker severity."
+        },
+        {
+          "text": "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+          "passed": true,
+          "evidence": "The cross-role comparison table separately records project-manager, product/business, and non-testing interpretations of current status and next action, including the resolved/follow-up divergence."
+        },
+        {
+          "text": "Pauses final factual revision until the author clarifies issue-count scope and current status",
+          "passed": true,
+          "evidence": "Section 5 asks four decision-critical author questions and explicitly states that no final factual rewrite will be provided before answers are received."
+        },
+        {
+          "text": "Provides safe suggested wording or placeholders without silently choosing a count",
+          "passed": true,
+          "evidence": "ER-01 supplies a placeholder-based structure example using unresolved time, status, action, role, and completion-standard fields without choosing a number or final state."
+        },
+        {
+          "text": "Avoids repeating the same root issue across multiple long sections",
+          "passed": true,
+          "evidence": "The 88-line report uses one comparison table, four root findings, one consolidated question list, and a short priority list; evidence is not repeated as separate role essays."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6667,
+        "passed": 4,
+        "failed": 2,
+        "total": 6,
+        "time_seconds": 116.434,
+        "tokens": 126167,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+          "passed": true,
+          "evidence": "The baseline asks whether the categories overlap and says not to form a final rewrite before confirming the counting scope."
+        },
+        {
+          "text": "Identifies the contradiction between two issues still open and all residual issues resolved",
+          "passed": true,
+          "evidence": "The opening judgment and confirmation questions explicitly identify the conflict between two open issues and all residual issues resolved."
+        },
+        {
+          "text": "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+          "passed": false,
+          "evidence": "The baseline mentions possible role interpretations inside a problem table, but it does not independently restate and compare project-manager, product/business, and non-testing-reader understandings of resolved versus follow-up status."
+        },
+        {
+          "text": "Pauses final factual revision until the author clarifies issue-count scope and current status",
+          "passed": true,
+          "evidence": "The baseline explicitly withholds a final factual rewrite until the author confirms the total, category relation, and state."
+        },
+        {
+          "text": "Provides safe suggested wording or placeholders without silently choosing a count",
+          "passed": false,
+          "evidence": "The baseline provides recommendations and an organization order but no safe replacement wording or placeholder-based revision that the author could use after clarification."
+        },
+        {
+          "text": "Avoids repeating the same root issue across multiple long sections",
+          "passed": true,
+          "evidence": "The 39-line baseline is concise and keeps each root issue primarily in one table row, with confirmation questions separated."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 636.594,
+        "stddev": 0.0,
+        "min": 636.594,
+        "max": 636.594
+      },
+      "tokens": {
+        "mean": 145059.0,
+        "stddev": 0.0,
+        "min": 145059,
+        "max": 145059
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.6667,
+        "stddev": 0.0,
+        "min": 0.6667,
+        "max": 0.6667
+      },
+      "time_seconds": {
+        "mean": 116.434,
+        "stddev": 0.0,
+        "min": 116.434,
+        "max": 116.434
+      },
+      "tokens": {
+        "mean": 126167.0,
+        "stddev": 0.0,
+        "min": 126167,
+        "max": 126167
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.33",
+      "time_seconds": "+520.2",
+      "tokens": "+18892"
+    }
+  },
+  "notes": []
+}

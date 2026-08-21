@@ -1,0 +1,44 @@
+{
+  "skill_name": "doc-reviewer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请审核下面这份测试报告，重点看前后是否自相矛盾，以及项目经理和产品是否会理解错。不要替我编造正确数字。\n\n# 支付版本测试报告\n## 执行情况\n本轮共执行 80 条用例，其中通过 78 条、失败 1 条、阻塞 2 条，通过率为 97.5%。\n\n## 缺陷情况\n当前仍有 1 个阻断缺陷未关闭，支付回调在弱网环境下可能重复扣款。\n\n## 测试结论\n本轮所有测试均已通过，版本不存在发布风险，建议立即全量发布。",
+      "expected_output": "四角色独立审核结果。测试经理指出用例合计为 81 而非 80，并指出‘所有测试均已通过/不存在发布风险’与失败、阻塞及未关闭阻断缺陷冲突。非测试角色分别复述结论、风险和下一步，汇总比较理解偏差。输出精确原文、位置、影响和建议文本，不编造新的正确统计值。",
+      "files": [],
+      "expectations": [
+        "Identifies that 78 passed + 1 failed + 2 blocked equals 81, conflicting with the stated total of 80",
+        "Identifies the contradiction between all tests passed/no release risk and the failed, blocked, and open blocker statements",
+        "Preserves independent project-manager, product/business, and non-testing-reader restatements before synthesis",
+        "Classifies uncertain corrective values as requiring author confirmation instead of inventing a number",
+        "Every material finding quotes the source passage and includes an actionable recommendation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我从测试经理和其他岗位角度审核这份测试计划是否严谨、通俗易懂。\n\n# 国际化改造测试计划\n## 测试范围\n覆盖所有终端和全部语言场景。\n\n## 执行安排\n仅在 Android 14 的 A 型终端上执行中文和英文验证，其他场景根据时间灵活处理。\n\n## 完成标准\nP0/P1 都处理完就可以发版。\n\n## 风险\n暂无。",
+      "expected_output": "识别‘所有终端和全部语言’与实际仅覆盖单一终端、两个语言之间的范围矛盾；指出‘根据时间灵活处理’、‘处理完’和‘暂无风险’表达含糊；非测试角色先复述他们理解的覆盖范围、风险和发布条件，并暴露 P0/P1 未解释导致的理解偏差。",
+      "files": [],
+      "expectations": [
+        "Identifies the conflict between all devices/all languages and execution limited to one device with Chinese and English",
+        "Flags the phrases other scenarios handled flexibly and P0/P1 handled as ambiguous rather than precise criteria",
+        "Explains that P0/P1 should be retained but defined for non-testing readers",
+        "Shows cross-role restatements of scope, risk, and release criteria before listing readability findings",
+        "Does not enforce an unrelated fixed test-plan template"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "审核下面这段缺陷复盘并给修改建议。如果有无法确定的地方先问我，不要直接替换。\n\n# 登录故障复盘\n发布后共收到 3 个登录相关问题。\n经排查，本次故障由缓存失效导致，当前还有 2 个问题未关闭。\n后文统计表显示：重复提交 2 个、缓存异常 2 个。\n所有遗留问题均已解决，后续由客户端团队继续跟进。",
+      "expected_output": "识别 3 个问题与统计表合计 4 个之间可能存在范围或去重口径不明，不能直接判定正确数字；识别‘还有 2 个未关闭’与‘所有遗留问题均已解决’矛盾；识别‘均已解决’与‘继续跟进’可能造成不同角色对状态和责任的不同理解；先提出作者确认问题，再决定最终修改稿。",
+      "files": [],
+      "expectations": [
+        "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+        "Identifies the contradiction between two issues still open and all residual issues resolved",
+        "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+        "Pauses final factual revision until the author clarifies issue-count scope and current status",
+        "Provides safe suggested wording or placeholders without silently choosing a count"
+      ]
+    }
+  ]
+}

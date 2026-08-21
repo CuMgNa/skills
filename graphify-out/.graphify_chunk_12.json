@@ -1,0 +1,274 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_device_management_messaging_interface",
+      "label": "Device Management Messaging Interface",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_device_group_tree",
+      "label": "Device Group Tree",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_scheduling_group_conversation_list",
+      "label": "Scheduling Group Conversation List",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "label": "Conversation Room",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_terminal_5010",
+      "label": "Terminal 5010",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_conversation_list_timestamp",
+      "label": "Conversation List Timestamp 10:59",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room_timestamp",
+      "label": "Conversation Room Timestamp 2026-08-05 10:59:06",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_timestamp_format_inconsistency",
+      "label": "Conversation Timestamp Format Inconsistency",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_emergency_assistance_message",
+      "label": "Emergency Assistance Message",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_geographic_coordinates",
+      "label": "Emergency Geographic Coordinates",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_10_59_55_message_delivery_status",
+      "label": "Message Delivery Status",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_device_management_messaging_interface",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_device_group_tree",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_device_management_messaging_interface",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_scheduling_group_conversation_list",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_device_management_messaging_interface",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_scheduling_group_conversation_list",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_terminal_5010",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_terminal_5010",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_scheduling_group_conversation_list",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_list_timestamp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room_timestamp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_timestamp_format_inconsistency",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_list_timestamp",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_timestamp_format_inconsistency",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room_timestamp",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_conversation_list_timestamp",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room_timestamp",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_emergency_assistance_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_emergency_assistance_message",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_geographic_coordinates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+      "target": "assets_img_snipaste_2026_08_05_10_59_55_message_delivery_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "conversation_timestamp_consistency_defect",
+      "label": "Conversation Timestamp Consistency Defect",
+      "nodes": [
+        "assets_img_snipaste_2026_08_05_10_59_55_scheduling_group_conversation_list",
+        "assets_img_snipaste_2026_08_05_10_59_55_conversation_room",
+        "assets_img_snipaste_2026_08_05_10_59_55_timestamp_format_inconsistency"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_10-59-55.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

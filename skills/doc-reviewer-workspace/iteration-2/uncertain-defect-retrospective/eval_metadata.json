@@ -1,0 +1,13 @@
+{
+  "eval_id": 3,
+  "eval_name": "uncertain-defect-retrospective-clean",
+  "prompt": "审核一段存在统计口径和状态歧义的缺陷复盘；不同岗位先独立复述理解，不能替作者选择数字或状态。",
+  "assertions": [
+    "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+    "Identifies the contradiction between two issues still open and all residual issues resolved",
+    "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+    "Pauses final factual revision until the author clarifies issue-count scope and current status",
+    "Provides safe suggested wording or placeholders without silently choosing a count",
+    "Avoids repeating the same root issue across multiple long sections"
+  ]
+}

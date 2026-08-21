@@ -1,0 +1,203 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_intercom_console_interface",
+      "label": "Intercom Console Interface",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_english_localization_mode",
+      "label": "English Localization Mode",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+      "label": "Create Intercom Group Modal",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_group_name_field",
+      "label": "Intercom Group Name Field",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_group_name_character_limit",
+      "label": "Group Name Maximum 15 Characters",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_confirm_action",
+      "label": "Create Group Confirm Action",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "label": "Create Intercom Group Modal Elements Not Translated into English",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_intercom_console_interface",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_english_localization_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_intercom_console_interface",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_group_name_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_group_name_field",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_group_name_character_limit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_confirm_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_english_localization_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_group_name_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_group_name_character_limit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect",
+      "target": "assets_img_snipaste_2026_08_05_13_42_46_confirm_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_13_42_46_english_localization_defect_group",
+      "label": "Untranslated Create Intercom Group Modal Elements",
+      "nodes": [
+        "assets_img_snipaste_2026_08_05_13_42_46_english_localization_mode",
+        "assets_img_snipaste_2026_08_05_13_42_46_create_intercom_group_modal",
+        "assets_img_snipaste_2026_08_05_13_42_46_group_name_field",
+        "assets_img_snipaste_2026_08_05_13_42_46_group_name_character_limit",
+        "assets_img_snipaste_2026_08_05_13_42_46_confirm_action",
+        "assets_img_snipaste_2026_08_05_13_42_46_untranslated_modal_elements_defect"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_13-42-46.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,160 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_dispatch_console_interface",
+      "label": "Dispatch Console Interface",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "full screenshot",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_english_language_selection",
+      "label": "English Language Selection",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "top-right language selector",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_group_chat_conversation_panel",
+      "label": "Group Chat Conversation Panel",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "center modal panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_bottom_operation_toolbar",
+      "label": "Bottom Operation Toolbar",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "bottom of group chat panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_add_member_control",
+      "label": "Add Member Control",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "highlighted person-plus icon in bottom operation toolbar",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_chinese_add_member_tooltip",
+      "label": "Chinese Add Member Tooltip",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "tooltip above highlighted add-member icon",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_55_18_english_localization_defect",
+      "label": "English Localization Defect",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "red Chinese annotation and highlighted tooltip",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_dispatch_console_interface",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_group_chat_conversation_panel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "center modal within dispatch console",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_group_chat_conversation_panel",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_bottom_operation_toolbar",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "bottom edge of group chat panel",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_bottom_operation_toolbar",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_add_member_control",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "highlighted person-plus icon in toolbar",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_add_member_control",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_chinese_add_member_tooltip",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "tooltip displayed above add-member control",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_english_language_selection",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_english_localization_defect",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "English selected while highlighted tooltip remains Chinese",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_55_18_chinese_add_member_tooltip",
+      "target": "assets_img_snipaste_2026_08_04_16_55_18_english_localization_defect",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png",
+      "source_location": "red annotation identifies untranslated hover text",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "english_localization_defect_evidence",
+      "label": "English Localization Defect Evidence",
+      "nodes": [
+        "assets_img_snipaste_2026_08_04_16_55_18_english_language_selection",
+        "assets_img_snipaste_2026_08_04_16_55_18_chinese_add_member_tooltip",
+        "assets_img_snipaste_2026_08_04_16_55_18_english_localization_defect"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-55-18.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

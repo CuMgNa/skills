@@ -1,0 +1,135 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_sos_dispatch_console",
+      "label": "SOS Dispatch Console",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "center dispatch conversation panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_sos_rescue_session_2026062601_0011",
+      "label": "SOS Rescue Session 2026062601-0011",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "dispatch tab and active conversation",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_device_remark_group_search",
+      "label": "Device Remark Group Search",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "upper-left of dispatch conversation panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_quick_phrase_selector",
+      "label": "Quick Phrase Selector",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "bottom-right of dispatch conversation panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_control_text_partial_occlusion_defect",
+      "label": "搜索框与选择框文本部分遮挡缺陷",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "red annotation and arrows across the dispatch panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_36_13_map_based_emergency_monitoring",
+      "label": "Map-Based Emergency Monitoring",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "full-screen satellite map background with device and SOS panels",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_sos_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_sos_rescue_session_2026062601_0011",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "active Dispatch tab labeled SOS-2026062601-0011",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_sos_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_device_remark_group_search",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "search control inside dispatch panel",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_sos_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_quick_phrase_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "Quick Phrase dropdown inside dispatch panel",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_control_text_partial_occlusion_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_device_remark_group_search",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "red defect annotation arrow pointing to search field",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_control_text_partial_occlusion_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_quick_phrase_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "red defect annotation arrow pointing to Quick Phrase selector",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_36_13_sos_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_05_11_36_13_map_based_emergency_monitoring",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-36-13.png",
+      "source_location": "dispatch console overlays a satellite map and device monitoring interface",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

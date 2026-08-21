@@ -1,0 +1,135 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_intercom_group_chat_console",
+      "label": "Intercom Group Chat Console",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_english_localization_mode",
+      "label": "English Localization Mode",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_package_overview_modal",
+      "label": "Package Overview Modal",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_device_package_quota_summary",
+      "label": "Device Package Quota Summary",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_batch_package_purchase_action",
+      "label": "Batch Package Purchase Action",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_53_25_untranslated_package_overview_defect",
+      "label": "Untranslated Package Overview Defect",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_intercom_group_chat_console",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_english_localization_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_intercom_group_chat_console",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_package_overview_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_package_overview_modal",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_device_package_quota_summary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_package_overview_modal",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_batch_package_purchase_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_untranslated_package_overview_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_package_overview_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_53_25_untranslated_package_overview_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_53_25_english_localization_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-53-25.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,278 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_subscribe_device_selection_dialog",
+      "label": "Subscribe Device Selection Dialog",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "center modal",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "label": "Subscription Purchase Workflow",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "modal progress indicator",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "label": "Select Devices Step",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_order_details_step",
+      "label": "Order Details Step",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_pay_order_step",
+      "label": "Pay Order Step",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_complete_payment_step",
+      "label": "Complete Payment Step",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 4",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_device_group_tree",
+      "label": "Device Group Tree",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "left pane of modal",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_device_search_controls",
+      "label": "Device Search Controls",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "search fields above device panes",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_selected_devices_table",
+      "label": "Selected Devices Table",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "right pane of modal",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_cancel_select_all_button",
+      "label": "Cancel Select All Button",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "left toolbar of modal",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_button_text_overflow_defect",
+      "label": "Button Text Overflow Defect",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "red annotation pointing to Cancel Select All button",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_complete_selection_action",
+      "label": "Complete Selection Action",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "Complete (0) button at bottom of modal",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_subscribe_device_selection_dialog",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "modal header and progress indicator",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 1",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_order_details_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 2",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_pay_order_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 3",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_subscription_purchase_workflow",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_complete_payment_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "progress step 4",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_device_group_tree",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "active Select Devices pane",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_device_search_controls",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "active Select Devices pane",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_selected_devices_table",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "active Select Devices pane",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_cancel_select_all_button",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "left toolbar of active step",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_button_text_overflow_defect",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_cancel_select_all_button",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "red annotation and arrow",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_complete_selection_action",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "bottom action button of active step",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_05_11_37_47_device_group_tree",
+      "target": "assets_img_snipaste_2026_08_05_11_37_47_selected_devices_table",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png",
+      "source_location": "two-pane device selection layout",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "assets_img_snipaste_2026_08_05_11_37_47_device_selection_interface",
+      "label": "Device Selection Interface",
+      "nodes": [
+        "assets_img_snipaste_2026_08_05_11_37_47_select_devices_step",
+        "assets_img_snipaste_2026_08_05_11_37_47_device_group_tree",
+        "assets_img_snipaste_2026_08_05_11_37_47_device_search_controls",
+        "assets_img_snipaste_2026_08_05_11_37_47_selected_devices_table",
+        "assets_img_snipaste_2026_08_05_11_37_47_cancel_select_all_button",
+        "assets_img_snipaste_2026_08_05_11_37_47_complete_selection_action"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-05_11-37-47.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

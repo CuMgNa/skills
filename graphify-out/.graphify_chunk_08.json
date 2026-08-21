@@ -1,0 +1,211 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_dispatch_console",
+      "label": "Dispatch Console",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "full screenshot",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_english_language_mode",
+      "label": "English Language Mode",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "top-right language selector",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_intercom_group_chat_panel",
+      "label": "Intercom Group Chat Panel",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "center dispatch dialog",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chat_tab",
+      "label": "Untranslated Chat Tab",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "center dialog tab labeled 对讲群聊",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_status_labels",
+      "label": "Untranslated Status Labels",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "conversation list labels 已结束 and 已退出",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_action_buttons",
+      "label": "Untranslated Action Buttons",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "bottom-left buttons 全部已读 and 创建对讲群",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chinese_ui_text",
+      "label": "Untranslated Chinese UI Text",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "annotated red callouts across chat panel",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_internationalization_inconsistency",
+      "label": "Internationalization Inconsistency",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "red annotation describing untranslated Chinese after switching to English",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_english_language_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "top-right language selector displays English",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_dispatch_console",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_intercom_group_chat_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "center dispatch dialog",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_intercom_group_chat_panel",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chat_tab",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "tab labeled 对讲群聊",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_intercom_group_chat_panel",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_status_labels",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "conversation statuses 已结束 and 已退出",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_intercom_group_chat_panel",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_action_buttons",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "buttons 全部已读 and 创建对讲群",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chat_tab",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chinese_ui_text",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "red callout to 对讲群聊",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_status_labels",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chinese_ui_text",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "red callout to 已结束 and 已退出",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_action_buttons",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chinese_ui_text",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "red callout to 全部已读 and 创建对讲群",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_english_language_mode",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_internationalization_inconsistency",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "English selector and red defect annotation",
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chinese_ui_text",
+      "target": "assets_img_snipaste_2026_08_04_16_52_20_internationalization_inconsistency",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png",
+      "source_location": "red annotation states Chinese text remains untranslated after language switch",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chat_elements",
+      "label": "Untranslated Chat Elements",
+      "nodes": [
+        "assets_img_snipaste_2026_08_04_16_52_20_untranslated_chat_tab",
+        "assets_img_snipaste_2026_08_04_16_52_20_untranslated_status_labels",
+        "assets_img_snipaste_2026_08_04_16_52_20_untranslated_action_buttons"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_16-52-20.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

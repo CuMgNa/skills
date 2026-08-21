@@ -1,0 +1,343 @@
+{
+  "nodes": [
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_terminal_message_console",
+      "label": "Terminal Message Console",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_terminal_group_list",
+      "label": "Terminal and Group List",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_conversation_list",
+      "label": "Terminal Conversation List",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_selected_terminal_conversation",
+      "label": "Selected Terminal Conversation: 去吧皮卡丘！",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+      "label": "Conversation Timeline",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+      "label": "Five-Second Voice Message",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_terminal_read_receipt",
+      "label": "Terminal Read Receipt",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_voice_delivery_failure",
+      "label": "Voice Delivery Failure",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_insufficient_voice_balance_and_star_beans",
+      "label": "Insufficient Voice Balance and Star Beans",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_voice_balance_counter",
+      "label": "Short Voice Balance Counter",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_recharge_action",
+      "label": "Recharge Action",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_message_display_overflow_defect",
+      "label": "Message Display Overflow Defect",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_message_composer",
+      "label": "Voice and Text Message Composer",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_map_based_monitoring_workspace",
+      "label": "Map-Based Monitoring Workspace",
+      "file_type": "image",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_terminal_message_console",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_terminal_group_list",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_terminal_message_console",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_conversation_list",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_terminal_message_console",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_map_based_monitoring_workspace",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_conversation_list",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_selected_terminal_conversation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_selected_terminal_conversation",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_terminal_read_receipt",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_terminal_read_receipt",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_voice_delivery_failure",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_voice_delivery_failure",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_insufficient_voice_balance_and_star_beans",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_voice_balance_counter",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_insufficient_voice_balance_and_star_beans",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_insufficient_voice_balance_and_star_beans",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_recharge_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_message_display_overflow_defect",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_voice_delivery_failure",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_message_display_overflow_defect",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "assets_img_snipaste_2026_08_04_17_41_23_message_composer",
+      "target": "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_voice_message_failure_flow",
+      "label": "Voice Message Failure and Recharge Flow",
+      "nodes": [
+        "assets_img_snipaste_2026_08_04_17_41_23_voice_message",
+        "assets_img_snipaste_2026_08_04_17_41_23_voice_delivery_failure",
+        "assets_img_snipaste_2026_08_04_17_41_23_insufficient_voice_balance_and_star_beans",
+        "assets_img_snipaste_2026_08_04_17_41_23_recharge_action"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png"
+    },
+    {
+      "id": "assets_img_snipaste_2026_08_04_17_41_23_terminal_messaging_workspace",
+      "label": "Terminal Messaging Workspace",
+      "nodes": [
+        "assets_img_snipaste_2026_08_04_17_41_23_terminal_group_list",
+        "assets_img_snipaste_2026_08_04_17_41_23_conversation_list",
+        "assets_img_snipaste_2026_08_04_17_41_23_selected_terminal_conversation",
+        "assets_img_snipaste_2026_08_04_17_41_23_conversation_timeline",
+        "assets_img_snipaste_2026_08_04_17_41_23_message_composer"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\assets\\img\\Snipaste_2026-08-04_17-41-23.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

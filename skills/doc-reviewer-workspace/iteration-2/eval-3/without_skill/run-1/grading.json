@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Treats the 3 versus 4 issue count as author confirmation because duplicate or overlapping scope is possible",
+      "passed": true,
+      "evidence": "The baseline asks whether the categories overlap and says not to form a final rewrite before confirming the counting scope."
+    },
+    {
+      "text": "Identifies the contradiction between two issues still open and all residual issues resolved",
+      "passed": true,
+      "evidence": "The opening judgment and confirmation questions explicitly identify the conflict between two open issues and all residual issues resolved."
+    },
+    {
+      "text": "Compares how project, product, and non-testing readers may interpret resolved versus continue to follow up",
+      "passed": false,
+      "evidence": "The baseline mentions possible role interpretations inside a problem table, but it does not independently restate and compare project-manager, product/business, and non-testing-reader understandings of resolved versus follow-up status."
+    },
+    {
+      "text": "Pauses final factual revision until the author clarifies issue-count scope and current status",
+      "passed": true,
+      "evidence": "The baseline explicitly withholds a final factual rewrite until the author confirms the total, category relation, and state."
+    },
+    {
+      "text": "Provides safe suggested wording or placeholders without silently choosing a count",
+      "passed": false,
+      "evidence": "The baseline provides recommendations and an organization order but no safe replacement wording or placeholder-based revision that the author could use after clarification."
+    },
+    {
+      "text": "Avoids repeating the same root issue across multiple long sections",
+      "passed": true,
+      "evidence": "The 39-line baseline is concise and keeps each root issue primarily in one table row, with confirmation questions separated."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 2,
+    "total": 6,
+    "pass_rate": 0.6667
+  }
+}

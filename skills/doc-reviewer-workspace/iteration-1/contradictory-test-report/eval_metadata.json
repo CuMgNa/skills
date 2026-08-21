@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "contradictory-test-report",
+  "prompt": "Review eval 1 from the doc-reviewer eval set.",
+  "assertions": [
+    "Identifies that 78 passed + 1 failed + 2 blocked equals 81, conflicting with the stated total of 80",
+    "Identifies the contradiction between all tests passed/no release risk and the failed, blocked, and open blocker statements",
+    "Preserves independent project-manager, product/business, and non-testing-reader restatements before synthesis",
+    "Classifies uncertain corrective values as requiring author confirmation instead of inventing a number",
+    "Every material finding quotes the source passage and includes an actionable recommendation"
+  ]
+}

@@ -1,0 +1,1116 @@
+{
+  "nodes": [
+    {
+      "id": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "label": "星联应急叫应平台二期 PRD v2.1",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 1-1130",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_intercom_group_lifecycle",
+      "label": "对讲群全生命周期",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 223-761",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_starbean_system",
+      "label": "星豆虚拟货币体系",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 762-824",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_device_binding_and_operations",
+      "label": "设备绑定与运营管理",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 825-1043",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_87d5667c_6d3a_83c0_955f_01b64a8c844a_emergency_rescue_platform_index",
+      "label": "应急救援平台索引",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\87d5667c-6d3a-83c0-955f-01b64a8c844a.md",
+      "source_location": "lines 1-8",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "label": "上行计费逻辑",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 1-281",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_dual_resource_pools",
+      "label": "短音与报位独立资源池",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 41-73",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "短音和报位各自按对应套餐子池耗尽后再落星豆，禁止跨池借用，以避免一种资源余额掩盖另一种资源不足。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_binding_snapshot_billing",
+      "label": "绑定快照计费",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 184-242",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "单条上报按结算时刻的设备归属快照确定星豆主体与欠费或封禁后果，已结算上报不因后续归属变化而回溯改判。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a1f5667c_6d3a_83b7_ac9f_81a1b4e6fce7_ui_index",
+      "label": "救援平台 UI 索引",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7.md",
+      "source_location": "lines 1-10",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a2b5667c_6d3a_82b7_938a_81324c9d05c6_protocol_index",
+      "label": "通信协议索引",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a2b5667c-6d3a-82b7-938a-81324c9d05c6.md",
+      "source_location": "lines 1-7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "label": "星豆账户逻辑",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 1-626",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_identity_isolated_assets",
+      "label": "身份隔离的星豆资产",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 86-156",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_recharge_state_machine",
+      "label": "星豆充值状态机",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 158-277",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_ledger",
+      "label": "星豆流水与对账",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 280-409",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "label": "下行计费逻辑",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 1-560",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_delivery_state_machine",
+      "label": "下行投递状态机",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 226-276",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_origin_route_refund",
+      "label": "原路退费与副本幂等",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 384-519",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "每个接收终端副本独立扣费和退费，失败或等待态取消时锁定原扣费来源原路退回，同一副本只退一次。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_sos_group_management",
+      "label": "SOS 群管理方案",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
+      "source_location": "lines 1-138",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_phone_member_addition",
+      "label": "手机号添加 SOS 群成员",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
+      "source_location": "lines 52-112",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_rescue_completion_readonly",
+      "label": "救援完成只读态",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
+      "source_location": "lines 113-138",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_afc5667c_6d3a_82f5_b597_81cafc86f207_billing_change_v1_2",
+      "label": "套餐计费规则变更 v1.2",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\afc5667c-6d3a-82f5-b597-81cafc86f207.md",
+      "source_location": "lines 1-228",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_tcp_protocol_v1_3",
+      "label": "卫星应急救援终端 TCP 协议 V1.3",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\b7c5667c-6d3a-82fe-a474-81698e4422ab.md",
+      "source_location": "lines 1-310",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_terminal_message_types",
+      "label": "终端登录上报与下发消息类型",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\b7c5667c-6d3a-82fe-a474-81698e4422ab.md",
+      "source_location": "lines 53-310",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c275667c_6d3a_8321_af26_016edd020891_s1_product_spec_v1_5",
+      "label": "星联卫士 S1 产品规格 v1.5",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c275667c-6d3a-8321-af26-016edd020891.md",
+      "source_location": "lines 1-390",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_phase2_test_plan",
+      "label": "二期测试计划",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c395667c-6d3a-8288-8c55-81aac6a686b7.md",
+      "source_location": "lines 1-704",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_risk_based_test_strategy",
+      "label": "风险驱动测试策略",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c395667c-6d3a-8288-8c55-81aac6a686b7.md",
+      "source_location": "lines 106-165",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "测试按 P0 核心链路、计费账本、权限矩阵、并发换群与多端一致性分层，以高风险副作用和状态闭环优先。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c3c5667c_6d3a_82d4_82ec_814ba4460a5b_requirements_index",
+      "label": "需求文档索引",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
+      "source_location": "lines 1-11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "label": "对讲群聊天主页面",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 1-346",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_four_layer_package_display",
+      "label": "四层套餐余量展示",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 36-126",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "负值只允许出现在群顶部和设备聚合层，单套餐实例卡最低为零，以同时表达企业设备欠费总账和单实例不倒扣的展示约束。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_terminal_ack_statistics",
+      "label": "终端 ACK 接收统计",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 183-232",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_c815667c_6d3a_82a9_b868_013db98652e8_sos_chat_list_rules",
+      "label": "SOS 群聊列表规则",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c815667c-6d3a-82a9-b868-013db98652e8.md",
+      "source_location": "lines 1-77",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_common_protocol_v2_0_12",
+      "label": "天地卫通通用协议 v2.0.12",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\cc05667c-6d3a-8331-9995-81fc50f9055c.md",
+      "source_location": "lines 1-3867",
+      "source_url": null,
+      "captured_at": null,
+      "author": "PG",
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_protocol_type_registry",
+      "label": "协议消息类型注册表",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\cc05667c-6d3a-8331-9995-81fc50f9055c.md",
+      "source_location": "lines 83-527",
+      "source_url": null,
+      "captured_at": null,
+      "author": "PG",
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_sensor_and_multimedia_protocols",
+      "label": "传感器与多媒体传输协议",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\cc05667c-6d3a-8331-9995-81fc50f9055c.md",
+      "source_location": "lines 1766-3285",
+      "source_url": null,
+      "captured_at": null,
+      "author": "PG",
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_ceb5667c_6d3a_83d2_af71_8138d7b0c00a_member_location_ui",
+      "label": "成员位置 UI 原型",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\ceb5667c-6d3a-83d2-af71-8138d7b0c00a.md",
+      "source_location": "lines 1-7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "label": "对讲群成员邀请逻辑",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d345667c-6d3a-8275-b77e-01df63808736.md",
+      "source_location": "lines 1-567",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_invitation_fee_snapshot",
+      "label": "邀请费用快照",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d345667c-6d3a-8275-b77e-01df63808736.md",
+      "source_location": "lines 436-551",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "邀请发起时固化扣费金额、扣费账号、退还开关和过期时长，后续失效按快照原额回放，避免后台配置变化改写在途邀请。"
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_handling",
+      "label": "邀请处理逻辑",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d6d5667c-6d3a-8271-a791-01876788a072.md",
+      "source_location": "lines 1-288",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_state_machine",
+      "label": "邀请状态机",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d6d5667c-6d3a-8271-a791-01876788a072.md",
+      "source_location": "lines 18-103",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_message_sending_limits",
+      "label": "消息发送限制",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\df55667c-6d3a-8300-8ffa-81aacbc85f26.md",
+      "source_location": "lines 1-163",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_device_queue_state_machine",
+      "label": "设备级消息队列状态机",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\df55667c-6d3a-8300-8ffa-81aacbc85f26.md",
+      "source_location": "lines 106-158",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e285667c_6d3a_8375_90be_01c3ce90b0ff_miniprogram_test_strategy",
+      "label": "小程序整体测试策略",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e285667c-6d3a-8375-90be-01c3ce90b0ff.md",
+      "source_location": "lines 1-1013",
+      "source_url": null,
+      "captured_at": null,
+      "author": "QA",
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_admin_and_monitor_test_plan",
+      "label": "管理后台与监控平台测试计划",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 1-585",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_device_activation_state_machine",
+      "label": "设备激活状态机",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 214-266",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_debt_bill_management",
+      "label": "企业欠费账单管理",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 267-299",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_unbinding_risk_control",
+      "label": "设备解绑风险控制",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 333-365",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_e815667c_6d3a_83a2_a66c_81dd61809c34_chat_message_ui_prototypes",
+      "label": "聊天消息 UI 原型集",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e815667c-6d3a-83a2-a66c-81dd61809c34.md",
+      "source_location": "lines 1-19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "services_rescue_graph_sources_pages_f185667c_6d3a_82e1_9124_81d6142ca035_s1_product_spec_v1_4",
+      "label": "星联卫士 S1 产品规格 v1.4",
+      "file_type": "document",
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\f185667c-6d3a-82e1-9124-81d6142ca035.md",
+      "source_location": "lines 1-331",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_intercom_group_lifecycle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 223-761",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_starbean_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 762-824",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_device_binding_and_operations",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md",
+      "source_location": "lines 825-1043",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_dual_resource_pools",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 41-73",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_binding_snapshot_billing",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 184-242",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a1f5667c_6d3a_83b7_ac9f_81a1b4e6fce7_ui_index",
+      "target": "services_rescue_graph_sources_pages_ceb5667c_6d3a_83d2_af71_8138d7b0c00a_member_location_ui",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7.md",
+      "source_location": "line 6",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a1f5667c_6d3a_83b7_ac9f_81a1b4e6fce7_ui_index",
+      "target": "services_rescue_graph_sources_pages_e815667c_6d3a_83a2_a66c_81dd61809c34_chat_message_ui_prototypes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a1f5667c-6d3a-83b7-ac9f-81a1b4e6fce7.md",
+      "source_location": "line 7",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a2b5667c_6d3a_82b7_938a_81324c9d05c6_protocol_index",
+      "target": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_tcp_protocol_v1_3",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a2b5667c-6d3a-82b7-938a-81324c9d05c6.md",
+      "source_location": "line 5",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a2b5667c_6d3a_82b7_938a_81324c9d05c6_protocol_index",
+      "target": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_common_protocol_v2_0_12",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a2b5667c-6d3a-82b7-938a-81324c9d05c6.md",
+      "source_location": "line 6",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_identity_isolated_assets",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 86-156",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_recharge_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 158-277",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_ledger",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 280-409",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 18-31",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 22-23",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_account_logic",
+      "target": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 38-39",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_delivery_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 226-276",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_origin_route_refund",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 384-519",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-8298-b2e6-0187ca27e5a8.md",
+      "source_location": "lines 294-299",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_sos_group_management",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_phone_member_addition",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
+      "source_location": "lines 52-112",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_sos_group_management",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_rescue_completion_readonly",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a8b5667c-6d3a-82aa-9f9d-01cbb8a25317.md",
+      "source_location": "lines 113-138",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_afc5667c_6d3a_82f5_b597_81cafc86f207_billing_change_v1_2",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\afc5667c-6d3a-82f5-b597-81cafc86f207.md",
+      "source_location": "lines 71-77",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_afc5667c_6d3a_82f5_b597_81cafc86f207_billing_change_v1_2",
+      "target": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\afc5667c-6d3a-82f5-b597-81cafc86f207.md",
+      "source_location": "lines 71-128",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_tcp_protocol_v1_3",
+      "target": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_terminal_message_types",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\b7c5667c-6d3a-82fe-a474-81698e4422ab.md",
+      "source_location": "lines 53-310",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_tcp_protocol_v1_3",
+      "target": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_common_protocol_v2_0_12",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\b7c5667c-6d3a-82fe-a474-81698e4422ab.md",
+      "source_location": "lines 6-310",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_phase2_test_plan",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c395667c-6d3a-8288-8c55-81aac6a686b7.md",
+      "source_location": "lines 23-24",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_phase2_test_plan",
+      "target": "services_rescue_graph_sources_pages_afc5667c_6d3a_82f5_b597_81cafc86f207_billing_change_v1_2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c395667c-6d3a-8288-8c55-81aac6a686b7.md",
+      "source_location": "lines 23-24",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_phase2_test_plan",
+      "target": "services_rescue_graph_sources_pages_c395667c_6d3a_8288_8c55_81aac6a686b7_risk_based_test_strategy",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c395667c-6d3a-8288-8c55-81aac6a686b7.md",
+      "source_location": "lines 106-165",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c3c5667c_6d3a_82d4_82ec_814ba4460a5b_requirements_index",
+      "target": "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
+      "source_location": "line 5",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c3c5667c_6d3a_82d4_82ec_814ba4460a5b_requirements_index",
+      "target": "services_rescue_graph_sources_pages_afc5667c_6d3a_82f5_b597_81cafc86f207_billing_change_v1_2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
+      "source_location": "line 6",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c3c5667c_6d3a_82d4_82ec_814ba4460a5b_requirements_index",
+      "target": "services_rescue_graph_sources_pages_c275667c_6d3a_8321_af26_016edd020891_s1_product_spec_v1_5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
+      "source_location": "line 11",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c3c5667c_6d3a_82d4_82ec_814ba4460a5b_requirements_index",
+      "target": "services_rescue_graph_sources_pages_f185667c_6d3a_82e1_9124_81d6142ca035_s1_product_spec_v1_4",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c3c5667c-6d3a-82d4-82ec-814ba4460a5b.md",
+      "source_location": "line 10",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "target": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_four_layer_package_display",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 36-126",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "target": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_terminal_ack_statistics",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 183-232",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 185-226",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "target": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 249-250",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_common_protocol_v2_0_12",
+      "target": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_protocol_type_registry",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\cc05667c-6d3a-8331-9995-81fc50f9055c.md",
+      "source_location": "lines 83-527",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_common_protocol_v2_0_12",
+      "target": "services_rescue_graph_sources_pages_cc05667c_6d3a_8331_9995_81fc50f9055c_sensor_and_multimedia_protocols",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\cc05667c-6d3a-8331-9995-81fc50f9055c.md",
+      "source_location": "lines 1766-3285",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "target": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_invitation_fee_snapshot",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d345667c-6d3a-8275-b77e-01df63808736.md",
+      "source_location": "lines 436-551",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "target": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_handling",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d345667c-6d3a-8275-b77e-01df63808736.md",
+      "source_location": "lines 302-434",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_handling",
+      "target": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d6d5667c-6d3a-8271-a791-01876788a072.md",
+      "source_location": "lines 18-103",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_handling",
+      "target": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d6d5667c-6d3a-8271-a791-01876788a072.md",
+      "source_location": "lines 5-8",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_message_sending_limits",
+      "target": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_device_queue_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\df55667c-6d3a-8300-8ffa-81aacbc85f26.md",
+      "source_location": "lines 106-158",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_device_queue_state_machine",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_delivery_state_machine",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\df55667c-6d3a-8300-8ffa-81aacbc85f26.md",
+      "source_location": "lines 106-158",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e285667c_6d3a_8375_90be_01c3ce90b0ff_miniprogram_test_strategy",
+      "target": "services_rescue_graph_sources_pages_df55667c_6d3a_8300_8ffa_81aacbc85f26_message_sending_limits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e285667c-6d3a-8375-90be-01c3ce90b0ff.md",
+      "source_location": "lines 46-52",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e285667c_6d3a_8375_90be_01c3ce90b0ff_miniprogram_test_strategy",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_82aa_9f9d_01cbb8a25317_sos_group_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e285667c-6d3a-8375-90be-01c3ce90b0ff.md",
+      "source_location": "lines 53-55",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e285667c_6d3a_8375_90be_01c3ce90b0ff_miniprogram_test_strategy",
+      "target": "services_rescue_graph_sources_pages_c815667c_6d3a_82a9_b868_013db98652e8_sos_chat_list_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e285667c-6d3a-8375-90be-01c3ce90b0ff.md",
+      "source_location": "lines 56-59",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_admin_and_monitor_test_plan",
+      "target": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_device_activation_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 214-266",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_admin_and_monitor_test_plan",
+      "target": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_debt_bill_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 267-299",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_admin_and_monitor_test_plan",
+      "target": "services_rescue_graph_sources_pages_e495667c_6d3a_8362_8b9b_811e4cb605a8_unbinding_risk_control",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\e495667c-6d3a-8362-8b9b-811e4cb605a8.md",
+      "source_location": "lines 333-365",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c275667c_6d3a_8321_af26_016edd020891_s1_product_spec_v1_5",
+      "target": "services_rescue_graph_sources_pages_f185667c_6d3a_82e1_9124_81d6142ca035_s1_product_spec_v1_4",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c275667c-6d3a-8321-af26-016edd020891.md",
+      "source_location": "lines 18-390",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page",
+      "target": "services_rescue_graph_sources_pages_e815667c_6d3a_83a2_a66c_81dd61809c34_chat_message_ui_prototypes",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\c555667c-6d3a-83d0-a00d-81403f5fd393.md",
+      "source_location": "lines 11-336",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+      "target": "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md",
+      "source_location": "lines 41-155",
+      "weight": 1.0
+    },
+    {
+      "source": "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_ledger",
+      "target": "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_invitation_fee_snapshot",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\a335667c-6d3a-83aa-8180-01943cc89aef.md",
+      "source_location": "lines 336-390",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "device_communication_billing_flow",
+      "label": "设备通信计费与退费链路",
+      "nodes": [
+        "services_rescue_graph_sources_pages_90a5667c_6d3a_834d_ab03_8144953f606d_uplink_billing_logic",
+        "services_rescue_graph_sources_pages_a8b5667c_6d3a_8298_b2e6_0187ca27e5a8_downlink_billing_logic",
+        "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_ledger",
+        "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_four_layer_package_display"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\90a5667c-6d3a-834d-ab03-8144953f606d.md"
+    },
+    {
+      "id": "intercom_invitation_transaction_flow",
+      "label": "对讲群邀请交易闭环",
+      "nodes": [
+        "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_group_member_invitation",
+        "services_rescue_graph_sources_pages_d6d5667c_6d3a_8271_a791_01876788a072_invitation_state_machine",
+        "services_rescue_graph_sources_pages_d345667c_6d3a_8275_b77e_01df63808736_invitation_fee_snapshot",
+        "services_rescue_graph_sources_pages_a335667c_6d3a_83aa_8180_01943cc89aef_starbean_ledger"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\d345667c-6d3a-8275-b77e-01df63808736.md"
+    },
+    {
+      "id": "rescue_platform_product_stack",
+      "label": "救援平台产品协议与终端栈",
+      "nodes": [
+        "services_rescue_graph_sources_pages_8375667c_6d3a_8341_8af2_8148964e9b01_prd_v2_1",
+        "services_rescue_graph_sources_pages_c275667c_6d3a_8321_af26_016edd020891_s1_product_spec_v1_5",
+        "services_rescue_graph_sources_pages_b7c5667c_6d3a_82fe_a474_81698e4422ab_tcp_protocol_v1_3",
+        "services_rescue_graph_sources_pages_c555667c_6d3a_83d0_a00d_81403f5fd393_intercom_chat_page"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:\\Users\\33606\\Desktop\\skills\\services\\rescue-graph\\sources\\pages\\8375667c-6d3a-8341-8af2-8148964e9b01.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
