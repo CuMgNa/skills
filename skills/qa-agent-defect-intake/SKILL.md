@@ -35,10 +35,13 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
         1. 用户本机原图路径，或
         2. CDP/浏览器全分辨率截图（`Page.captureScreenshot` / Playwright），再 `--attach`
       - 禁止把已严重压缩的聊天图当成「原图」而不提示
-   c. 构造并执行 `zentao-bug-create.mjs`：`--steps-file` + **每个截图 `--attach <绝对路径>`**
+   c. 将确认后的标题以 UTF-8 无 BOM 写入 `title-<timestamp>.txt`，构造并执行 `zentao-bug-create.mjs`：`--title-file` + `--steps-file` + **每个截图 `--attach <绝对路径>`**
    d. 禁止用 `--steps` 传含中文的长正文
    e. 禁止省略 `--attach`（本环境截图必须嵌入「实际结果」HTML，不走附件栏）
-5. 收集返回的 Bug ID 与链接。
+5. 收集返回的 Bug ID 与链接，并核对创单脚本的创建后回查结果：
+   - `created_and_validated`：标题回查通过，可继续后续流程
+   - `created_but_validation_failed`：Bug 已创建但标题回查失败，记录 Bug ID 与原因，禁止自动重复创建
+   - 同时核对禅道「实际结果」包含对应截图
 6. **若用户选择要录**（创单成功后）：
    a. 确保本机 Chrome 已登录业务页且开了远程调试（CDP）
    b. 执行：
@@ -78,6 +81,7 @@ description: QA缺陷录入Agent。仅用于截图提取缺陷并写入禅道；
 
 - 未录制：`pathRecorded: false`，可省略 `pathFile`
 - `projectKey`：与 `paths/` 目录名一致；用户未提供且未录制时可省略
+- 创建成功但标题回查失败：不要放入正常 `bugsCreated` 成功项；写入 `bugsFailed`，保留 `id`、`created: true` 和失败原因，后续禁止按失败项自动重建
 
 8. 向用户汇报：已创建 Bug 列表 + handoff 路径；若已录路径，提示回归命令：
    ```

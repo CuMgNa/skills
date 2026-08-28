@@ -33,6 +33,30 @@ function findRepoRoot(start) {
 }
 const REPO_ROOT = findRepoRoot(__dirname);
 
+const HTML_ENTITY_MAP = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#39;": "'",
+  "&apos;": "'",
+};
+
+function decodeHtmlEntities(value, maxRounds = 2) {
+  let decodedValue = String(value ?? "");
+
+  for (let decodeRound = 0; decodeRound < maxRounds; decodeRound += 1) {
+    const nextValue = decodedValue.replace(
+      /&(?:amp|lt|gt|quot|#39|apos);/gi,
+      (entity) => HTML_ENTITY_MAP[entity.toLowerCase()] || entity
+    );
+    if (nextValue === decodedValue) break;
+    decodedValue = nextValue;
+  }
+
+  return decodedValue;
+}
+
 function sanitizeFilePart(v) {
   return String(v || "")
     .replace(/[\\/:*?"<>|]/g, " ")
@@ -327,6 +351,10 @@ async function main() {
   }
 
   let bugs = await fetchAllBugs(projectId);
+  bugs = bugs.map((bug) => ({
+    ...bug,
+    title: decodeHtmlEntities(bug.title),
+  }));
   console.error(`拉取缺陷：${bugs.length} 条`);
 
   // 获取账号 → 中文名映射

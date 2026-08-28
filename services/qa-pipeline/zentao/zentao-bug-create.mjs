@@ -58,9 +58,12 @@ if (!ZENTAO_URL) {
   ZENTAO_ACCOUNT = process.env.ZENTAO_ACCOUNT;
   ZENTAO_PASSWORD = process.env.ZENTAO_PASSWORD;
 }
-if (!ZENTAO_URL || !ZENTAO_ACCOUNT || !ZENTAO_PASSWORD) {
-  console.error("缺少禅道配置。请配置 mcp.json 的 zentao.env 或环境变量 ZENTAO_URL / ZENTAO_ACCOUNT / ZENTAO_PASSWORD。");
-  process.exit(1);
+function ensureZentaoConfig() {
+  if (!ZENTAO_URL || !ZENTAO_ACCOUNT || !ZENTAO_PASSWORD) {
+    throw new Error(
+      "缺少禅道配置。请配置 mcp.json 的 zentao.env 或环境变量 ZENTAO_URL / ZENTAO_ACCOUNT / ZENTAO_PASSWORD。"
+    );
+  }
 }
 
 function joinUrl(base, path) {
@@ -70,6 +73,7 @@ function joinUrl(base, path) {
 let token = null;
 
 async function login() {
+  ensureZentaoConfig();
   const res = await fetch(joinUrl(ZENTAO_URL, "/api.php/v1/tokens"), {
     method: "POST",
     headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -473,11 +477,87 @@ const HTML_ENTITY_MAP = {
   "&apos;": "'",
 };
 
+const HTML_ENTITY_PATTERN = /&(?:#[0-9]+|#x[0-9a-f]+|[a-z][a-z0-9]+);/i;
+
 function unescapeHtml(s) {
   return String(s).replace(
     /&(?:amp|lt|gt|quot|#39|apos);/gi,
     (m) => HTML_ENTITY_MAP[m.toLowerCase()] || m
   );
+}
+
+function decodeHtmlEntities(value, maxRounds = 2) {
+  let decodedValue = String(value ?? "");
+
+  for (let decodeRound = 0; decodeRound < maxRounds; decodeRound += 1) {
+    const nextValue = unescapeHtml(decodedValue);
+    if (nextValue === decodedValue) break;
+    decodedValue = nextValue;
+  }
+
+  return decodedValue;
+}
+
+function normalizeBugTitle(rawTitle) {
+  return decodeHtmlEntities(String(rawTitle ?? "").replace(/^\uFEFF/, "").trim())
+    .replace(/「/g, "“")
+    .replace(/」/g, "”")
+    .replace(/"([^"\r\n]+)"/g, "“$1”")
+    .replace(/。$/, "");
+}
+
+function validateBugTitle(title) {
+  const normalizedTitle = String(title ?? "");
+  const validationErrors = [];
+
+  if (!normalizedTitle) validationErrors.push("标题不能为空");
+  if (normalizedTitle.includes("\uFFFD")) validationErrors.push("标题含 U+FFFD 替换字符");
+  if (HTML_ENTITY_PATTERN.test(normalizedTitle)) validationErrors.push("标题中禁止包含 HTML 实体");
+  if (normalizedTitle.includes('"')) validationErrors.push("标题含未配对的半角双引号，请改用中文引号“”或删除引号");
+  if (Array.from(normalizedTitle).length > 32) validationErrors.push("标题不能超过 32 个字符");
+
+  let quoteBalance = 0;
+  for (const character of normalizedTitle) {
+    if (character === "“") quoteBalance += 1;
+    if (character === "”") quoteBalance -= 1;
+    if (quoteBalance < 0) break;
+  }
+  if (quoteBalance !== 0) validationErrors.push("标题中的中文双引号未成对");
+
+  if (validationErrors.length) {
+    throw new Error(`标题校验失败：${validationErrors.join("；")}`);
+  }
+
+  return normalizedTitle;
+}
+
+function validateCreatedBugTitle(rawServerTitle, expectedTitle) {
+  const validationErrors = [];
+  const serverTitle = String(rawServerTitle ?? "");
+  let normalizedServerTitle = "";
+
+  if (HTML_ENTITY_PATTERN.test(serverTitle)) {
+    validationErrors.push("服务端原始标题包含 HTML 实体");
+  }
+
+  try {
+    normalizedServerTitle = validateBugTitle(normalizeBugTitle(serverTitle));
+  } catch (error) {
+    validationErrors.push(error.message || String(error));
+  }
+
+  if (normalizedServerTitle && normalizedServerTitle !== expectedTitle) {
+    validationErrors.push(
+      `服务端标题与提交标题不一致：期望「${expectedTitle}」，实际「${normalizedServerTitle}」`
+    );
+  }
+
+  return {
+    valid: validationErrors.length === 0,
+    rawServerTitle: serverTitle,
+    normalizedServerTitle,
+    validationErrors,
+  };
 }
 
 /**
@@ -948,7 +1028,17 @@ async function main() {
   console.error(hint);
 
   steps = normalizePunctuation(steps);
-  args.title = normalizePunctuation(args.title || "").replace(/[。]$/, "");
+
+  const originalTitle = args.title || "";
+  if (!(Number.isFinite(args.updateBugId) && args.updateBugId > 0 && !originalTitle)) {
+    args.title = validateBugTitle(normalizeBugTitle(originalTitle));
+    console.error(`[title-check] 原始标题：${originalTitle}`);
+    console.error(`[title-check] 最终标题：${args.title}`);
+    if (args.title !== originalTitle) {
+      console.error("[title-normalized] 已规范化标题中的引号、HTML 实体或结尾标点");
+    }
+    console.error("[title-check] 通过");
+  }
 
   let stepsHtml = stepsToHtml(steps.trim());
   const attachSection = args.attachSection || "实际结果";
@@ -1004,25 +1094,61 @@ async function main() {
   });
 
   const bugId = created.id ?? created.bug?.id;
-  console.log(JSON.stringify(created, null, 2));
-  if (bugId) {
-    const base = ZENTAO_URL.replace(/\/$/, "");
-    console.error(`已创建缺陷 ID: ${bugId}（请在禅道界面核对产品与项目归属）`);
-    console.error(`可尝试访问: ${base}/bug-view-${bugId}.html（路径因禅道路由配置可能略有不同）`);
-    persistBugSemantic({
-      bugId,
-      title: args.title,
-      severity,
-      pri,
-      type,
-      stepsText: steps.trim(),
-      projectId: projectForBody && Number.isFinite(Number(projectForBody.id)) ? Number(projectForBody.id) : null,
-      productId,
-    });
+  if (!bugId) {
+    console.log(JSON.stringify(created, null, 2));
+    throw new Error("创建响应中缺少 Bug ID");
   }
+
+  let validation;
+  try {
+    const createdBug = await api(`/api.php/v1/bugs/${bugId}`);
+    validation = validateCreatedBugTitle(createdBug.title, args.title);
+  } catch (error) {
+    validation = {
+      valid: false,
+      rawServerTitle: "",
+      normalizedServerTitle: "",
+      validationErrors: [`创建后回查失败：${error.message || error}`],
+    };
+  }
+
+  const creationStatus = validation.valid
+    ? "created_and_validated"
+    : "created_but_validation_failed";
+  console.log(JSON.stringify({ ...created, creationStatus, validation }, null, 2));
+
+  const base = ZENTAO_URL.replace(/\/$/, "");
+  if (validation.valid) {
+    console.error(`已创建并校验缺陷 ID: ${bugId}`);
+    console.error("[created-title-check] 通过");
+  } else {
+    console.error(`缺陷已创建，但创建后校验失败，Bug ID: ${bugId}`);
+    validation.validationErrors.forEach((error) => console.error(`[created-title-check] ${error}`));
+    console.error("[created-title-check] 已获得 Bug ID，禁止自动重复创建");
+  }
+  console.error(`可尝试访问: ${base}/bug-view-${bugId}.html（路径因禅道路由配置可能略有不同）`);
+
+  persistBugSemantic({
+    bugId,
+    title: args.title,
+    severity,
+    pri,
+    type,
+    stepsText: steps.trim(),
+    projectId: projectForBody && Number.isFinite(Number(projectForBody.id)) ? Number(projectForBody.id) : null,
+    productId,
+  });
 }
 
-export { embedAttachedScreenshots, insertImagesIntoSection, uploadStepsImage };
+export {
+  decodeHtmlEntities,
+  embedAttachedScreenshots,
+  insertImagesIntoSection,
+  normalizeBugTitle,
+  uploadStepsImage,
+  validateBugTitle,
+  validateCreatedBugTitle,
+};
 
 if (isMain) {
   main().catch((e) => {

@@ -106,6 +106,8 @@ node "services/qa-pipeline/zentao/zentao-bug-create.mjs" ^
 
 4. Windows PowerShell 执行前建议：`chcp 65001`
 5. `--steps`（命令行直传）仅用于纯 ASCII 调试场景，含中文时禁用。
+6. 创单前标题必须经过脚本统一规范化：HTML 实体先解码，成对半角双引号转为中文弯引号；规范化后仍含半角双引号、HTML 实体、U+FFFD 或超过 32 字时禁止创建。
+7. `--dry-run` 必须核对日志中的“原始标题”和“最终标题”，请求体 `body.title` 以最终标题为准。
 
 ### 写入正文结构（与第一步对齐）
 
@@ -139,8 +141,8 @@ node "services/qa-pipeline/zentao/zentao-bug-create.mjs" ^
 
 | 场景 | 正确 | 错误 |
 |------|------|------|
-| 中文描述 | ，。、；："" | , . " |
-| UI/按钮/页面 | "提交订单" | 「提交订单」 |
+| 中文描述 | ，。、；：“” | , . " |
+| UI/按钮/页面 | “提交订单” | "提交订单" / 「提交订单」 |
 | 字段/接口/枚举 | `payStatus` | "payStatus" |
 | 标题结尾 | 无句号 | 加句号。 |
 | 连续感叹/问号 | 禁止 | ！！！ ？？？ |
@@ -188,9 +190,11 @@ mcp/output/bug-semantic/{projectId|productId}-{YYYYMMDD}.jsonl
 2. 按模板输出完整 Bug 报告，展示给用户确认。  
 3. 用户确认后，将正文整理为 `--steps-file` 文件（含四段）。  
 4. 若用户在聊天中上传了截图：将图片保存到 `output/runtime/handoff/`（保留原扩展名），记录绝对路径。  
-5. 构造并执行 `zentao-bug-create.mjs`：`--steps-file` + 每个截图一个 `--attach`。  
-6. 若需指派成员，追加调用分配接口。  
-7. 反馈结果：Bug ID + 禅道链接 + 分配状态；确认「实际结果」中已出现截图。
+5. 构造并执行 `zentao-bug-create.mjs`：`--title-file` + `--steps-file` + 每个截图一个 `--attach`。  
+6. 创建成功后脚本必须回查 Bug 标题：服务端原始标题不得包含 HTML 实体，规范化后的标题必须与提交标题一致。  
+7. 若返回 `created_but_validation_failed`，说明 Bug 已创建但回查不通过；必须保留 Bug ID，禁止自动重复创建。  
+8. 若需指派成员，追加调用分配接口。  
+9. 反馈结果：Bug ID + 禅道链接 + 分配状态；确认标题回查通过且「实际结果」中已出现截图。
 
 ### 注意事项
 
