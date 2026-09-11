@@ -1,0 +1,471 @@
+{
+  "title": "革泰运维管理平台 · PRD",
+  "url": "http://getai.pg8.ink/admin/index.html",
+  "bodyText": "革泰 · PRD\n◂ 门户\n问题\n用户\n目标\n模块\n原型\n流程\n规则\n操作\n附录\n1.0 · 2026-08 · 顶栏可切地区\n开发者\n革泰运维管理平台 · 1.0 · admin\n革泰运维管理平台\n可点击需求文档\n\n客服和运维共用一个后台。在这里开户、管设备、管物联卡、处理告警。登录后进账号管理。\n\n10\n覆盖屏幕\n4\n关键流程\n30\n需求条数\n01\n要解决什么问题\n\n运维不能再逐个登录用户的 App，才能看清全网有多少牧场、多少设备。\n\n▣\n跨客户管理难\n\n以前要逐个登录用户的 App 才能看设备和告警，没法在一个后台纵览全部牧场。\n\n!\n物联卡充值分散\n\n卡号和流量余量散在运营商平台。客服应能在系统里批量绑卡、帮用户充值，并和运营商数据对得上账。\n\n↻\n设备从入库到上线没统一记录\n\n从设备入库、激活、分给哪个账号，到下发指令，以前分散在多个工具里。现在要能在一个后台从头查到尾，每一步都有记录。\n\n02\n谁在用\n\n本文只写运维后台。牧场主用手机 App 和监控台，各有单独文档。\n\nC\n运营与客服\n核心用户\n典型一天\n先处理告警，再给物联卡充值，最后受理用户反馈\n规模\n管理 100+ 企业账号\nB\n财务\n协作方\n典型一天\n先核对订单，再处理欠费，最后导出报表\n诉求\n账单和订单用同一套算法统计\n03\n目标与边界\n\n一期：以 App 现有一期功能为目标；运维 8 屏 + 手工赋权。App 没有的（订单/星豆/对讲等）从平台删除。对齐清单\n\n一期目标\n账号：创建/冻结企业与个人账号，可设设备配额\n设备：入库 → 激活\n手工赋权：在账号或设备上直接写 expire / softwareTier（无套餐目录、无订单号）\n跨客户告警监控、物联卡登记充值\n各项名称与手机 App、监控台同一套说法\n一期不做（二期或产品锁）\n套餐目录、订单流水、退款、账单欠费冻结、物联卡运营商充值 API\n星豆、对讲、应急套餐、控制台聚合（App 无，平台删除）\n保修 Hold/放行、经销商返利结算\n不做语音调度、会议；不做多语言后台编辑；不自造财务角色\n上线后怎么看成效\n指标开户到激活 ≤ 4 步\n指标手工赋权后 App 可见到期\n04\n开发模块与功能点\n\n按模块列出本期要开发的屏幕与功能点；点击可跳到可点击原型对应位置。\n\n8 个模块 · 10 屏 · 30 个功能点\n1\n登录\n1 屏\n3 功能点\n\n运维账号登录，进入账号管理。\n\n管理员登录\n3 项\n打开此屏 →\n3\n账号\n3 屏\n8 功能点\n\n看企业或个人列表。能禁用或启用。能点进二级、三级账号详情。\n\n账号管理\n6 项\n打开此屏 →\n二级账号管理\n1 项\n打开此屏 →\n三级账号管理\n1 项\n打开此屏 →\n相关弹窗 · 2\n4\n设备\n1 屏\n3 功能点\n\n跨客户看设备列表、检测统计，导出表格。\n\n全网设备列表\n3 项\n打开此屏 →\n5\n入库\n1 屏\n3 功能点\n\n单台或批量入库。必须先入库才能激活。\n\n设备入库\n3 项\n打开此屏 →\n相关弹窗 · 1\n6\n激活\n1 屏\n3 功能点\n\n入库后激活设备，全过程可从头查到尾。\n\n设备激活\n3 项\n打开此屏 →\n相关弹窗 · 1\n7\n指令\n1 屏\n3 功能点\n\n让设备立即定位或重启，并记录每次结果。\n\n指令下发\n3 项\n打开此屏 →\n相关弹窗 · 1\n8\n物联卡\n1 屏\n4 功能点\n\n看卡处于哪种状态（五态枚举与 App / 监控台一致）。能绑卡、帮用户充值或手工登记。到期前会预警。\n\n物联网卡充值管理\n4 项\n打开此屏 →\n12\n告警\n1 屏\n3 功能点\n\n跨客户看告警，可升级或关闭。\n\n告警监控\n3 项\n打开此屏 →\n05\n可点击原型\n\n点左边菜单或表格按钮，两侧需求卡片会跟着高亮；点卡片也会反向高亮网页上的对应位置。\n\n登录\n账号 3\n设备\n入库\n激活\n指令\n物联卡\n告警\n管理员登录\n功能需求 · 3 项\nFR-ADM-LOGIN-01 · 可定位\n管理员登录\n\n输入运维账号和密码登录。\n\n验收 · 成功后进入账号管理\n操作规格 · OP-ADM-LOGIN-01\nFR-ADM-LOGIN-02 · 可定位\n验证码\n\n连续输错 3 次后，下次须填验证码。\n\n验收 · 连续失败 3 次后出现验证码；第 4 次仍失败则账号锁定 15 分钟\n操作规格 · OP-ADM-LOGIN-02\nFR-ADM-LOGIN-03 · 可定位\n多语言\n\n顶部可切换界面语言。\n\n验收 · 切换后表单标签跟着变\n操作规格 · OP-ADM-LOGIN-03\n页面布局 · 4 区\nLAY-LOG-01 · 可定位\n品牌区\n\n运维平台名\n\n分区 · top\nLAY-LOG-02 · 可定位\n表单区\n\n账号密码与验证码\n\n分区 · form\nLAY-LOG-03 · 可定位\n语言\n\n中/英切换\n\n分区 · toolbar\nLAY-LOG-04 · 可定位\n锁定提示\n\n第 4 次失败锁 15 分钟\n\n分区 · form\n管理员登录\n登录\n必须联网\n溯源 · prd-brief.json · compiled\n视觉参照 · admin-front · Element UI\nFR 3\nUX 3\nLAY 4\nFLD 4\nOP 3\nscreen id: login\n布局 · 品牌区 → 表单区 → 语言 → 锁定提示\n本屏字段 4 项，见右栏字段卡片\n本屏操作规格 · 3 项 · 查看全部索引\nOP-ADM-LOGIN-01\n管理员登录\nlogin\n详情\nOP-ADM-LOGIN-02\n验证码与锁定\nlogin\n详情\nOP-ADM-LOGIN-03\n切换界面语言\nlogin\n详情\ngetai.admin/login\n革泰运维管理平台\n登录后进账号管理。侧栏保留入库/激活/物联卡/告警等一期能力。\n管理员登录\n\n革泰运维平台 v2.2\n\n账号\n密码\n验证码\n中文界面\n登录\n\n空态：第一次进来用 ops_admin。错误：验证码错了账号还在，点重试即可。\n\nEsc 关闭弹层 · 演示数据均为本地模拟，不访问网络\n交互与体验 · 3 项\nUX-LOGIN-01 · 可定位\n登录按钮醒目\n\n全宽主色登录按钮，提交中不可再点。\n\nUX-LOGIN-02 · 可定位\n错误可改\n\n密码或验证码错误时账号还在，不清空。\n\nUX-LOGIN-03 · 可定位\n锁定提示\n\n锁定 15 分钟时写明剩余时间，不能连点。\n\n本屏字段 · 4 项\nFL-login-01 · 可定位\n运维账号\n\n样例 ops_admin\n\n字段 · account · string · 必填\n不进企业/个人池\nFL-login-02 · 可定位\n密码\n\n8–64 位\n\n字段 · password · string · 必填\nFL-login-03 · 可定位\n验证码\n\n连续失败第 3 次出现\n\n字段 · captcha · string · 可选\n第 4 次锁 15 分钟\nFL-login-04 · 可定位\n界面语言\n\nzh / en\n\n字段 · lang · enum · 可选\n即时切换\n06\n关键流程\n\n三条常用路线：新牧场开户到设备上线、禁用用户、告警升级。可以自动播，右边演示和上面原型分开。\n\n1 · 新牧场开户到设备在网\n2 · 禁用用户\n3 · 告警升级处理\n4 · 物联卡到期续费\n\n登录后台，开企业账号，入库设备，激活，再绑物联卡。\n\n1\n运维账号登录，进入账号管理。\nFR-ADM-LOGIN-01\n2\n创建企业一级管理员，当场设 8–64 位密码。\nFR-ACC-02\n3\n单台或批量入库设备号与物联卡号，失败行可重试。\nFR-INV-02\n4\n已入库才能激活；失败保留原单号。\nFR-ACT-01\n5\n绑定物联卡，并充值或登记充值。\nFR-SIM-03\nlogin\n革泰运维管理平台\n登录后进账号管理。侧栏保留入库/激活/物联卡/告警等一期能力。\n管理员登录\n\n革泰运维平台 v2.2\n\n账号\n密码\n验证码\n中文界面\n登录\n\n空态：第一次进来用 ops_admin。错误：验证码错了账号还在，点重试即可。\n\n< Prev\n▶ Play\nNext >\nStep 1 / 5 运维账号登录，进入账号管理。\n07\n业务规则\n\n出错或碰到特殊情况怎么办——下面是和后台商定的处理办法。\n\n账号权限怎么分\n服务端 RoleType + level\n\n企业一级管理员、二三级企业用户、个人账号分开。企业账号由运维开户；个人账号可在 App 自助注册。欠费冻结与人工冻结会注明不同原因。\n\n#\t判定条件\t结果\n1\tlevel=1 且 role=WebAdmin\t可创 L2/L3、管全部本企业设备与配额\n2\tlevel=2 或 3 且 role=WebUser\t可见分配分组设备，不可改套餐\n3\t运维 SystemAdmin\t跨租户开户与只读，不可当牧场用户登录 App/监控台\n4\tstatus=FROZEN\t该主账号、其下 WebUser、以及该账号下设备号登录一律拒绝，直至解冻\n5\t开户密码\t当场设定 8–64 位，不邮寄、不短信。首次登录不强制改密。忘记密码由运维重置\n6\t海外个人账号\t无微信列；手机存 E.164。App 不开放自助注册\n7\tlockTime\t连续登录失败后的剩余锁定分钟，0=未锁。不是冻结天数\n状态集 · 一级 WebAdmin 二级 WebUser 运维 FROZEN / 已冻结\n从\t\t到\t触发事件\t说明\nadmin\t→\tdisabled\t运维禁用租户\t子账号一并不可登录\ndisabled\t→\tadmin\t重新启用\t权限按原角色恢复\n设备从入库到在网\n服务端\n\n先入库，再激活，再绑定，才能在网。未入库不可激活。\n\n#\t判定条件\t结果\n1\t未入库 SN\t不可激活\n2\tactivationResult=Success\tcardStatus 同步 Tianyi 查询结果\n3\t绑定前置\t必须已入库 + 已激活 + 已绑 ICCID，才能被 App/监控台绑定。IMEI 全局唯一主人\n4\tofficialId / pic\t可选预留；空值不阻断。不替代官方耳标，本期不接申报库\n状态集 · 已入库 已激活 已分配 在网\n从\t\t到\t触发事件\t说明\n—\t→\tinbound\t单台或批量入库\tSN 唯一\ninbound\t→\tactivated\t激活成功\t失败行可重试\nactivated\t→\tbound\t企业在监控台绑定或个人在 App 绑定\t总览才出现\n物联卡状态与充值\n服务端 + Tianyi\n\n物联卡有五种状态。低流量可充值；拆机后禁止充值与绑定。\n\n#\t判定条件\t结果\n1\tremainKB 低于阈值\t在用卡标红可充值；低流量是余量展示，不是 140002 的名字\n2\tstatus=110000 拆机\t禁止充值与绑定\n3\t充值成功\t调用 Tianyi 查询刷新 remainKB\n状态集 · 预开通 未激活 在用 停机 拆机\n从\t\t到\t触发事件\t说明\n140002\t→\t100000\t激活成功\t未激活 → 在用\n100000\t→\t120000\t套餐到期\t展示续费\nany\t→\t110000\t拆机\t禁止充值与绑定\n巴西\n支付提示需写明 PayPal 换算；Pix 本期不做\n欧洲 / 澳洲\n结算以 PayPal 当日汇率换算\n欠费冻结\n服务端\n\n欠费按天数分两档处理。欠费冻结与人工禁用使用同一账号状态，但会记录不同原因。\n\n#\t判定条件\t结果\n1\t欠费满 30 天\t账号 status=FROZEN（来源=欠费），App/监控台不可登录\n2\t欠费满 45 天\t停物联卡；账号仍为 FROZEN\n3\t运维手动禁用\t账号 status=FROZEN（来源=人工），与欠费同一字段\n4\t标记已缴或运维解冻\t24 小时内 FROZEN→NORMAL\n5\t退款\t仅 COMPLETED 且支付成功 30 天内可标 REFUNDED。Tracker 单缩短 expire 到退款前（已过期保持 EXPIRED）；Software 单降档（Plus→Pro 或 Pro→Basic），不改 expire\n6\t轨迹留存\t默认 90 天；dataRetentionDays 可配 30–365。到期删除或匿名化。订单/欠费另留\n状态集 · NORMAL 欠费 30 天 · FROZEN 停登录 欠费 45 天 · 停卡 解冻中\n从\t\t到\t触发事件\t说明\nok\t→\td30\t欠费满 30 天\t账号 FROZEN，来源=欠费\nd30\t→\td45\t再逾期 15 天\t停物联卡\nd45\t→\tthaw\t财务标记已缴\t24 小时内恢复 NORMAL\nok\t→\td30\t运维手动冻结\tFROZEN，来源=人工\n告警超时升级\n服务端\n\n未处理超时会升级通知。紧急求救置顶；关闭后记为已处理。\n\n#\t判定条件\t结果\n1\tSOS 未处理>10 分钟\t短信通知值班运维\n2\tOpen 的 sos 未处理>10 分钟已短信后仍未关\t列表 sos 置顶，其次 fence-exit/entry\n3\t关闭告警\tstatus=resolved，写入 processedBy=运维。不用 Pending/Processed\n状态集 · 未处理 已升级 已关闭\n从\t\t到\t触发事件\t说明\nopen\t→\tescalated\t超时未处理\t按类型用不同时限\nescalated\t→\tclosed\t运维关闭或升级处理\t保留工单痕迹\n保修 Hold 与放行\nops_admin + App 用户端\n\n购买日与发票不一致可挂起。用户端详情见同一状态。不自造财务角色。\n\n#\t判定条件\t结果\n1\t购买日与发票不一致\tops_admin 改为 Hold；用户端见 Hold 与补证明\n2\t核验通过\t放行为 Active；用户端见 Active。SLA 1 个工作日\n3\t角色\t仅现有 ops_admin，不新增财务/超管角色\n经销商返利\n财务待定 · 本版只读\n\n本版只读演示表。周期、费率、跟哪张订单、谁批 TBD，截止日期 2026-09-30。\n\n#\t判定条件\t结果\n1\t本版\t只读列表，不可结算、不新开入口角色\n2\t未闭合项\t周期 / 费率 / 订单关联 / 审批人 均为 TBD，页上写截止日期\n内容发布\n运维审核\n\n公告发布后，监控台帮助中心与 App 同时可见。\n\n#\t判定条件\t结果\n1\tpublished=true\t监控台 supportHelp 与 App support 同时可见\n2\t下线公告\t两端不再展示，历史链接 404\n状态集 · 草稿 已发布 已下线\n从\t\t到\t触发事件\t说明\ndraft\t→\tpublished\t发布\t监控台 supportHelp + App support 立刻可见\npublished\t→\toffline\t下线\t两端历史链接 404\n08\n点哪里、会看到什么\n\n每一步点哪里、屏幕会出现什么——给开发和测试验收用。点索引表「详情」看完整步骤。\n\nOP ID\t操作\t所属\t关联 FR\t规则\t\nOP-ADM-LOGIN-01\t管理员登录\t屏幕 · login\tFR-ADM-LOGIN-01\taccountPermission#3\t详情 →\nOP-ADM-LOGIN-02\t验证码与锁定\t屏幕 · login\tFR-ADM-LOGIN-02\taccountPermission#7\t详情 →\nOP-ADM-LOGIN-03\t切换界面语言\t屏幕 · login\tFR-ADM-LOGIN-03\t\t详情 →\nOP-INV-01\t单条入库\t屏幕 · deviceInventory\tFR-INV-01\tdeviceLifecycle#1\t详情 →\nOP-INV-02\t批量导入\t屏幕 · deviceInventory\tFR-INV-02\tdeviceLifecycle#1\t详情 →\nOP-INV-03\t分组管理\t屏幕 · deviceInventory\tFR-INV-03\t\t详情 →\nOP-ACT-01\t单条激活\t屏幕 · deviceActivation\tFR-ACT-01\tdeviceLifecycle#2\t详情 →\nOP-ACT-02\t批量激活\t屏幕 · deviceActivation\tFR-ACT-02\tdeviceLifecycle#2\t详情 →\nOP-ACT-03\t查看激活记录\t屏幕 · deviceActivation\tFR-ACT-03\t\t详情 →\nOP-SIM-01\t查询卡列表\t屏幕 · simCardManage\tFR-SIM-01\tsimCardLifecycle#1\t详情 →\nOP-SIM-BIND-01\t批量绑卡\t屏幕 · simCardManage\tFR-SIM-02\tsimCardLifecycle#2\t详情 →\nOP-SIM-RC-01\t对接充值\t屏幕 · simCardManage\tFR-SIM-03\tsimCardLifecycle#3\t详情 →\nOP-SIM-RC-02\t登记充值\t屏幕 · simCardManage\tFR-SIM-03\tsimCardLifecycle#3\t详情 →\nOP-SIM-04\t到期预警筛选\t屏幕 · simCardManage\tFR-SIM-04\tsimCardLifecycle#1\t详情 →\nOP-ACC-LIST-01\t查询企业/个人账号\t屏幕 · accountManage\tFR-ACC-01\taccountPermission#1\t详情 →\nOP-ACC-CREATE-01\t创建一级账号\t屏幕 · accountManage\tFR-ACC-02\taccountPermission#5\t详情 →\nOP-ACC-DISABLE-01\t禁用主账号\t屏幕 · accountManage\tFR-ACC-05\taccountPermission#4\t详情 →\nOP-ACC-GRANT-01\t手工赋权\t屏幕 · accountManage\tFR-ACC-GRANT-01\taccountPermission#2\t详情 →\nOP-ACC-DRILL-01\t下钻二级\t屏幕 · accountManage\tFR-ACC-03\taccountPermission#1\t详情 →\nOP-ACC-PERSONAL-01\t个人账号 Tab\t屏幕 · accountManage\tFR-ACC-04\taccountPermission#1\t详情 →\nOP-BILL-LIST-01\t欠费列表\t屏幕 · billArrears\tFR-BILL-01\tbillingArrears#1\t详情 →\nOP-BILL-01\t标记已缴\t屏幕 · billArrears\tFR-BILL-02\tbillingArrears#4\t详情 →\nOP-BILL-03\t查看冻结规则\t屏幕 · billArrears\tFR-BILL-03\tbillingArrears#1, billingArrears#2\t详情 →\nOP-ORD-ADM-01\t筛选订单\t屏幕 · orderManage\tFR-ORD-ADM-01, FR-ORD-ADM-02\t\t详情 →\nOP-ORD-REFUND-01\t退款\t屏幕 · orderManage\tFR-ORD-ADM-03\tbillingArrears#5\t详情 →\nOP-ALM-01\t筛选告警\t屏幕 · alertMonitor\tFR-ALM-01\talertEscalation#2\t详情 →\nOP-ALM-02\t升级告警\t屏幕 · alertMonitor\tFR-ALM-02\talertEscalation#1\t详情 →\nOP-ALM-03\t关闭告警\t屏幕 · alertMonitor\tFR-ALM-03\talertEscalation#3\t详情 →\nOP-CNT-01\t发布公告\t屏幕 · contentManage\tFR-CNT-01\tcontentPublish#1\t详情 →\nOP-CNT-02\t编辑帮助步骤\t屏幕 · contentManage\tFR-CNT-02\tcontentPublish#1\t详情 →\nOP-CNT-03\t配置客服时段\t屏幕 · contentManage\tFR-CNT-03\t\t详情 →\nOP-CMD-01\t批量下发指令\t屏幕 · deviceCommand\tFR-CMD-01, FR-CMD-02\tdeviceLifecycle#4\t详情 →\nOP-CMD-02\t查看下发记录\t屏幕 · deviceCommand\tFR-CMD-03\t\t详情 →\nOP-DGL-01\t查询全网设备\t屏幕 · deviceGlobalList\tFR-DGL-01, FR-DGL-02\tdeviceLifecycle#4\t详情 →\nOP-DGL-EXPORT-01\t导出设备\t屏幕 · deviceGlobalList\tFR-DGL-03\t\t详情 →\nOP-NTF-LIST-01\t查询通知\t屏幕 · notificationRecord\tFR-NOT-01, FR-NOT-02\t\t详情 →\nOP-NTF-01\t重发通知\t屏幕 · notificationRecord\tFR-NOT-03\t\t详情 →\nOP-LOG-01\t查询日志\t屏幕 · logRecord\tFR-LOG-01\t\t详情 →\nOP-LOG-02\t查看 diff\t屏幕 · logRecord\tFR-LOG-02\t\t详情 →\nOP-LOG-03\t导出日志\t屏幕 · logRecord\tFR-LOG-03\t\t详情 →\nOP-PKG-ADM-01\t保存套餐\t屏幕 · packagePlan\tFR-PKG-ADM-01, FR-PKG-ADM-03\t\t详情 →\nOP-PKG-ADM-02\t上下架\t屏幕 · packagePlan\tFR-PKG-ADM-02\t\t详情 →\nOP-ADM-WARR-01\t查看保修\t屏幕 · warrantyDash\tFR-ADM-WARR-01\t\t详情 →\nOP-ADM-WARR-02\t挂起或放行保修\t屏幕 · warrantyDash\tFR-ADM-WARR-02\twarranty#2, warranty#3\t详情 →\nOP-ADM-REB-01\t查看返利\t屏幕 · dealerRebate\tFR-ADM-REB-01\t\t详情 →\nOP-ACC-II-01\t查看/创建二级\t屏幕 · accountII\tFR-ACC-II-01\taccountPermission#2\t详情 →\nOP-ACC-III-01\t查看三级叶子\t屏幕 · accountIII\tFR-ACC-III-01\taccountPermission#2\t详情 →\nOP-SYS-ADM-01\t管理员账号 CRUD\t屏幕 · systemManage\tFR-SYS-ADM\taccountPermission#3\t详情 →\nOP-SYS-ROLE-01\t角色权限\t屏幕 · systemManage\tFR-SYS-ROLE\t\t详情 →\nOP-SYS-SUPER-01\t保存超管口令\t屏幕 · systemManage\tFR-SYS-SUPER\t\t详情 →\nOP-CON-01\t查看跨租户 KPI\t屏幕 · consoleDashboard\tFR-CON-01\t\t详情 →\nOP-CON-02\t切换趋势日期\t屏幕 · consoleDashboard\tFR-CON-02\t\t详情 →\nOP-CON-03\t快捷入口\t屏幕 · consoleDashboard\tFR-CON-03\t\t详情 →\nOP-FB-LIST-01\t反馈列表\t屏幕 · feedbackManage\tFR-FB-01\t\t详情 →\nOP-FB-01\t受理回复\t屏幕 · feedbackManage\tFR-FB-02\t\t详情 →\nOP-FB-02\t关闭工单\t屏幕 · feedbackManage\tFR-FB-03\t\t详情 →\nOP-SYS-01\t保存地图配置\t屏幕 · systemSettings\tFR-SYS-01\t\t详情 →\nOP-SYS-02\t查看权限说明\t屏幕 · systemSettings\tFR-SYS-02\taccountPermission#1\t详情 →\nOP-SYS-03\t保存数据保留天数\t屏幕 · systemSettings\tFR-SYS-03\tbillingArrears#6\t详情 →\n\n共 59 条操作规格。点击索引表「详情」或规则链接，在弹窗中查看完整内容。\n\n开发者附录 · 屏幕全集 / 字段字典 / 设计规范 / 模拟数据\n革泰运维管理平台 · 1.0 · 可点击需求文档 · 2026-08",
+  "sections": [
+    {
+      "id": "sec-problem",
+      "heading": "要解决什么问题",
+      "textLength": 230
+    },
+    {
+      "id": "sec-user",
+      "heading": "谁在用",
+      "textLength": 148
+    },
+    {
+      "id": "sec-goal",
+      "heading": "目标与边界",
+      "textLength": 360
+    },
+    {
+      "id": "sec-modules",
+      "heading": "开发模块与功能点",
+      "textLength": 604
+    },
+    {
+      "id": "sec-app",
+      "heading": "可点击原型",
+      "textLength": 1422
+    },
+    {
+      "id": "sec-flows",
+      "heading": "关键流程",
+      "textLength": 467
+    },
+    {
+      "id": "sec-rules",
+      "heading": "业务规则",
+      "textLength": 2724
+    },
+    {
+      "id": "sec-ops",
+      "heading": "点哪里、会看到什么",
+      "textLength": 4011
+    },
+    {
+      "id": "sec-region",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-screens",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-dialogs",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-fr",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-copy",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-fields",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-design",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-provenance",
+      "heading": "",
+      "textLength": 0
+    },
+    {
+      "id": "sec-review",
+      "heading": "",
+      "textLength": 0
+    }
+  ],
+  "headings": [
+    {
+      "level": "H1",
+      "text": "革泰运维管理平台\n可点击需求文档"
+    },
+    {
+      "level": "H2",
+      "text": "要解决什么问题"
+    },
+    {
+      "level": "H3",
+      "text": "▣\n跨客户管理难"
+    },
+    {
+      "level": "H3",
+      "text": "!\n物联卡充值分散"
+    },
+    {
+      "level": "H3",
+      "text": "↻\n设备从入库到上线没统一记录"
+    },
+    {
+      "level": "H2",
+      "text": "谁在用"
+    },
+    {
+      "level": "H3",
+      "text": "C\n运营与客服\n核心用户"
+    },
+    {
+      "level": "H3",
+      "text": "B\n财务\n协作方"
+    },
+    {
+      "level": "H2",
+      "text": "目标与边界"
+    },
+    {
+      "level": "H4",
+      "text": "一期目标"
+    },
+    {
+      "level": "H4",
+      "text": "一期不做（二期或产品锁）"
+    },
+    {
+      "level": "H4",
+      "text": "上线后怎么看成效"
+    },
+    {
+      "level": "H2",
+      "text": "开发模块与功能点"
+    },
+    {
+      "level": "H3",
+      "text": "1\n登录\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "3\n账号\n3 屏\n8 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "4\n设备\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "5\n入库\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "6\n激活\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "7\n指令\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "8\n物联卡\n1 屏\n4 功能点"
+    },
+    {
+      "level": "H3",
+      "text": "12\n告警\n1 屏\n3 功能点"
+    },
+    {
+      "level": "H2",
+      "text": "可点击原型"
+    },
+    {
+      "level": "H4",
+      "text": "管理员登录"
+    },
+    {
+      "level": "H4",
+      "text": "验证码"
+    },
+    {
+      "level": "H4",
+      "text": "多语言"
+    },
+    {
+      "level": "H4",
+      "text": "品牌区"
+    },
+    {
+      "level": "H4",
+      "text": "表单区"
+    },
+    {
+      "level": "H4",
+      "text": "语言"
+    },
+    {
+      "level": "H4",
+      "text": "锁定提示"
+    },
+    {
+      "level": "H3",
+      "text": "管理员登录\n登录\n必须联网"
+    },
+    {
+      "level": "H1",
+      "text": "革泰运维管理平台"
+    },
+    {
+      "level": "H2",
+      "text": "管理员登录"
+    },
+    {
+      "level": "H4",
+      "text": "登录按钮醒目"
+    },
+    {
+      "level": "H4",
+      "text": "错误可改"
+    },
+    {
+      "level": "H4",
+      "text": "锁定提示"
+    },
+    {
+      "level": "H4",
+      "text": "运维账号"
+    },
+    {
+      "level": "H4",
+      "text": "密码"
+    },
+    {
+      "level": "H4",
+      "text": "验证码"
+    },
+    {
+      "level": "H4",
+      "text": "界面语言"
+    },
+    {
+      "level": "H2",
+      "text": "关键流程"
+    },
+    {
+      "level": "H1",
+      "text": "革泰运维管理平台"
+    },
+    {
+      "level": "H2",
+      "text": "管理员登录"
+    },
+    {
+      "level": "H2",
+      "text": "业务规则"
+    },
+    {
+      "level": "H3",
+      "text": "账号权限怎么分\n服务端 RoleType + level"
+    },
+    {
+      "level": "H3",
+      "text": "设备从入库到在网\n服务端"
+    },
+    {
+      "level": "H3",
+      "text": "物联卡状态与充值\n服务端 + Tianyi"
+    },
+    {
+      "level": "H3",
+      "text": "欠费冻结\n服务端"
+    },
+    {
+      "level": "H3",
+      "text": "告警超时升级\n服务端"
+    },
+    {
+      "level": "H3",
+      "text": "保修 Hold 与放行\nops_admin + App 用户端"
+    },
+    {
+      "level": "H3",
+      "text": "经销商返利\n财务待定 · 本版只读"
+    },
+    {
+      "level": "H3",
+      "text": "内容发布\n运维审核"
+    },
+    {
+      "level": "H2",
+      "text": "点哪里、会看到什么"
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H1",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H3",
+      "text": ""
+    },
+    {
+      "level": "H2",
+      "text": ""
+    }
+  ],
+  "scripts": [
+    "http://getai.pg8.ink/shared/edition.js",
+    "http://getai.pg8.ink/shared/copy.js",
+    "http://getai.pg8.ink/shared/account-model.js",
+    "http://getai.pg8.ink/admin/assets/mock.js",
+    "http://getai.pg8.ink/admin/assets/web-lib.js",
+    "http://getai.pg8.ink/admin/assets/fields.js",
+    "http://getai.pg8.ink/admin/assets/requirements.js",
+    "http://getai.pg8.ink/admin/assets/page-specs.js",
+    "http://getai.pg8.ink/admin/assets/rules.js",
+    "http://getai.pg8.ink/admin/assets/ops.js",
+    "http://getai.pg8.ink/admin/assets/ops-scope.js",
+    "http://getai.pg8.ink/admin/assets/flows.js",
+    "http://getai.pg8.ink/admin/assets/screens-web.js",
+    "http://getai.pg8.ink/shared/web-flow-view.js",
+    "http://getai.pg8.ink/shared/proto-lightbox.js",
+    "http://getai.pg8.ink/admin/assets/router.js",
+    "http://getai.pg8.ink/shared/doc-mode.js",
+    "http://getai.pg8.ink/shared/prd-doc.js",
+    "http://getai.pg8.ink/shared/flow-player.js",
+    "http://getai.pg8.ink/admin/assets/prd.js",
+    "http://getai.pg8.ink/shared/nav-mobile.js",
+    "[inline]",
+    "[inline]"
+  ]
+}

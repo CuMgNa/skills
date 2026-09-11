@@ -1,0 +1,14 @@
+.venv/
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.sqlite*
+*.db
+.temps/
+*.log
