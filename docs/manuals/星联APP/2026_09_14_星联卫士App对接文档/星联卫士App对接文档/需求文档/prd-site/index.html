@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="color-scheme" content="light" />
+  <title>星联卫士 · PRD</title>
+  <link rel="stylesheet" href="assets/doc.css" />
+  <link rel="stylesheet" href="assets/app-ui.css" />
+</head>
+<body>
+  <div class="share-tip" role="note">
+    <b>手机打开</b>：解压后用系统浏览器打开 <code>index.html</code>（勿用微信内置预览）。本包纯本地，无需联网。
+  </div>
+  <header class="topbar">
+    <div class="inner">
+      <div class="brand">星联卫士 · PRD</div>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="topNav" aria-label="打开章节导航">
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav id="topNav">
+        <a href="#sec-ecosystem">四方全景</a>
+        <a href="#sec-roles">各岗分工</a>
+        <a href="#sec-problem">要解决什么</a>
+        <a href="#sec-user">谁在用</a>
+        <a href="#sec-goal">目标与边界</a>
+        <a href="#sec-module">核心概念</a>
+        <a href="#sec-protocol">协议时序</a>
+        <a href="#sec-firmware">终端固件</a>
+        <a href="#sec-app">可点击原型</a>
+        <a href="#sec-flows">关键流程</a>
+        <a href="#sec-rules">业务规则</a>
+        <a href="#sec-ops">操作规格</a>
+        <a href="#sec-review">评审清单</a>
+        <a href="../通用/工程附录-联调前置说明.md">工程联调</a>
+        <div class="nav-drawer-meta">1.3 · 2026-08 · 星联卫士 APP</div>
+      </nav>
+      <div class="ver">1.3 · 2026-08</div>
+    </div>
+  </header>
+  <div class="nav-overlay" id="navOverlay" hidden></div>
+
+  <div class="wrap">
+    <div class="hero-doc">
+      <div>
+        <span class="tag">星联卫士 · 1.3 · mobile · APP v1.8 · UDP V1.12</span>
+        <h1>星联卫士<br /><span>可点击需求文档</span></h1>
+        <p class="lead">手机蓝牙连上挂身终端，发收文本/语音/图片，看终端位置和能不能发消息。</p>
+        <div class="facts">
+          <div class="fact"><b id="statScreens">–</b><span>覆盖屏幕</span></div>
+          <div class="fact"><b id="statFlows">–</b><span>关键流程</span></div>
+          <div class="fact"><b id="statFr">–</b><span>功能需求</span></div>
+        </div>
+      </div>
+      <div class="hero-shot">
+        <div class="hero-ia">
+          <b>消息</b>
+          <span>会话气泡 · 发送五态 · 常用语</span>
+        </div>
+        <div class="hero-ia">
+          <b>地图</b>
+          <span>终端位置打点 · 本地底图</span>
+        </div>
+        <div class="hero-ia">
+          <b>卫星态</b>
+          <span>先看蓝牙 · 再看能否联网发送</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="sec-ecosystem">
+      <div class="sec-head"><div class="no">览</div><h2>这次要做什么 · 四方全景</h2></div>
+      <p class="sec-lead">三句话：<b>手机 App 只跟终端蓝牙说话</b>；<b>终端跟 UDP接入平台 走卫星 UDP</b>；<b>UDP接入平台再跟 Podium 业务平台走 HTTP</b>，调度员在 Monitor Web 看消息。工程实现名：<code>rescuesat-tcp-platform</code>。</p>
+      <div class="proto-diagram-wrap">
+        <pre class="mermaid">
+flowchart LR
+  APP[手机App] -->|蓝牙 $xxxx| TERM[救援棒终端]
+  TERM -->|UDP| UDP[UDP接入平台]
+  UDP -->|HTTP| BIZ[Podium业务平台]
+  BIZ -.->|WebSocket| MON[Monitor Web]
+        </pre>
+      </div>
+      <p class="sec-lead" style="margin-top:16px">延伸阅读：<a href="#sec-protocol">第 05 章 协议时序</a> · <a href="../后端/Podium平台HTTP与WebSocket对接说明.md">Podium 服务端对接</a> · <a href="../前端/README.md">Monitor Web 前端</a></p>
+    </section>
+
+    <section id="sec-roles">
+      <div class="sec-head"><div class="no">岗</div><h2>各岗要做什么</h2></div>
+      <p class="sec-lead">救援棒程序和后端服务大体已写好，大家主要是<strong>联调、验真、修问题</strong>。产品/项目经理：先看 <a href="#sec-ecosystem">四方全景</a> → <a href="#sec-problem">01–04</a> → <a href="#sec-app">可点击原型</a>。</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>岗位</th><th>状态</th><th>你要干什么</th><th>先看这里</th><th>详细步骤</th></tr></thead>
+          <tbody>
+            <tr><td>UI设计师</td><td><span class="badge badge-wip">进行中</span></td><td>画出<strong>星联卫士 App</strong>各页面样式（消息、地图、设置等）；<strong>不是</strong>调度员用的网页</td><td><a href="#sec-app">可点击原型</a></td><td>—</td></tr>
+            <tr><td>Android工程师</td><td><span class="badge badge-wip">进行中</span></td><td>按设计稿做 App：手机连救援棒蓝牙，能发文字、语音、图片，顶栏能看出能不能发</td><td><a href="#sec-protocol">05 协议时序</a></td><td><a href="../Android/BLE集成指南.md">BLE 集成指南</a></td></tr>
+            <tr><td>嵌入式工程师</td><td><span class="badge badge-verify">联调验收</span></td><td>确认救援棒里的程序：蓝牙和卫星转发正确；跟 App、平台一起真机联调（不是从零写代码）</td><td><a href="#sec-firmware">06 终端固件</a></td><td><a href="../固件/固件工作范围说明.md">固件工作范围说明</a></td></tr>
+            <tr><td>前端工程师</td><td><span class="badge badge-wip">进行中</span></td><td>做<strong>调度员网页</strong>：求救群、对讲群里用户发的图片要能刷出来、点开看</td><td>—</td><td><a href="../前端/上行媒体前端对接说明.md">上行媒体前端对接说明</a> §9</td></tr>
+            <tr><td>后端工程师</td><td><span class="badge badge-verify">联调验收</span></td><td>确认<strong>卫星接入平台</strong>和<strong>业务平台</strong>之间数据通、字段对；配合前端/Android 查问题</td><td><a href="#sec-ecosystem">四方全景</a></td><td><a href="../后端/Podium平台HTTP与WebSocket对接说明.md">Podium 服务端对接</a></td></tr>
+            <tr><td>测试工程师</td><td><span class="badge badge-wip">进行中</span></td><td>整条路走通：手机发出 → 救援棒 → 平台 → 调度员网页能看见；不是只测某一个模块</td><td><a href="#sec-ecosystem">四方全景</a></td><td><a href="../通用/联调与测试指南.md">联调与测试指南</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sec-lead" style="margin-top:12px">第 06 章和固件文档若写「待做」，以<strong>联调实测结果</strong>为准。</p>
+    </section>
+
+    <section id="sec-problem">
+      <div class="sec-head"><div class="no">01</div><h2>要解决什么问题</h2></div>
+      <p class="sec-lead">户外无地面网，靠挂身终端走天通卫星。终端本身几乎没屏幕，手机成了唯一操作面。</p>
+      <div class="grid-cards">
+        <div class="panel"><h3>设备无屏难操作</h3><p>S1 挂在身上，按键能录短音发卫星，但看不到联网态和历史消息，也没法从手机发文本或图片。</p></div>
+        <div class="panel"><h3>卫星态不可见</h3><p>用户分不清：手机有没有连上终端、终端有没有卫星联网。容易以为「能发」其实发不出去。</p></div>
+        <div class="panel"><h3>位置难对照</h3><p>终端能定位，手机上却看不到终端在哪、坐标有没有更新。</p></div>
+      </div>
+    </section>
+
+    <section id="sec-user">
+      <div class="sec-head"><div class="no">02</div><h2>谁在用</h2></div>
+      <div class="grid-cards">
+        <div class="panel">
+          <h3>户外作业人员 <span class="badge">核心用户</span></h3>
+          <div class="kvs">
+            <div><span>典型一天</span><b>挂上 S1 → 手机蓝牙连上 → 看顶栏能不能发 → 发一条或看一条下行 → 打开地图确认终端位置</b></div>
+            <div><span>环境</span><b>无地面网络，依赖天通卫星；操作都在 Android 手机上完成</b></div>
+            <div><span>核心诉求</span><b>连得上、看得出状态、发得出去、找得到人在哪</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-goal">
+      <div class="sec-head"><div class="no">03</div><h2>目标与边界</h2></div>
+      <div class="compare">
+        <div class="side">
+          <h4>本期要做</h4>
+          <ul>
+            <li>连上救援棒后，顶栏能看出<strong>能不能发</strong>、电量和信号</li>
+            <li>消息页发收<strong>文字、语音、图片</strong>，发送进度看得懂</li>
+            <li>地图能看到<strong>终端在哪</strong></li>
+            <li>救援棒保留机身功能，补上 App 蓝牙转发（见 <a href="#sec-firmware">06 章</a>）</li>
+          </ul>
+        </div>
+        <div class="side old">
+          <h4>本期不做</h4>
+          <ul>
+            <li>iOS、账号体系、设备 OTA、取消发送、多人地图</li>
+            <li>App 不直连卫星、不存授权码、不上报已读</li>
+            <li>联调细节（GATT 表等）见 <a href="../通用/工程附录-联调前置说明.md">工程附录</a></li>
+          </ul>
+        </div>
+        <div class="side">
+          <h4>怎么算做好</h4>
+          <div class="kvs">
+            <div><span>体验</span><b>连上后 3 秒内顶栏有联网态</b></div>
+            <div><span>路径</span><b>首次连接 ≤ 4 屏到消息页</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-module">
+      <div class="sec-head"><div class="no">04</div><h2>核心概念</h2></div>
+      <p class="sec-lead">先记人话，括号里是协议名。手机从不直接跟卫星说话。</p>
+      <div class="grid-cards">
+        <div class="panel"><h3>手机只跟终端说话</h3><p>蓝牙上来回都是 <code>$xxxx</code> 帧（共 14 条）。手机不组、不解析卫星 UDP，也不存授权码。</p></div>
+        <div class="panel"><h3>发送两道门</h3><p>蓝牙已连，且终端已卫星联网（顶栏联网成功，对应 <code>netStatus=2</code>）。少一道就置灰，提示「暂不可发送」。</p></div>
+        <div class="panel"><h3>气泡五态</h3><p>整条消息：等待 → 发送中 → 失败 / 成功等待回执 → 发送成功。进度看终端回报；平台业务号另有回执帧。</p></div>
+        <div class="panel"><h3>下行已读归终端</h3><p>平台消息先到终端，再推到手机展示。已读由终端报平台；APP 只做本机展示和去重。</p></div>
+        <div class="panel"><h3>地图点来自终端</h3><p>坐标来自终端位置推送；未定位不造假点。图层 / 下载 / 缩放是本地底图能力，不占卫星带宽。</p></div>
+      </div>
+    </section>
+
+    <section id="sec-protocol">
+      <div class="sec-head"><div class="no">05</div><h2>协议时序（APP 交互协议 v1.8）</h2></div>
+      <p class="sec-lead">四方全链路见 <a href="#sec-ecosystem">览章</a>；本章只讲 <b>App↔终端蓝牙</b>。字段对照 <a href="docs/protocol-appendix.md">协议附录</a>；联调前置 <a href="../通用/工程附录-联调前置说明.md">工程附录</a>。</p>
+      <div class="proto-tabs" id="protoTabs" role="tablist">
+        <button type="button" class="on" data-proto="snap">连上之后</button>
+        <button type="button" data-proto="query">查状态</button>
+        <button type="button" data-proto="down">收到消息</button>
+        <button type="button" data-proto="up">发出消息</button>
+        <button type="button" data-proto="gate">何时能发 / 失败怎么办</button>
+      </div>
+      <div class="proto-panels">
+        <div class="panel proto-pane on" data-proto-pane="snap">
+          <h3>连上之后会发生什么</h3>
+          <p class="proto-plain">终端先自己向平台登录。手机蓝牙连上后，终端立刻推三样东西：能不能发、当前位置、信号好坏。顶栏和地图点随之更新。</p>
+          <div class="proto-diagram-wrap">
+            <pre class="mermaid">
+sequenceDiagram
+  participant APP as 手机APP
+  participant TERM as 终端
+  participant PLAT as 卫星平台
+  Note over TERM,PLAT: 上电登录联网
+  TERM->>PLAT: UDP 0x00 · 终端上电登录
+  PLAT-->>TERM: UDP 0x80 · 平台确认授权结果
+  APP->>TERM: BLE GATT · 手机蓝牙连接
+  TERM-->>APP: "$TOSTA · 推送状态电量SOS"
+  TERM-->>APP: "$TOLOC · 推送终端位置"
+  TERM-->>APP: "$TOSIG · 推送信号强弱"
+            </pre>
+          </div>
+          <div class="proto-kv">
+            <div><b>要点</b><span>授权码只留在终端；连上后推快照→位置→信号；netStatus=2 表示已联网且已登录。</span></div>
+          </div>
+        </div>
+        <div class="panel proto-pane" data-proto-pane="query">
+          <h3>想再确认一下状态 / 位置 / 信号</h3>
+          <p class="proto-plain">状态变了终端会主动推。用户刷新或进地图时，APP 也可主动问；终端约 5 秒内按类型回答。</p>
+          <div class="proto-diagram-wrap">
+            <pre class="mermaid">
+sequenceDiagram
+  participant APP as 手机APP
+  participant TERM as 终端
+  participant PLAT as 卫星平台
+  APP->>TERM: "$TIQRY · 查询状态"
+  TERM-->>APP: "$TOSTA · 回答状态"
+  APP->>TERM: "$TILOC · 查询位置"
+  TERM-->>APP: "$TOLOC · 回答位置"
+  APP->>TERM: "$TISIG · 查询信号"
+  TERM-->>APP: "$TOSIG · 回答信号"
+  alt 联网完成
+    PLAT-->>TERM: UDP 0x80 · 平台登录结果
+    TERM-->>APP: "$TOSTA · 主动推送联网态"
+  else 定位更新
+    TERM-->>APP: "$TOLOC · 主动推送位置"
+  else 信号更新
+    TERM-->>APP: "$TOSIG · 主动推送信号"
+  end
+            </pre>
+          </div>
+          <div class="proto-kv">
+            <div><b>要点</b><span>问什么答什么；变化也可主动推同一套帧。</span></div>
+          </div>
+        </div>
+        <div class="panel proto-pane" data-proto-pane="down">
+          <h3>平台发来消息时</h3>
+          <p class="proto-plain">平台先把文本/语音发给终端。终端本机处理后推到手机气泡；接收/已读回执由终端报平台。APP 不发已读指令。</p>
+          <div class="proto-diagram-wrap">
+            <pre class="mermaid">
+sequenceDiagram
+  participant PLAT as 卫星平台
+  participant TERM as 终端
+  participant APP as 手机APP
+  PLAT->>TERM: UDP 0x81/0x82 · 平台下发文本或语音
+  TERM->>TERM: 本机处理 · 存储或播报
+  TERM->>PLAT: UDP 0x03 · 告诉平台已收到
+  TERM->>APP: "$TOTXT/$TOVOI · 推到会话气泡"
+  APP->>APP: 展示去重 · 不发已读帧
+  Note over APP: "无 $TIRD 已读帧"
+  TERM->>PLAT: UDP 0x05 · 已读回执由终端上报
+            </pre>
+          </div>
+          <div class="proto-kv">
+            <div><b>要点</b><span>已连：推完 APP 后报 0x05；未连：本机播完后报。APP 只做本机展示与去重。</span></div>
+          </div>
+        </div>
+        <div class="panel proto-pane" data-proto-pane="up">
+          <h3>用户从 APP 发消息时</h3>
+          <p class="proto-plain">先过门闩（蓝牙已连 + 已联网）。手机把内容交给终端，终端再发上卫星。进度不断回报；平台签收后带回业务号。语音/图片分包须等本包成功（TODST=4）再发下一包。</p>
+          <div class="proto-diagram-wrap">
+            <pre class="mermaid">
+sequenceDiagram
+  participant APP as 手机APP
+  participant TERM as 终端
+  participant PLAT as 卫星平台
+  APP->>APP: 门闩检查 · 蓝牙已连且 netStatus=2
+  alt 不可发送
+    Note over APP: 按钮置灰 · 暂不可发送
+  else 可发送
+    APP->>TERM: "$TITXT/$TIVOI/$TIIMG · 上报文本/语音/图片"
+    TERM-->>APP: "$TODST=1 · 数据发送状态·发送中"
+    TERM->>PLAT: "UDP 0x12/0x10/0x11 · APP上报文本/语音/图片"
+    TERM-->>APP: "$TODST=3 · 数据发送状态·已发出等回执"
+    PLAT-->>TERM: "UDP 0x83 · 平台下发回执"
+    TERM-->>APP: "$TOACK · 平台回执"
+    TERM-->>APP: "$TODST=4 · 本包成功·可发下一包"
+  end
+            </pre>
+          </div>
+          <div class="proto-kv">
+            <div><b>要点</b><span>APP 不组 UDP；先 TOACK 再 TODST=4；TODST=3 只表示已发出等回执，不是可发下一包。</span></div>
+          </div>
+        </div>
+        <div class="panel proto-pane" data-proto-pane="gate">
+          <h3>何时能发、失败怎么重试</h3>
+          <p class="proto-plain">没联网就别发；每包最多试 3 次；发出后还要等平台签收。一直等不到可发送，默认 10 分钟超时（设置可改）。</p>
+          <div class="proto-diagram-wrap">
+            <pre class="mermaid">
+flowchart TD
+  startNode[用户点发送] --> bleCheck{蓝牙已连接?}
+  bleCheck -->|否| blockGray[置灰 · 暂不可发送]
+  bleCheck -->|是| netCheck{netStatus=2?}
+  netCheck -->|否| blockGray
+  netCheck -->|是| sendFrame["发 $TITXT / $TIVOI / $TIIMG"]
+  sendFrame --> waitTodst{"5秒内收到 $TODST?"}
+  waitTodst -->|否或 status=2| failPlus[本轮失败加1]
+  failPlus --> retryCheck{失败满3次?}
+  retryCheck -->|是| msgFail[整条消息失败]
+  retryCheck -->|否| sendFrame
+  waitTodst -->|status=0| waitCond[等待条件恢复 · 开始计时]
+  waitCond --> waitTimeout{"连续等待超过配置时长?\n默认10分钟"}
+  waitTimeout -->|是| msgFail
+  waitTimeout -->|否且已恢复| sendFrame
+  waitTodst -->|status=3| waitAck{"10秒内收到 status=4?"}
+  waitAck -->|否| msgFail
+  waitAck -->|"经 $TOACK 再 status=4"| msgOk[本包成功]
+            </pre>
+          </div>
+          <div class="proto-kv">
+            <div>
+              <b>什么时候能点发送？</b>
+              <span>蓝牙已连 + 顶栏联网成功（netStatus=2）。否则置灰「暂不可发送」。</span>
+            </div>
+            <div>
+              <b>一包失败怎么重试？</b>
+              <span>失败或 5 秒无应答计 1 次，满 3 次整条失败。同条重试保持同一 seq；整条失败后再发才换新 seq。语音/图片等 TODST=4 再发下一包。</span>
+            </div>
+            <div>
+              <b>暂时发不出去 / 等待超时</b>
+              <span>TODST=0 进入等待，不计包失败；恢复后从当前包续发。连续等待达配置时长（默认 10 分钟）整条失败。已发出等回执后 10 秒无成功 → 整条失败不重发。</span>
+            </div>
+            <div>
+              <b>平台业务号</b>
+              <span>先推 TOACK（业务号），再推 TODST=4；气泡显示「发送成功」。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-firmware">
+      <div class="sec-head"><div class="no">06</div><h2>终端固件要做什么</h2></div>
+      <p class="sec-lead">终端在蓝牙与 UDP 之间转译。V1.10 机身业务不重做；本期补 V1.11 三条 APP 上行 + V1.12 号段 + v1.8 蓝牙桥。详情见 <a href="../固件/固件工作范围说明.md">固件工作范围说明</a>、<a href="../通用/工程附录-联调前置说明.md">工程附录</a> §E–H。</p>
+
+      <h3 class="fw-subhead">V1.11 新增了哪三条 UDP</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>UDP</th><th>干什么</th><th>谁触发</th><th>不要和谁混</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>0x12</code> APP上报文本</td>
+              <td>把 APP 里的文字发上卫星</td>
+              <td><code>$TITXT</code> 上报文本</td>
+              <td>V1.10 没有对应类型</td>
+            </tr>
+            <tr>
+              <td><code>0x10</code> APP上报语音</td>
+              <td>把 APP 里的语音发上卫星</td>
+              <td><code>$TIVOI</code> 上报语音</td>
+              <td>不是 <code>0x02</code> 终端上报语音（机身短音）</td>
+            </tr>
+            <tr>
+              <td><code>0x11</code> APP上报图片</td>
+              <td>把 APP 里的图片发上卫星</td>
+              <td><code>$TIIMG</code> 上报图片</td>
+              <td>V1.10 没有图片上行</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fw-plain" style="margin-top:8px"><code>0x83</code> 平台下发回执须覆盖上述三条；平台须按 UDP协议 <strong>V1.12</strong> 上线。</p>
+
+      <h3 class="fw-subhead">别混：机身短音 vs APP 语音</h3>
+      <p class="fw-plain">两条路不一样，固件最容易串包：</p>
+      <div class="proto-diagram-wrap">
+        <pre class="mermaid">
+sequenceDiagram
+  participant USER as 用户按键
+  participant TERM as 终端
+  participant PLAT as 卫星平台
+  Note over USER,TERM: ① 机身短音（V1.10）
+  USER->>TERM: 按键录音
+  TERM->>PLAT: UDP 0x02
+        </pre>
+      </div>
+      <div class="proto-diagram-wrap">
+        <pre class="mermaid">
+sequenceDiagram
+  participant APP as 手机APP
+  participant TERM as 终端
+  participant PLAT as 卫星平台
+  Note over APP,TERM: ② APP 发语音（V1.11）
+  APP->>TERM: $TIVOI
+  TERM->>PLAT: UDP 0x10
+        </pre>
+      </div>
+      <div class="proto-kv">
+        <div><b>记住</b><span>机身按键 → 0x02；APP 录音发送 → $TIVOI → 0x10。禁止复用 0x02。</span></div>
+      </div>
+    </section>
+
+    <section id="sec-app">
+      <div class="sec-head">
+        <div class="no">07</div>
+        <h2>可点击原型</h2>
+        <p>点原型控件与两侧需求卡片可双向高亮；Tab 切换消息 / 地图 / 设置。顶栏可点循环演示卫星态。</p>
+      </div>
+      <div class="screen-nav" id="screenNav"></div>
+      
+        <div class="stage">
+          <div class="col-left" id="colLeft"></div>
+          <div class="phone-col phone-scale-host">
+            <div class="phone-meta" id="phoneMeta"></div>
+            <div class="phone">
+              <div class="screen">
+                <div id="screenRoot"></div>
+                <div class="dlg-layer" id="dialogLayer"></div>
+                <div class="toast-layer" id="toastLayer"></div>
+                <div class="toast-layer" id="loadingLayer"></div>
+              </div>
+            </div>
+            <div class="phone-hintbar">
+              <span class="hint-desk">演示数据本地模拟，不访问网络 · 点击控件可定位需求卡片</span>
+              <span class="hint-mob">本地演示 · 点击控件高亮需求</span>
+            </div>
+          </div>
+          <div class="col-right" id="colRight"></div>
+        </div>
+    </section>
+
+    <section id="sec-flows">
+      <div class="sec-head">
+        <div class="no">08</div>
+        <h2>关键流程</h2>
+        <p>故事线步骤条：点步骤或播放会跳到上方「可点击原型」并切到对应屏；需要点控件时直接在原型里操作。</p>
+      </div>
+      <div class="flow-tabs" id="flowTabs"></div>
+      <p class="flow-summary" id="flowSummary"></p>
+      <div class="flow-stage flow-stage-lite">
+        <div class="flow-steps" id="flowSteps"></div>
+        <div class="flow-side">
+          <div class="flow-dots" id="flowDots"></div>
+          <div class="flow-controls">
+            <button type="button" id="flowPrev">上一步</button>
+            <button type="button" id="flowPlay">播放</button>
+            <button type="button" id="flowNext">下一步</button>
+          </div>
+          <div class="flow-caption" id="flowCaption"></div>
+          <button type="button" class="flow-jump" id="flowJump">在原型中查看</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-rules">
+      <div class="sec-head"><div class="no">09</div><h2>业务规则</h2></div>
+      <div id="rulesBox"></div>
+    </section>
+
+    <section id="sec-ops">
+      <div class="sec-head"><div class="no">10</div><h2>操作规格</h2></div>
+      <div id="opsBox"></div>
+    </section>
+
+    <section id="sec-design">
+      <div class="sec-head"><div class="no">11</div><h2>设计规范 · 术语</h2></div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>不再使用</th><th>统一为</th><th>英文</th><th>说明</th></tr></thead>
+        <tbody><tr><td>天通 APP</td><td><b>星联卫士 APP</b></td><td>StarGuard App</td><td>产品全称</td></tr><tr><td>JSON 帧 / TIDAT 透传</td><td><b>$xxxx 应用层帧</b></td><td>NMEA-like $ frame</td><td>蓝牙应用层</td></tr><tr><td>设备 / 我的 Tab</td><td><b>消息 / 地图 / 设置</b></td><td>Messages / Map / Settings</td><td>底栏三 Tab</td></tr><tr><td>authCode / $TIRD / loginStatus</td><td><b>终端自登录 + $TOSTA.netStatus=2</b></td><td>terminal login via netStatus</td><td>APP 不存授权码；已读不发 $TIRD</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section id="sec-provenance">
+      <div class="sec-head"><div class="no">12</div><h2>模拟数据说明</h2>
+      <p>本站点由 prd-brief.json 编译生成；演示数据不访问网络。</p></div>
+    </section>
+
+    <section id="sec-review">
+      <div class="sec-head"><div class="no">13</div><h2>发布前评审清单</h2></div>
+      <div class="panel"><ul id="reviewList">
+        <li>问题陈述里没有写解决方案</li>
+        <li>目标可量化，且能对应到流程或需求条目</li>
+        <li>「本期不做」具体，能挡住范围蔓延</li>
+        <li>用户场景是任务闭环，不是功能堆砌</li>
+        <li>每条验收标准可判断通过/不通过</li>
+        <li>异常路径（离线/失败/过期）有说明</li>
+        <li>原型与文字描述一致</li>
+        <li>术语全文统一（UDP协议 / APP 交互协议）</li>
+        <li>关键流程可在约 10 分钟内走完</li>
+        <li>协议与号段：UDP V1.12 支持 0x10/0x11/0x12、0x83 覆盖；号段机身 0～32767、APP 32800～65535；分包串行等 TODST=4（见 <a href="../通用/工程附录-联调前置说明.md">工程附录</a> H）</li>
+        <li>联调签收：GATT 对照表填入工程附录 §B；0x02 与 0x10 不串包；禁用/额度/0x05 时机实测通过</li>
+      </ul></div>
+    </section>
+
+    <footer>星联卫士 · 1.3 · APP 交互协议 v1.8 · UDP协议 V1.12 · 由 clickable-prd 编译</footer>
+  </div>
+
+  <script src="assets/mock.js"></script>
+  <script src="assets/icons.js"></script>
+  <script src="assets/toast.js"></script>
+  <script src="assets/fields.js"></script>
+  <script src="assets/requirements.js"></script>
+  <script src="assets/page-specs.js"></script>
+  <script src="assets/rules.js"></script>
+  <script src="assets/ops.js"></script>
+  <script src="assets/flows.js"></script>
+  <script src="assets/screens-lib.js"></script>
+  <script src="assets/screens-1.js"></script>
+  <script src="assets/router.js"></script>
+  <script src="assets/prd.js"></script>
+  <script src="assets/mermaid.min.js"></script>
+  <script>
+    (function () {
+      var toggle = document.getElementById("navToggle");
+      var overlay = document.getElementById("navOverlay");
+      function setNav(open) {
+        document.body.classList.toggle("nav-open", open);
+        if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        if (overlay) overlay.hidden = !open;
+      }
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          setNav(!document.body.classList.contains("nav-open"));
+        });
+      }
+      if (overlay) {
+        overlay.addEventListener("click", function () {
+          setNav(false);
+        });
+      }
+      document.querySelectorAll("#topNav a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          setNav(false);
+        });
+      });
+
+      function renderMermaidIn(pane) {
+        if (!pane || !window.mermaid || !mermaid.run) return;
+        var nodes = pane.querySelectorAll(".mermaid:not([data-processed])");
+        if (!nodes.length) return;
+        mermaid.run({ nodes: nodes });
+      }
+
+      function showProto(id) {
+        var tabs = document.getElementById("protoTabs");
+        if (!tabs) return;
+        tabs.querySelectorAll("[data-proto]").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-proto") === id);
+        });
+        var target = null;
+        document.querySelectorAll("[data-proto-pane]").forEach(function (pane) {
+          var on = pane.getAttribute("data-proto-pane") === id;
+          pane.classList.toggle("on", on);
+          if (on) target = pane;
+        });
+        if (target) {
+          requestAnimationFrame(function () {
+            renderMermaidIn(target);
+          });
+        }
+      }
+
+      var tabs = document.getElementById("protoTabs");
+      if (tabs) {
+        tabs.addEventListener("click", function (e) {
+          var btn = e.target.closest("[data-proto]");
+          if (!btn) return;
+          showProto(btn.getAttribute("data-proto"));
+        });
+      }
+
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "neutral",
+          securityLevel: "loose",
+          themeVariables: { fontSize: "13px" },
+          sequence: { actorMargin: 28, messageMargin: 36, mirrorActors: false },
+          flowchart: { htmlLabels: true, curve: "basis" },
+        });
+        var ecoSec = document.getElementById("sec-ecosystem");
+        if (ecoSec) renderMermaidIn(ecoSec);
+        var first = document.querySelector(".proto-panels > .proto-pane.on");
+        if (first) renderMermaidIn(first);
+        var fw = document.getElementById("sec-firmware");
+        if (fw) renderMermaidIn(fw);
+      }
+    })();
+  </script>
+</body>
+</html>

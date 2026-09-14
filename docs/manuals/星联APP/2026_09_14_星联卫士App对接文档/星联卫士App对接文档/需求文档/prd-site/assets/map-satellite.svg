@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1000" viewBox="0 0 750 1000">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a4058"/>
+      <stop offset="100%" stop-color="#1c2c3c"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="750" height="1000" fill="url(#sky)"/>
+  <ellipse cx="220" cy="380" rx="180" ry="140" fill="rgba(90,160,90,.45)"/>
+  <ellipse cx="520" cy="520" rx="220" ry="160" fill="rgba(70,120,70,.5)"/>
+  <ellipse cx="380" cy="280" rx="120" ry="90" fill="rgba(120,100,60,.35)"/>
+  <ellipse cx="160" cy="700" rx="160" ry="110" fill="rgba(60,100,80,.4)"/>
+  <ellipse cx="580" cy="760" rx="140" ry="100" fill="rgba(90,140,70,.35)"/>
+  <path d="M40 620 Q200 580 360 640 T700 600" fill="none" stroke="rgba(180,160,100,.35)" stroke-width="8"/>
+  <path d="M120 200 Q300 320 480 280 T720 400" fill="none" stroke="rgba(200,200,180,.2)" stroke-width="3"/>
+  <path d="M80 800 L280 640 L420 700 L620 520 L720 560" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+  <rect width="750" height="1000" fill="url(#grid)"/>
+</svg>

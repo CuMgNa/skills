@@ -1,0 +1,2253 @@
+{
+  "meta": {
+    "product": "星联卫士",
+    "tagline": "手机蓝牙连上挂身终端，发收文本/语音/图片，看终端位置和能不能发消息。",
+    "shell": "mobile",
+    "version": "1.3",
+    "date": "2026-08",
+    "locale": "zh-CN",
+    "level": "L3"
+  },
+  "narrative": {
+    "problem": [
+      {
+        "title": "设备无屏难操作",
+        "body": "S1 挂在身上，按键能录短音发卫星，但看不到联网态和历史消息，也没法从手机发文本或图片。"
+      },
+      {
+        "title": "卫星态不可见",
+        "body": "用户分不清：手机有没有连上终端、终端有没有卫星联网。容易以为「能发」其实发不出去。"
+      },
+      {
+        "title": "位置难对照",
+        "body": "终端能定位，手机上却看不到终端在哪、坐标有没有更新。"
+      }
+    ],
+    "users": [
+      {
+        "role": "户外作业人员",
+        "badge": "核心用户",
+        "kvs": [
+          {
+            "label": "典型一天",
+            "value": "挂上 S1 → 手机蓝牙连上 → 看顶栏能不能发 → 发一条或看一条下行 → 打开地图确认终端位置"
+          },
+          {
+            "label": "环境",
+            "value": "无地面网络，依赖天通卫星；操作都在 Android 手机上完成"
+          },
+          {
+            "label": "核心诉求",
+            "value": "连得上、看得出状态、发得出去、找得到人在哪"
+          }
+        ]
+      }
+    ],
+    "goals": {
+      "inScope": [
+        "手机蓝牙连上终端后，3 秒内顶栏能看出能不能发、电量和信号（连上后收设备快照/位置/信号）",
+        "消息页收发文本、语音、图片；气泡能看出发送进度（等待/发送中/失败/等回执/成功）；下行已读由终端处理（APP 不发 $TIRD）",
+        "只有「蓝牙已连 + 终端已卫星联网」才能点发送，否则置灰并提示「暂不可发送」",
+        "一直发不出去可配置最长等待（默认 10 分钟），超时整条失败",
+        "地图展示终端位置与经纬度，可切图层、下离线底图；右下角定位回终端",
+        "终端侧：保留已有机身业务；补 APP 三条卫星上行 + 号段分区 + 蓝牙桥（分包串行；联调见 engineering-appendix）"
+      ],
+      "outOfScope": [
+        "不做 iOS、账号体系、设备 OTA、固件版本查询",
+        "不做取消发送；手机后连不补推错过的下行",
+        "不做多人地图/队员协议；APP 不发已读指令",
+        "蓝牙层不用 JSON；APP 不组卫星包、不存卫星授权码",
+        "产品交互不写 BLE UUID/MTU，但联调前必须填齐 docs/engineering-appendix.md 中的 GATT 对照表",
+        "设置页「授权信息」= 语音库/图像库/APP 许可证，不是卫星授权码"
+      ],
+      "metrics": [
+        "首次连接主路径 ≤ 4 屏到达消息页",
+        "文本/常用语发送演示路径 ≤ 3 步（输入→发送→气泡态）",
+        "连接后 3 秒内顶栏可见联网态与信号格"
+      ]
+    },
+    "concepts": [
+      {
+        "title": "手机只跟终端说话",
+        "body": "蓝牙上来回都是 $xxxx 帧（共 14 条）。手机不组、不解析卫星 UDP，也不存授权码。"
+      },
+      {
+        "title": "发送两道门",
+        "body": "蓝牙已连，且终端已卫星联网（顶栏联网成功，对应 netStatus=2）。少一道就置灰，提示「暂不可发送」。"
+      },
+      {
+        "title": "气泡五态",
+        "body": "整条消息：等待 → 发送中 → 失败 / 成功等待回执 → 发送成功。进度看终端回报；平台业务号另有回执帧。连续「等待」超过设置时长（默认 10 分钟）亦判失败。"
+      },
+      {
+        "title": "下行已读归终端",
+        "body": "平台消息先到终端，再推到手机展示。已读由终端报平台；APP 只做本机展示和去重。"
+      },
+      {
+        "title": "地图点来自终端",
+        "body": "坐标来自终端位置推送；未定位不造假点。图层/下载/缩放是本地底图能力，不占卫星带宽。"
+      }
+    ],
+    "moduleCapabilities": [
+      {
+        "module": "连接",
+        "canDo": "扫描、配对、断连；顶栏先显示蓝牙，再显示联网态"
+      },
+      {
+        "module": "消息",
+        "canDo": "会话气泡、常用语、发语音/图片；收到下行在本机展示"
+      },
+      {
+        "module": "地图",
+        "canDo": "终端打点与经纬度、定位按钮、卫星/标准图层、离线底图下载"
+      },
+      {
+        "module": "设置",
+        "canDo": "设备号、许可证授权信息、指令调试、等待发送超时、APP 版本检测"
+      },
+      {
+        "module": "终端固件",
+        "canDo": "机身业务保留；本期补 APP 上行三条 + 号段分区 + 蓝牙桥（不改硬件）"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "key": "m_boot",
+      "name": "启动与权限",
+      "screens": [
+        "splash",
+        "perm_guide"
+      ]
+    },
+    {
+      "key": "m_connect",
+      "name": "蓝牙连接",
+      "screens": [
+        "device_scan"
+      ]
+    },
+    {
+      "key": "m_msg",
+      "name": "消息",
+      "screens": [
+        "messages"
+      ]
+    },
+    {
+      "key": "m_map",
+      "name": "地图",
+      "screens": [
+        "map"
+      ]
+    },
+    {
+      "key": "m_profile",
+      "name": "设置",
+      "screens": [
+        "settings",
+        "auth_info",
+        "auth_detail",
+        "cmd_debug"
+      ]
+    },
+    {
+      "key": "m_common",
+      "name": "异常态",
+      "screens": [
+        "state_error"
+      ]
+    }
+  ],
+  "screens": {
+    "splash": {
+      "title": "开屏",
+      "module": "m_boot",
+      "offline": "完全离线",
+      "fr": [
+        {
+          "id": "FR-SPLASH-01",
+          "title": "品牌展示",
+          "desc": "冷启动展示星联卫士品牌",
+          "acceptance": "2 秒内自动进入权限引导或跳过",
+          "anchor": "splashLogo"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-SPLASH-01",
+          "title": "Logo 居中",
+          "desc": "品牌 Logo 为视觉焦点",
+          "anchor": "splashLogo"
+        },
+        {
+          "id": "UX-SPLASH-02",
+          "title": "轻触跳过",
+          "desc": "全屏可点击进入下一步",
+          "anchor": "splashLogo"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-SPLASH-01",
+          "title": "品牌区",
+          "desc": "Logo+产品名",
+          "zone": "top",
+          "anchor": "splashLogo"
+        },
+        {
+          "id": "LAY-SPLASH-02",
+          "title": "副标题",
+          "desc": "卫星应急通信",
+          "zone": "form",
+          "anchor": "splashTagline"
+        },
+        {
+          "id": "LAY-SPLASH-03",
+          "title": "跳过区",
+          "desc": "全屏热区",
+          "zone": "bottom",
+          "anchor": "splashLogo"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-SPLASH-01",
+          "key": "brandName",
+          "label": "品牌名",
+          "type": "string",
+          "required": true,
+          "anchor": "splashLogo"
+        }
+      ]
+    },
+    "perm_guide": {
+      "title": "权限引导",
+      "module": "m_boot",
+      "offline": "完全离线",
+      "fr": [
+        {
+          "id": "FR-PERM-01",
+          "title": "申请必要权限",
+          "desc": "蓝牙、麦克风、相机/相册；地图位置来自终端，不申请手机 GPS",
+          "acceptance": "授权后进入设备扫描；拒绝则说明影响",
+          "anchor": "permContinueBtn",
+          "ops": [
+            "OP-PERM-01"
+          ]
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-PERM-01",
+          "title": "逐项说明",
+          "desc": "每项权限对应功能",
+          "anchor": "permList"
+        },
+        {
+          "id": "UX-PERM-02",
+          "title": "终端定位说明",
+          "desc": "文案写明地图用终端 $TOLOC，不申请手机 GPS",
+          "anchor": "permList"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-PERM-01",
+          "title": "说明标题",
+          "desc": "需要以下权限",
+          "zone": "top",
+          "anchor": "permTitle"
+        },
+        {
+          "id": "LAY-PERM-02",
+          "title": "权限列表",
+          "desc": "蓝牙/麦/相机/终端定位说明",
+          "zone": "list",
+          "anchor": "permList"
+        },
+        {
+          "id": "LAY-PERM-03",
+          "title": "继续按钮",
+          "desc": "主按钮",
+          "zone": "bottom",
+          "anchor": "permContinueBtn"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-PERM-01",
+          "key": "bleGranted",
+          "label": "蓝牙已授权",
+          "type": "boolean",
+          "required": false,
+          "anchor": "permList"
+        }
+      ]
+    },
+    "device_scan": {
+      "title": "连接设备",
+      "module": "m_connect",
+      "offline": "需蓝牙",
+      "fr": [
+        {
+          "id": "FR-SCAN-01",
+          "title": "扫描星联卫士",
+          "desc": "扫描 BLE 广播名含 S1/星联卫士 的设备",
+          "acceptance": "10 秒内列表出现设备或空态",
+          "anchor": "scanList"
+        },
+        {
+          "id": "FR-SCAN-02",
+          "title": "点击连接",
+          "desc": "GATT 连接成功后终端推送 $TOSTA+$TOLOC+$TOSIG，进入消息页",
+          "acceptance": "15 秒内进入消息页或显示失败原因",
+          "anchor": "scanConnectBtn",
+          "ops": [
+            "OP-CONNECT-01"
+          ]
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-SCAN-01",
+          "title": "扫描动画",
+          "desc": "连接中显示进度",
+          "anchor": "scanSpinner"
+        },
+        {
+          "id": "UX-SCAN-02",
+          "title": "空态",
+          "desc": "未发现设备时提示靠近并确认开机",
+          "anchor": "scanEmpty"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-SCAN-01",
+          "title": "标题栏",
+          "desc": "连接设备",
+          "zone": "top",
+          "anchor": "scanTitle"
+        },
+        {
+          "id": "LAY-SCAN-02",
+          "title": "设备列表",
+          "desc": "RSSI+名称",
+          "zone": "list",
+          "anchor": "scanList"
+        },
+        {
+          "id": "LAY-SCAN-03",
+          "title": "连接按钮",
+          "desc": "选中后连接",
+          "zone": "bottom",
+          "anchor": "scanConnectBtn"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-SCAN-01",
+          "key": "selectedDeviceId",
+          "label": "选中设备",
+          "type": "string",
+          "required": false,
+          "anchor": "scanList"
+        },
+        {
+          "id": "FL-SCAN-02",
+          "key": "connectState",
+          "label": "连接状态",
+          "type": "enum",
+          "required": true,
+          "anchor": "scanSpinner"
+        }
+      ]
+    },
+    "messages": {
+      "title": "消息",
+      "module": "m_msg",
+      "offline": "需蓝牙",
+      "fr": [
+        {
+          "id": "FR-MSG-01",
+          "title": "卫星状态顶栏",
+          "desc": "未连蓝牙时展示连接入口；连上后按 netStatus 展示联网三态、deviceId、电量与信号；已连点击弹出断开确认",
+          "acceptance": "未连显示「未连接蓝牙 · 点击连接」；已连显示联网态与电量；无 loginStatus",
+          "anchor": "satBanner"
+        },
+        {
+          "id": "FR-MSG-02",
+          "title": "会话气泡列表",
+          "desc": "左右分列展示下行与上行；语音显示时长；发出图片缩略气泡；上行展示发送五态",
+          "acceptance": "至少可见发送成功/失败/发送中，并可用演示切换等待与成功等待回执；可见发出图片气泡",
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "FR-MSG-03",
+          "title": "文本与常用语发送",
+          "desc": "输入框或常用语发出 $TITXT；不可发送时按钮置灰并提示「暂不可发送」",
+          "acceptance": "可发送时发出后气泡进入发送中 1/1；不可发送时 Toast「暂不可发送」",
+          "anchor": "msgSendBtn",
+          "ops": [
+            "OP-SEND-TXT-01"
+          ]
+        },
+        {
+          "id": "FR-MSG-04",
+          "title": "语音上行",
+          "desc": "按住录音，松手后发 $TIVOI 分包",
+          "acceptance": "录音后气泡出现并进入发送中 m/n",
+          "anchor": "msgVoiceBtn",
+          "ops": [
+            "OP-SEND-VOICE-01"
+          ]
+        },
+        {
+          "id": "FR-MSG-05",
+          "title": "图片上行",
+          "desc": "拍照或相册发 $TIIMG 分包；会话出现发出图片气泡与发送态；无图片下行",
+          "acceptance": "选图后会话出现发出图片气泡并进入发送中 m/n",
+          "anchor": "msgCameraBtn",
+          "ops": [
+            "OP-SEND-IMAGE-01"
+          ]
+        },
+        {
+          "id": "FR-MSG-06",
+          "title": "下行展示与本机已读",
+          "desc": "打开下行文本/语音做本机展示与去重；已读回执由终端上报 UDP 0x05，APP 不发 $TIRD；platId=0 按键短音仅展示",
+          "acceptance": "点击下行气泡仅本机标记已读/Toast 说明；协议层无 $TIRD",
+          "anchor": "msgChatList",
+          "ops": [
+            "OP-READ-MSG-01"
+          ]
+        },
+        {
+          "id": "FR-MSG-07",
+          "title": "发送中分包进度",
+          "desc": "发送中文案为「发送中 m/n」；文本固定 1/1；语音/图片按分包跟踪",
+          "acceptance": "发送中气泡可见 m/n；点状态可演示推进进度",
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "FR-MSG-08",
+          "title": "失败原因",
+          "desc": "发送失败旁显示感叹号；点击弹出 APP 归纳的失败原因",
+          "acceptance": "失败气泡可见 ! ；点击后 Sheet 展示 failReason",
+          "anchor": "msgFailHint"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-MSG-01",
+          "title": "顶栏优先级",
+          "desc": "卫星态条始终在标题下；联网成功绿/失败红/联网中橙；deviceId 与电量跟在态文案后",
+          "anchor": "satBanner"
+        },
+        {
+          "id": "UX-MSG-02",
+          "title": "气泡状态色与进度",
+          "desc": "成功蓝、失败红、发送中橙并带 m/n；等待与成功等待回执可区分",
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "UX-MSG-03",
+          "title": "常用语面板",
+          "desc": "展开后可一键填入并发送短文本，节省带宽",
+          "anchor": "msgPhrases"
+        },
+        {
+          "id": "UX-MSG-04",
+          "title": "失败感叹号",
+          "desc": "失败旁圆形 ! ，点击弹出原因 Sheet",
+          "anchor": "msgFailHint"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-MSG-01",
+          "title": "标题",
+          "desc": "消息",
+          "zone": "top",
+          "anchor": "msgTitle"
+        },
+        {
+          "id": "LAY-MSG-02",
+          "title": "卫星顶栏",
+          "desc": "态+deviceId+电量+信号",
+          "zone": "top",
+          "anchor": "satBanner"
+        },
+        {
+          "id": "LAY-MSG-03",
+          "title": "会话区",
+          "desc": "气泡列表（含图片）",
+          "zone": "list",
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "LAY-MSG-04",
+          "title": "常用语",
+          "desc": "可展开面板",
+          "zone": "sheet",
+          "anchor": "msgPhrases"
+        },
+        {
+          "id": "LAY-MSG-05",
+          "title": "输入区",
+          "desc": "语音/文本/相机/发送",
+          "zone": "bottom",
+          "anchor": "msgInputBar"
+        },
+        {
+          "id": "LAY-MSG-06",
+          "title": "底栏",
+          "desc": "消息/地图/设置",
+          "zone": "tab",
+          "anchor": "tabbar"
+        },
+        {
+          "id": "LAY-MSG-07",
+          "title": "失败原因 Sheet",
+          "desc": "感叹号弹出",
+          "zone": "sheet",
+          "anchor": "msgFailSheet"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-MSG-01",
+          "key": "satUiState",
+          "label": "卫星顶栏态",
+          "type": "enum",
+          "required": true,
+          "anchor": "satBanner",
+          "note": "connecting|connected|offline（演示态；协议以 netStatus 为准）"
+        },
+        {
+          "id": "FL-MSG-02",
+          "key": "draftText",
+          "label": "输入草稿",
+          "type": "string",
+          "required": false,
+          "anchor": "msgInput"
+        },
+        {
+          "id": "FL-MSG-03",
+          "key": "msgUiStatus",
+          "label": "气泡发送态",
+          "type": "enum",
+          "required": true,
+          "anchor": "msgChatList",
+          "note": "waiting|sending|failed|ack_wait|success"
+        },
+        {
+          "id": "FL-MSG-04",
+          "key": "platId",
+          "label": "平台业务 ID",
+          "type": "string",
+          "required": false,
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "FL-MSG-05",
+          "key": "deviceId",
+          "label": "终端 ID",
+          "type": "string",
+          "required": true,
+          "anchor": "satDeviceId"
+        },
+        {
+          "id": "FL-MSG-06",
+          "key": "pktDone",
+          "label": "已完成分包",
+          "type": "number",
+          "required": false,
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "FL-MSG-07",
+          "key": "pktTotal",
+          "label": "总分包数",
+          "type": "number",
+          "required": false,
+          "anchor": "msgChatList"
+        },
+        {
+          "id": "FL-MSG-08",
+          "key": "failReason",
+          "label": "失败原因",
+          "type": "string",
+          "required": false,
+          "anchor": "msgFailSheet"
+        }
+      ]
+    },
+    "map": {
+      "title": "地图",
+      "module": "m_map",
+      "offline": "需蓝牙",
+      "fr": [
+        {
+          "id": "FR-MAP-01",
+          "title": "卫星状态顶栏",
+          "desc": "与消息页共用同一套蓝牙优先 + 联网三态顶栏逻辑",
+          "acceptance": "与消息页顶栏态一致（未连蓝牙/联网三态/断开确认）",
+          "anchor": "satBanner"
+        },
+        {
+          "id": "FR-MAP-02",
+          "title": "终端打点",
+          "desc": "用最近一次有效 $TOLOC 在地图上打点，并常驻展示经纬度；未定位不造假点",
+          "acceptance": "locStatus=1 时可见终端标记与经纬度条；否则显示搜星中/无效提示且无坐标数字",
+          "anchor": "mapCanvas"
+        },
+        {
+          "id": "FR-MAP-03",
+          "title": "定位按钮",
+          "desc": "右下角缩放区上方的定位按钮，回到终端 $TOLOC 位置",
+          "acceptance": "有有效坐标时点击提示已回到终端位置；无坐标时提示暂无有效坐标",
+          "anchor": "mapLocateBtn"
+        },
+        {
+          "id": "FR-MAP-05",
+          "title": "离线底图与图层",
+          "desc": "可在卫星图/标准地图间切换；可模拟下载离线底图；缩放为本地能力，不走卫星指令",
+          "acceptance": "图层 sheet 二选一且底图变化；下载可走 idle→进度→已就绪，文案说明不占卫星带宽",
+          "anchor": "mapDownloadBtn"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-MAP-01",
+          "title": "右侧工具条",
+          "desc": "下载/图层纵向排列；定位在缩放区上方",
+          "anchor": "mapToolbar"
+        },
+        {
+          "id": "UX-MAP-02",
+          "title": "缩放与定位",
+          "desc": "右下角定位 + +/- ",
+          "anchor": "mapZoom"
+        },
+        {
+          "id": "UX-MAP-03",
+          "title": "未定位空态",
+          "desc": "locStatus≠1 时不显示坐标数字；已定位时底部常驻经纬度",
+          "anchor": "mapCanvas"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-MAP-01",
+          "title": "标题",
+          "desc": "地图",
+          "zone": "top",
+          "anchor": "mapTitle"
+        },
+        {
+          "id": "LAY-MAP-02",
+          "title": "卫星顶栏",
+          "desc": "蓝牙/联网态",
+          "zone": "top",
+          "anchor": "satBanner"
+        },
+        {
+          "id": "LAY-MAP-03",
+          "title": "地图画布",
+          "desc": "底图+终端点",
+          "zone": "map",
+          "anchor": "mapCanvas"
+        },
+        {
+          "id": "LAY-MAP-04",
+          "title": "工具条",
+          "desc": "下载/图层",
+          "zone": "side",
+          "anchor": "mapToolbar"
+        },
+        {
+          "id": "LAY-MAP-06",
+          "title": "底栏",
+          "desc": "Tab",
+          "zone": "tab",
+          "anchor": "tabbar"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-MAP-01",
+          "key": "locStatus",
+          "label": "定位态",
+          "type": "enum",
+          "required": true,
+          "anchor": "mapCanvas"
+        },
+        {
+          "id": "FL-MAP-02",
+          "key": "lat",
+          "label": "纬度",
+          "type": "number",
+          "required": false,
+          "anchor": "mapCanvas"
+        },
+        {
+          "id": "FL-MAP-03",
+          "key": "lon",
+          "label": "经度",
+          "type": "number",
+          "required": false,
+          "anchor": "mapCanvas"
+        },
+        {
+          "id": "FL-MAP-04",
+          "key": "mapLayer",
+          "label": "图层",
+          "type": "enum",
+          "required": false,
+          "anchor": "mapLayerBtn"
+        }
+      ]
+    },
+    "settings": {
+      "title": "设置",
+      "module": "m_profile",
+      "offline": "部分离线",
+      "fr": [
+        {
+          "id": "FR-SET-01",
+          "title": "设备号",
+          "desc": "展示 $TOSTA.deviceId（12 位）",
+          "acceptance": "与最近一次 $TOSTA 的 deviceId 一致",
+          "anchor": "setDeviceInfo"
+        },
+        {
+          "id": "FR-SET-02",
+          "title": "版本检测更新",
+          "desc": "展示并检测 APP 版本，不做固件版本查询",
+          "acceptance": "可见当前 APP 版本号；点击进入检测流程或说明",
+          "anchor": "setVersionRow"
+        },
+        {
+          "id": "FR-SET-03",
+          "title": "断开连接",
+          "desc": "断开蓝牙并回到扫描",
+          "acceptance": "二次确认后进入连接异常或扫描页",
+          "anchor": "setDisconnectBtn"
+        },
+        {
+          "id": "FR-SET-04",
+          "title": "授权信息入口",
+          "desc": "设置页进入语音库/图像库/APP 许可证查看与解绑（非卫星 UDP authCode）",
+          "acceptance": "点击「授权信息」进入 auth_info",
+          "anchor": "setAuthRow"
+        },
+        {
+          "id": "FR-SET-05",
+          "title": "指令调试入口",
+          "desc": "授权信息下方进入指令调试，查看与发送 $xxxx 帧",
+          "acceptance": "点击「指令调试」进入 cmd_debug",
+          "anchor": "setCmdDebugRow"
+        },
+        {
+          "id": "FR-SET-06",
+          "title": "等待发送超时",
+          "desc": "配置消息处于「等待」态的最长连续时长；超时整条失败。默认 10 分钟，可选 5/10/15/30/60 分钟",
+          "acceptance": "设置页可见当前超时分钟数；切换后立即生效并持久化；默认值为 10",
+          "anchor": "setWaitTimeoutRow"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-SET-01",
+          "title": "头像+设备号",
+          "desc": "顶部身份区优先展示 deviceId",
+          "anchor": "setDeviceInfo"
+        },
+        {
+          "id": "UX-SET-02",
+          "title": "版本行",
+          "desc": "右侧显示 V 版本号与箭头",
+          "anchor": "setVersionRow"
+        },
+        {
+          "id": "UX-SET-03",
+          "title": "授权信息行",
+          "desc": "列表入口带箭头，位于版本检测之上",
+          "anchor": "setAuthRow"
+        },
+        {
+          "id": "UX-SET-04",
+          "title": "指令调试行",
+          "desc": "授权信息与版本检测之间",
+          "anchor": "setCmdDebugRow"
+        },
+        {
+          "id": "UX-SET-05",
+          "title": "等待超时行",
+          "desc": "展示当前分钟数，点击弹出档位选择",
+          "anchor": "setWaitTimeoutRow"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-SET-01",
+          "title": "标题",
+          "desc": "设置",
+          "zone": "top",
+          "anchor": "setTitle"
+        },
+        {
+          "id": "LAY-SET-02",
+          "title": "设备信息卡",
+          "desc": "头像+deviceId",
+          "zone": "top",
+          "anchor": "setDeviceInfo"
+        },
+        {
+          "id": "LAY-SET-03",
+          "title": "授权信息行",
+          "desc": "进入授权页",
+          "zone": "list",
+          "anchor": "setAuthRow"
+        },
+        {
+          "id": "LAY-SET-03b",
+          "title": "指令调试行",
+          "desc": "进入调试页",
+          "zone": "list",
+          "anchor": "setCmdDebugRow"
+        },
+        {
+          "id": "LAY-SET-03c",
+          "title": "等待超时行",
+          "desc": "等待发送超时配置",
+          "zone": "list",
+          "anchor": "setWaitTimeoutRow"
+        },
+        {
+          "id": "LAY-SET-04",
+          "title": "版本行",
+          "desc": "APP 版本检测",
+          "zone": "list",
+          "anchor": "setVersionRow"
+        },
+        {
+          "id": "LAY-SET-05",
+          "title": "断开",
+          "desc": "按钮",
+          "zone": "bottom",
+          "anchor": "setDisconnectBtn"
+        },
+        {
+          "id": "LAY-SET-06",
+          "title": "底栏",
+          "desc": "Tab",
+          "zone": "tab",
+          "anchor": "tabbar"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-SET-01",
+          "key": "deviceId",
+          "label": "设备号",
+          "type": "string",
+          "required": true,
+          "anchor": "setDeviceInfo"
+        },
+        {
+          "id": "FL-SET-02",
+          "key": "appVersion",
+          "label": "APP 版本",
+          "type": "string",
+          "required": true,
+          "anchor": "setVersionRow"
+        }
+      ]
+    },
+    "auth_info": {
+      "title": "授权信息",
+      "module": "m_profile",
+      "offline": "部分离线",
+      "fr": [
+        {
+          "id": "FR-AUTH-01",
+          "title": "三类授权卡片",
+          "desc": "展示语音库/图像库/APP 授权有效期、状态提示与立即授权或解绑",
+          "acceptance": "可见三张卡片；过期显示立即授权；永久有效显示解绑授权",
+          "anchor": "authList"
+        },
+        {
+          "id": "FR-AUTH-02",
+          "title": "一键解绑",
+          "desc": "二次确认后解绑 APP、语音、图像授权（演示）",
+          "acceptance": "确认框文案说明会解绑三类授权",
+          "anchor": "authUnbindAllBtn"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-AUTH-01",
+          "title": "过期红色提示",
+          "desc": "过期态用红色 * 提示 + 蓝色立即授权按钮",
+          "anchor": "authCard_voice"
+        },
+        {
+          "id": "UX-AUTH-02",
+          "title": "永久有效蓝色提示",
+          "desc": "永久有效用蓝色提示 + 红色解绑按钮",
+          "anchor": "authCard_image"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-AUTH-01",
+          "title": "标题",
+          "desc": "授权信息",
+          "zone": "top",
+          "anchor": "authTitle"
+        },
+        {
+          "id": "LAY-AUTH-02",
+          "title": "授权列表",
+          "desc": "三卡片",
+          "zone": "list",
+          "anchor": "authList"
+        },
+        {
+          "id": "LAY-AUTH-02b",
+          "title": "一键解绑",
+          "desc": "底部危险操作",
+          "zone": "bottom",
+          "anchor": "authUnbindAllBtn"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-AUTH-01",
+          "key": "authLicenses",
+          "label": "授权许可证",
+          "type": "object",
+          "required": true,
+          "anchor": "authList"
+        }
+      ]
+    },
+    "auth_detail": {
+      "title": "授权详情",
+      "module": "m_profile",
+      "offline": "部分离线",
+      "fr": [
+        {
+          "id": "FR-AUTH-03",
+          "title": "授权明细",
+          "desc": "展示设备 ID、生效/到期时间与调用次数",
+          "acceptance": "按 type 展示对应许可证 records",
+          "anchor": "authDetailList"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-AUTH-03",
+          "title": "明细卡片层级",
+          "desc": "键值行展示授权字段，标题优先",
+          "anchor": "authDetailList"
+        },
+        {
+          "id": "UX-AUTH-04",
+          "title": "空明细态",
+          "desc": "无 records 时显示暂无授权明细",
+          "anchor": "authDetailList"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-AUTH-03",
+          "title": "标题",
+          "desc": "按类型展示详情标题",
+          "zone": "top",
+          "anchor": "authDetailTitle"
+        },
+        {
+          "id": "LAY-AUTH-04",
+          "title": "明细区",
+          "desc": "授权字段块",
+          "zone": "list",
+          "anchor": "authDetailList"
+        },
+        {
+          "id": "LAY-AUTH-05",
+          "title": "返回",
+          "desc": "导航返回授权列表",
+          "zone": "top",
+          "anchor": "authDetailTitle"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-AUTH-02",
+          "key": "authType",
+          "label": "授权类型",
+          "type": "enum",
+          "required": true,
+          "anchor": "authDetailTitle",
+          "note": "voice|image|app"
+        }
+      ]
+    },
+    "cmd_debug": {
+      "title": "指令调试",
+      "module": "m_profile",
+      "offline": "需蓝牙",
+      "fr": [
+        {
+          "id": "FR-CMD-01",
+          "title": "查看交互日志",
+          "desc": "展示 APP↔终端 $xxxx 帧的 TX/RX 日志",
+          "acceptance": "可见方向、时间与完整帧字符串",
+          "anchor": "cmdLog"
+        },
+        {
+          "id": "FR-CMD-02",
+          "title": "发送指令",
+          "desc": "快捷 chip 或自定义输入框发送上行帧；未连蓝牙不可发",
+          "acceptance": "连蓝牙后可发送；查询类出现 mock RX；未连 Toast 请先连接蓝牙",
+          "anchor": "cmdSendBtn"
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-CMD-01",
+          "title": "快捷发送区",
+          "desc": "常用指令 chip 横向换行",
+          "anchor": "cmdQuickBar"
+        },
+        {
+          "id": "UX-CMD-02",
+          "title": "日志深色区",
+          "desc": "TX 绿 / RX 蓝区分方向",
+          "anchor": "cmdLog"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-CMD-01",
+          "title": "标题",
+          "desc": "指令调试",
+          "zone": "top",
+          "anchor": "cmdDebugTitle"
+        },
+        {
+          "id": "LAY-CMD-02",
+          "title": "快捷+自定义",
+          "desc": "发送区",
+          "zone": "form",
+          "anchor": "cmdCustom"
+        },
+        {
+          "id": "LAY-CMD-03",
+          "title": "日志",
+          "desc": "交互记录",
+          "zone": "list",
+          "anchor": "cmdLog"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-CMD-01",
+          "key": "cmdDraft",
+          "label": "自定义帧",
+          "type": "string",
+          "required": false,
+          "anchor": "cmdDraftInput"
+        }
+      ]
+    },
+    "state_error": {
+      "title": "连接异常",
+      "module": "m_common",
+      "offline": "完全离线",
+      "fr": [
+        {
+          "id": "FR-ERR-01",
+          "title": "异常说明",
+          "desc": "蓝牙断开/设备被占用等",
+          "acceptance": "根据 errorCode 展示对应文案与操作",
+          "anchor": "errMessage"
+        },
+        {
+          "id": "FR-ERR-02",
+          "title": "重试连接",
+          "desc": "返回 device_scan",
+          "acceptance": "点击后进入扫描页",
+          "anchor": "errRetryBtn",
+          "ops": [
+            "OP-CONNECT-01"
+          ]
+        }
+      ],
+      "ux": [
+        {
+          "id": "UX-ERR-01",
+          "title": "图标+文案",
+          "desc": "错误类型可区分",
+          "anchor": "errIcon"
+        },
+        {
+          "id": "UX-ERR-02",
+          "title": "主操作",
+          "desc": "重试按钮高对比",
+          "anchor": "errRetryBtn"
+        }
+      ],
+      "layout": [
+        {
+          "id": "LAY-ERR-01",
+          "title": "图标",
+          "desc": "居中",
+          "zone": "top",
+          "anchor": "errIcon"
+        },
+        {
+          "id": "LAY-ERR-02",
+          "title": "说明",
+          "desc": "错误文案",
+          "zone": "form",
+          "anchor": "errMessage"
+        },
+        {
+          "id": "LAY-ERR-03",
+          "title": "重试",
+          "desc": "按钮",
+          "zone": "bottom",
+          "anchor": "errRetryBtn"
+        }
+      ],
+      "fields": [
+        {
+          "id": "FL-ERR-01",
+          "key": "errorCode",
+          "label": "错误码",
+          "type": "enum",
+          "required": true,
+          "anchor": "errMessage"
+        }
+      ]
+    }
+  },
+  "flows": [
+    {
+      "id": "onboarding",
+      "title": "1 · 首次连接",
+      "summary": "开屏 → 权限 → 扫描 → 消息页",
+      "steps": [
+        {
+          "screen": "splash",
+          "caption": "品牌开屏",
+          "fr": "FR-SPLASH-01",
+          "demo": {
+            "bleConnected": false
+          }
+        },
+        {
+          "screen": "perm_guide",
+          "caption": "授权蓝牙/麦/相机",
+          "fr": "FR-PERM-01",
+          "demo": {
+            "bleConnected": false
+          }
+        },
+        {
+          "screen": "device_scan",
+          "caption": "扫描并连接 S1",
+          "fr": "FR-SCAN-02",
+          "demo": {
+            "bleConnected": false
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "收 $TOSTA+$TOLOC+$TOSIG 进入消息",
+          "fr": "FR-MSG-01",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "send_text",
+      "title": "2 · 发常用语/文本",
+      "summary": "消息页 → 常用语或输入 → 气泡态",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "展开常用语或输入文本",
+          "fr": "FR-MSG-03",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "发送后气泡进入发送中/成功",
+          "fr": "FR-MSG-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "send_voice",
+      "title": "3 · 发语音",
+      "summary": "消息页录音 → $TIVOI 分包 → 气泡五态",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "按住录音",
+          "fr": "FR-MSG-04",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "气泡显示发送中直至成功或失败",
+          "fr": "FR-MSG-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "send_image",
+      "title": "4 · 发图片",
+      "summary": "选图 → $TIIMG 分包 → 气泡五态",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "选图发送",
+          "fr": "FR-MSG-05",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "气泡显示发送进度态",
+          "fr": "FR-MSG-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uplink_with_ack",
+      "title": "5 · 上报与 TOACK",
+      "summary": "发 $TITXT → $TODST → $TOACK → $TODST=4",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "发出文本 $TITXT",
+          "fr": "FR-MSG-03",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "气泡随 $TODST 五态推进",
+          "fr": "FR-MSG-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "cmd_debug",
+          "caption": "日志可见 $TOACK 与 $TODST",
+          "fr": "FR-CMD-01",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "read_msg",
+      "title": "6 · 阅读下行",
+      "summary": "点击下行气泡 → 本机展示；已读由终端处理",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "查看下行文本/语音",
+          "fr": "FR-MSG-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "本机标记已读（无 $TIRD）",
+          "fr": "FR-MSG-06",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "view_map",
+      "title": "7 · 看终端地图",
+      "summary": "地图 Tab → 打点/图层/离线下载/定位",
+      "steps": [
+        {
+          "screen": "map",
+          "caption": "查看终端 $TOLOC 打点与经纬度",
+          "fr": "FR-MAP-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected",
+            "locStatus": 1
+          }
+        },
+        {
+          "screen": "map",
+          "caption": "切换图层或下载离线底图",
+          "fr": "FR-MAP-05",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected",
+            "locStatus": 1
+          }
+        },
+        {
+          "screen": "map",
+          "caption": "右下角定位回到终端",
+          "fr": "FR-MAP-03",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected",
+            "locStatus": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "view_auth",
+      "title": "8 · 查看授权信息",
+      "summary": "设置 → 授权信息 → 详情",
+      "steps": [
+        {
+          "screen": "settings",
+          "caption": "进入授权信息",
+          "fr": "FR-SET-04",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "auth_info",
+          "caption": "查看三类授权卡片",
+          "fr": "FR-AUTH-01",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "auth_detail",
+          "caption": "查看授权明细",
+          "fr": "FR-AUTH-03",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "net_offline",
+      "title": "9 · 卫星未联网",
+      "summary": "netStatus≠2 顶栏联网中/失败 + 发送置灰",
+      "steps": [
+        {
+          "screen": "messages",
+          "caption": "netStatus=0 顶栏显示联网失败",
+          "fr": "FR-MSG-01",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 0,
+            "satUiState": "offline"
+          }
+        },
+        {
+          "screen": "messages",
+          "caption": "发送不可用提示暂不可发送",
+          "fr": "FR-MSG-03",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 0,
+            "satUiState": "offline"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cmd_debug_flow",
+      "title": "10 · 指令调试",
+      "summary": "设置 → 指令调试 → 发 $TIQRY 看 TX/RX",
+      "steps": [
+        {
+          "screen": "settings",
+          "caption": "进入指令调试",
+          "fr": "FR-SET-05",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        },
+        {
+          "screen": "cmd_debug",
+          "caption": "查看日志并发送查询帧",
+          "fr": "FR-CMD-02",
+          "demo": {
+            "bleConnected": true,
+            "netStatus": 2,
+            "satUiState": "connected"
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "app_frame_only",
+      "title": "应用层只认 $xxxx",
+      "owner": "APP",
+      "summary": "禁止 JSON；不组 UDP；不保存授权码；无 $TIRD",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "任意蓝牙应用载荷",
+          "result": "必须是 $CMD,fields...*hh 帧"
+        },
+        {
+          "no": 2,
+          "cond": "平台授权码",
+          "result": "留在终端，APP 不存储"
+        },
+        {
+          "no": 3,
+          "cond": "下行已读",
+          "result": "终端发 UDP 0x05；APP 不发 $TIRD"
+        }
+      ]
+    },
+    {
+      "id": "ble_snapshot",
+      "title": "连接后快照三帧",
+      "owner": "终端→APP",
+      "summary": "GATT 连上后必推 TOSTA+TOLOC+TOSIG",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "BLE GATT 连接成功",
+          "result": "终端依次推 $TOSTA、$TOLOC、$TOSIG"
+        },
+        {
+          "no": 2,
+          "cond": "字段变化（断网/联网/SOS/定位/信号）",
+          "result": "终端主动 Notify 对应帧；APP 可用查询核对"
+        },
+        {
+          "no": 3,
+          "cond": "平台 0x80 授权/登录结果",
+          "result": "终端内部处理，仅经 $TOSTA.netStatus 反映给 APP"
+        }
+      ]
+    },
+    {
+      "id": "send_gate",
+      "title": "发送门闩",
+      "owner": "APP",
+      "summary": "蓝牙已连 + $TOSTA.netStatus=2",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "蓝牙已连且 netStatus=2",
+          "result": "发送按钮点亮"
+        },
+        {
+          "no": 2,
+          "cond": "蓝牙未连或 netStatus≠2",
+          "result": "置灰并提示「暂不可发送」；在途按 TODST=0 等待"
+        },
+        {
+          "no": 3,
+          "cond": "无 loginStatus / sendReady / reason",
+          "result": "登录成功语义已含于 netStatus=2"
+        }
+      ]
+    },
+    {
+      "id": "todst_ui",
+      "title": "TODST / TOACK 整条消息 UI",
+      "owner": "APP",
+      "summary": "五态汇总、重试上限与平台回执",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "TODST=0",
+          "result": "整条等待，不计包失败；恢复后从当前包继续；连续等待达配置时长则整条失败"
+        },
+        {
+          "no": 2,
+          "cond": "TODST=2 或 5s 无 TODST",
+          "result": "本轮失败 +1；同轮两种只计 1 次；满 3 次整条失败"
+        },
+        {
+          "no": 3,
+          "cond": "TODST=3 后 10s 无 4",
+          "result": "整条失败，不重发"
+        },
+        {
+          "no": 4,
+          "cond": "各包都是 4",
+          "result": "UI 发送成功"
+        },
+        {
+          "no": 5,
+          "cond": "各包至少 3 尚未都 4",
+          "result": "UI 成功等待回执"
+        },
+        {
+          "no": 6,
+          "cond": "收到 $TOACK",
+          "result": "记录 termBizId/pktIdx；随后应收到同 seq 的 TODST=4"
+        },
+        {
+          "no": 7,
+          "cond": "连续「等待」达到 waitTimeoutMinutes（默认 10）",
+          "result": "整条失败，failReason=等待发送超时；不再自动续发"
+        }
+      ]
+    },
+    {
+      "id": "wait_timeout",
+      "title": "等待发送超时",
+      "owner": "APP",
+      "summary": "默认 10 分钟；设置可改；超时整条失败",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "消息进入「等待」（未发或 TODST=0）",
+          "result": "APP 开始连续等待计时"
+        },
+        {
+          "no": 2,
+          "cond": "条件恢复并离开等待态",
+          "result": "计时清零；从当前包续发"
+        },
+        {
+          "no": 3,
+          "cond": "连续等待 ≥ 配置分钟数（默认 10）",
+          "result": "整条失败；气泡展示失败与「等待发送超时」；不自动重试"
+        },
+        {
+          "no": 4,
+          "cond": "设置页修改 waitTimeoutMinutes",
+          "result": "立即作用于后续计时；档位仅 5/10/15/30/60；属本地配置不走 $xxxx"
+        }
+      ]
+    },
+    {
+      "id": "seq_retry",
+      "title": "seq 自增与迟到丢弃",
+      "owner": "APP",
+      "summary": "seq 32800～65535；按 deviceId 持久化；同条重试保持 seq；整条失败后再发才换新 seq",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "发起新消息（含整条失败后用户再次发送）",
+          "result": "seq 在 32800～65535 自增；到 65535 后回 32800"
+        },
+        {
+          "no": 2,
+          "cond": "迟到的旧 seq 的 $TODST/$TOACK",
+          "result": "APP 丢弃，不驱动当前气泡态"
+        },
+        {
+          "no": 3,
+          "cond": "按 $TOSTA.deviceId 管理 seq",
+          "result": "本地持久化下一 seq；换终端（deviceId 变）从 32800 起；同终端重连续用已存值"
+        },
+        {
+          "no": 4,
+          "cond": "语音/图片分包",
+          "result": "串行：本包 TODST=4 后再发下一包；同条消息共用 seq；包失败重试保持 seq/idx"
+        }
+      ]
+    },
+    {
+      "id": "downlink_dedupe",
+      "title": "下行去重与回执",
+      "owner": "APP+终端",
+      "summary": "APP 去重展示；回执归终端",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "同一 platId+idx 重复到达",
+          "result": "APP 按 platId,idx 去重"
+        },
+        {
+          "no": 2,
+          "cond": "下行文本/语音已打开",
+          "result": "本机 UI 可标已读；不发蓝牙已读帧"
+        },
+        {
+          "no": 3,
+          "cond": "platId=0 按键短音",
+          "result": "进入同一会话列表展示；本机 UI 可标已读"
+        },
+        {
+          "no": 4,
+          "cond": "0x05 已读上报",
+          "result": "APP 已连：终端推完 TOTXT/TOVOI 后上报；APP 未连：本机播完后上报；APP 不发蓝牙已读帧"
+        },
+        {
+          "no": 5,
+          "cond": "会话持久化",
+          "result": "按 deviceId 落本地库；不做后连补推错过的下行"
+        }
+      ]
+    },
+    {
+      "id": "map_toloc",
+      "title": "地图坐标来自 TOLOC",
+      "owner": "APP",
+      "summary": "仅展示本终端；本地底图不占卫星带宽",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "locStatus≠1",
+          "result": "不显示假坐标，画布提示搜星中或无效"
+        },
+        {
+          "no": 2,
+          "cond": "下载/图层/缩放/定位",
+          "result": "本地能力，不发卫星指令"
+        }
+      ]
+    },
+    {
+      "id": "gb2312_chars",
+      "title": "不可转码字符",
+      "owner": "APP",
+      "summary": "文本含无法转 GB2312 的字符则拦截",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "输入或粘贴含无法转 GB2312 的字符",
+          "result": "Toast 提示，不装进 $TITXT"
+        }
+      ]
+    },
+    {
+      "id": "send_progress_fail",
+      "title": "分包进度与失败原因",
+      "owner": "APP",
+      "summary": "发送中显示 m/n；失败感叹号展示归纳原因",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "整条 UI 为发送中",
+          "result": "文案「发送中 m/n」；文本为 1/1"
+        },
+        {
+          "no": 2,
+          "cond": "整条 UI 为失败",
+          "result": "显示感叹号；点击展示 APP 按 TODST/超时归纳的 failReason"
+        },
+        {
+          "no": 3,
+          "cond": "协议无独立失败原因码",
+          "result": "不虚构终端原因字段"
+        }
+      ]
+    },
+    {
+      "id": "query_timeout",
+      "title": "查询与上报超时",
+      "owner": "APP",
+      "summary": "配对指令 5 s；单消息在途",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "TIQRY/TILOC/TISIG/TIDSQ/TITXT/TIVOI/TIIMG 发出后 5 s 无对应下行",
+          "result": "本轮失败"
+        },
+        {
+          "no": 2,
+          "cond": "同时仅一条消息在途",
+          "result": "上一条未完成前不发下一条业务消息"
+        }
+      ]
+    },
+    {
+      "id": "terminal_fw_scope",
+      "title": "终端固件工作范围",
+      "owner": "终端",
+      "summary": "UDP协议 V1.10 不动功能；本期 V1.11 三路上行 + V1.12 号段 + APP 交互协议 v1.8 蓝牙桥；互斥与号段须最小回归",
+      "rules": [
+        {
+          "no": 1,
+          "cond": "任意嵌入式开发",
+          "result": "不改板级/不换料；UDP协议 V1.10 已实现逻辑不重做（除非修 bug）"
+        },
+        {
+          "no": 2,
+          "cond": "UDP协议 V1.10 基线",
+          "result": "0x00/0x80/0x01/0x02/0x03/0x05/0x81/0x82/0x83 及附录 A 已实现；本期须回归互斥与号段"
+        },
+        {
+          "no": 3,
+          "cond": "UDP协议 V1.11/V1.12 APP 上行与号段",
+          "result": "实现 0x10/0x11/0x12；机身短音仍走 0x02，勿混；0x83 回执覆盖这三类；机身 termBizId 0～32767；APP 上行 termBizId=APP seq（32800～65535）；平台须已支持 V1.12"
+        },
+        {
+          "no": 4,
+          "cond": "APP 交互协议 v1.8 蓝牙桥",
+          "result": "14 条 $xxxx 帧引擎 + GATT；连上推 TOSTA→TOLOC→TOSIG；查询 5s 内答；变化 Notify；联调前须填齐 engineering-appendix GATT 表"
+        },
+        {
+          "no": 5,
+          "cond": "桥接发送",
+          "result": "TITXT→0x12、TIVOI→0x10、TIIMG→0x11；TODST/TOACK/TIDSQ；条件不足 TODST=0 且不发 UDP；APP 上行 UDP termBizId=APP seq；分包串行等 TODST=4"
+        },
+        {
+          "no": 6,
+          "cond": "禁用/用完与互斥",
+          "result": "设备禁用时 APP 上报 TODST=0；短音用完仅拦 TIVOI；机身 0x01/0x02 与 APP 上行共用一条在途通道；须回归"
+        },
+        {
+          "no": 7,
+          "cond": "通用发送规则",
+          "result": "分包有序串行；未联网或 TODST=0 暂停后续发；APP 等待超时属手机侧；0x05 见工程附录"
+        }
+      ]
+    }
+  ],
+  "ops": [
+    {
+      "id": "OP-PERM-01",
+      "screen": "perm_guide",
+      "name": "申请权限",
+      "trigger": "点击继续",
+      "preconditions": [
+        "首次启动"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "点击继续",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "弹出系统权限",
+          "detail": "蓝牙/麦/相机"
+        },
+        {
+          "no": 3,
+          "actor": "app",
+          "action": "进入 device_scan",
+          "detail": ""
+        }
+      ],
+      "responses": {
+        "loading": "正在请求权限…",
+        "success": "进入连接设备",
+        "validationFail": "请至少授权蓝牙",
+        "networkFail": "不适用",
+        "blocked": "权限被拒绝，显示说明与去设置"
+      },
+      "relatedFr": [
+        "FR-PERM-01"
+      ]
+    },
+    {
+      "id": "OP-CONNECT-01",
+      "screen": "device_scan",
+      "name": "连接设备",
+      "trigger": "点击连接",
+      "preconditions": [
+        "蓝牙已开",
+        "已选设备"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "选择设备并连接",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "GATT 连接",
+          "detail": ""
+        },
+        {
+          "no": 3,
+          "actor": "term",
+          "action": "推送 $TOSTA+$TOLOC+$TOSIG",
+          "detail": "终端已自行登录平台"
+        },
+        {
+          "no": 4,
+          "actor": "app",
+          "action": "进入 messages",
+          "detail": ""
+        }
+      ],
+      "responses": {
+        "loading": "连接中…",
+        "success": "进入消息页",
+        "validationFail": "请选择设备",
+        "networkFail": "连接超时，请重试",
+        "blocked": "设备已被其他手机占用"
+      },
+      "relatedFr": [
+        "FR-SCAN-02",
+        "FR-ERR-02"
+      ]
+    },
+    {
+      "id": "OP-SEND-TXT-01",
+      "screen": "messages",
+      "name": "发送文本/常用语",
+      "trigger": "点击发送或点选常用语",
+      "preconditions": [
+        "蓝牙已连",
+        "netStatus=2",
+        "草稿非空"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "输入或点常用语并发送",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "检查 TOSTA 门闩与 GB2312",
+          "detail": ""
+        },
+        {
+          "no": 3,
+          "actor": "app",
+          "action": "发 $TITXT",
+          "detail": "一包；超长截成多条消息"
+        },
+        {
+          "no": 4,
+          "actor": "app",
+          "action": "按 $TODST 更新气泡五态",
+          "detail": ""
+        }
+      ],
+      "responses": {
+        "loading": "发送中…",
+        "success": "发送成功",
+        "validationFail": "请输入内容",
+        "networkFail": "发送失败",
+        "blocked": "暂不可发送"
+      },
+      "relatedFr": [
+        "FR-MSG-03"
+      ]
+    },
+    {
+      "id": "OP-SEND-VOICE-01",
+      "screen": "messages",
+      "name": "发送语音",
+      "trigger": "松手结束录音",
+      "preconditions": [
+        "蓝牙已连",
+        "netStatus=2",
+        "已录音"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "按住录音并松手",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "按 250B 切包发 $TIVOI",
+          "detail": "TODST=4 后再发下一包（串行）"
+        },
+        {
+          "no": 3,
+          "actor": "app",
+          "action": "更新气泡五态",
+          "detail": ""
+        }
+      ],
+      "responses": {
+        "loading": "发送中…",
+        "success": "语音发送成功",
+        "validationFail": "请先录音",
+        "networkFail": "发送失败",
+        "blocked": "暂不可发送"
+      },
+      "relatedFr": [
+        "FR-MSG-04"
+      ]
+    },
+    {
+      "id": "OP-SEND-IMAGE-01",
+      "screen": "messages",
+      "name": "发送图片",
+      "trigger": "确认选图",
+      "preconditions": [
+        "蓝牙已连",
+        "netStatus=2",
+        "已选图"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "拍照或选图",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "按 250B 切包发 $TIIMG",
+          "detail": ""
+        },
+        {
+          "no": 3,
+          "actor": "app",
+          "action": "更新气泡五态",
+          "detail": ""
+        }
+      ],
+      "responses": {
+        "loading": "发送中…",
+        "success": "图片发送成功",
+        "validationFail": "请选择图片",
+        "networkFail": "发送失败",
+        "blocked": "暂不可发送"
+      },
+      "relatedFr": [
+        "FR-MSG-05"
+      ]
+    },
+    {
+      "id": "OP-READ-MSG-01",
+      "screen": "messages",
+      "name": "查看下行",
+      "trigger": "打开下行气泡",
+      "preconditions": [
+        "下行消息存在"
+      ],
+      "steps": [
+        {
+          "no": 1,
+          "actor": "user",
+          "action": "点击下行文本/语音",
+          "detail": ""
+        },
+        {
+          "no": 2,
+          "actor": "app",
+          "action": "播放或展示内容",
+          "detail": ""
+        },
+        {
+          "no": 3,
+          "actor": "app",
+          "action": "本机标记已读（不发 $TIRD）",
+          "detail": "已读回执由终端 UDP 0x05"
+        }
+      ],
+      "responses": {
+        "loading": "加载中…",
+        "success": "本机已展示；回执归终端",
+        "validationFail": "消息不存在",
+        "networkFail": "蓝牙未连接时可稍后重试",
+        "blocked": "platId=0 仅展示"
+      },
+      "relatedFr": [
+        "FR-MSG-06"
+      ]
+    }
+  ],
+  "terminology": [
+    {
+      "avoid": "天通 APP",
+      "use": "星联卫士 APP",
+      "en": "StarGuard App",
+      "note": "产品全称"
+    },
+    {
+      "avoid": "JSON 帧 / TIDAT 透传",
+      "use": "$xxxx 应用层帧",
+      "en": "NMEA-like $ frame",
+      "note": "蓝牙应用层"
+    },
+    {
+      "avoid": "设备 / 我的 Tab",
+      "use": "消息 / 地图 / 设置",
+      "en": "Messages / Map / Settings",
+      "note": "底栏三 Tab"
+    },
+    {
+      "avoid": "authCode / APP 发 0x00 / $TIRD / loginStatus",
+      "use": "终端自登录 + $TOSTA.netStatus=2",
+      "en": "terminal login via netStatus",
+      "note": "APP 不存授权码；已读不发 $TIRD"
+    }
+  ],
+  "demoData": {
+    "device": {
+      "deviceId": "123456789012",
+      "battery": 85,
+      "netStatus": 2,
+      "signalBars": 4,
+      "locStatus": 1,
+      "lat": 39.904987,
+      "lon": 116.407394,
+      "sosStatus": 0,
+      "connectedSeconds": 5
+    },
+    "appVersion": "V1.2.1",
+    "cmdLog": [
+      {
+        "dir": "RX",
+        "frame": "$TOSTA,123456789012,85,2,0*50",
+        "ts": "12:00:01"
+      },
+      {
+        "dir": "RX",
+        "frame": "$TOLOC,1,39.904987,116.407394,1724572800*58",
+        "ts": "12:00:01"
+      },
+      {
+        "dir": "RX",
+        "frame": "$TOSIG,-70,1,12345,25*6B",
+        "ts": "12:00:02"
+      },
+      {
+        "dir": "RX",
+        "frame": "$TOACK,1,9001,1*75",
+        "ts": "12:00:05"
+      },
+      {
+        "dir": "RX",
+        "frame": "$TODST,1,4*5C",
+        "ts": "12:00:05"
+      }
+    ],
+    "authLicenses": {
+      "voice": {
+        "status": "expired",
+        "expireDate": "2024-08-25",
+        "hint": "授权已超过有效期",
+        "records": [
+          {
+            "deviceId": "EIHDEHHEJJJIIFE",
+            "effectiveAt": "2024-05-06 14:09:00",
+            "expireAt": "2024-08-25 14:09:00",
+            "totalCalls": 10,
+            "usedCalls": 10,
+            "remainCalls": 0
+          }
+        ]
+      },
+      "image": {
+        "status": "permanent",
+        "expireDate": "永久有效",
+        "hint": "授权永久有效",
+        "records": [
+          {
+            "deviceId": "EIHDEHHEJJJIIFE",
+            "effectiveAt": "2025-05-06 14:09:00",
+            "expireAt": "永久有效",
+            "totalCalls": 10,
+            "usedCalls": 5,
+            "remainCalls": 5
+          }
+        ]
+      },
+      "app": {
+        "status": "permanent",
+        "expireDate": "永久有效",
+        "hint": "授权永久有效",
+        "records": [
+          {
+            "deviceId": "EIHDEHHEJJJIIFE",
+            "effectiveAt": "2025-05-06 14:09:00",
+            "expireAt": "永久有效",
+            "totalCalls": 10,
+            "usedCalls": 5,
+            "remainCalls": 5
+          }
+        ]
+      }
+    },
+    "phrases": [
+      "我在这里一切正常",
+      "麻烦各位队友报一下自己的位置",
+      "我已经安全到达目的地"
+    ],
+    "chat": [
+      {
+        "dir": "in",
+        "type": "text",
+        "text": "请确认位置安全",
+        "platId": "80003",
+        "ts": "15:28"
+      },
+      {
+        "dir": "in",
+        "type": "voice",
+        "duration": 3,
+        "platId": "80001",
+        "ts": "15:30"
+      },
+      {
+        "dir": "out",
+        "type": "voice",
+        "duration": 3,
+        "uiStatus": "success",
+        "pktDone": 3,
+        "pktTotal": 3,
+        "ts": "15:30"
+      },
+      {
+        "dir": "out",
+        "type": "voice",
+        "duration": 3,
+        "uiStatus": "failed",
+        "pktDone": 2,
+        "pktTotal": 3,
+        "failReason": "本包发送失败已满 3 次",
+        "ts": "15:31"
+      },
+      {
+        "dir": "out",
+        "type": "voice",
+        "duration": 3,
+        "uiStatus": "sending",
+        "pktDone": 2,
+        "pktTotal": 3,
+        "ts": "15:32"
+      },
+      {
+        "dir": "out",
+        "type": "image",
+        "uiStatus": "sending",
+        "pktDone": 2,
+        "pktTotal": 5,
+        "ts": "15:33"
+      },
+      {
+        "dir": "out",
+        "type": "text",
+        "text": "等待卫星可用",
+        "uiStatus": "waiting",
+        "ts": "15:34"
+      },
+      {
+        "dir": "out",
+        "type": "image",
+        "uiStatus": "failed",
+        "pktDone": 1,
+        "pktTotal": 5,
+        "failReason": "已发出后 10 秒未收到平台回执",
+        "ts": "15:35"
+      }
+    ],
+    "messages": [
+      {
+        "msgType": 1,
+        "platformBizId": "80001",
+        "preview": "下行文本示例",
+        "ts": 1724572800,
+        "read": false
+      },
+      {
+        "msgType": 2,
+        "platformBizId": "80002",
+        "preview": "语音 3 秒",
+        "ts": 1724572860,
+        "read": false
+      }
+    ],
+    "waitTimeoutMinutes": 10,
+    "waitTimeoutOptions": [
+      5,
+      10,
+      15,
+      30,
+      60
+    ]
+  },
+  "designTokens": {
+    "primary": "#1B5E8C",
+    "ink": "#1A1D21",
+    "bg": "#F4F6F8",
+    "danger": "#D00000",
+    "warn": "#F4A261",
+    "success": "#2D6A4F",
+    "surface": "#FFFFFF"
+  }
+}
