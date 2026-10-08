@@ -62,3 +62,21 @@
   1. 记录仅表达指令已有有效回复。
   2. 最新位置仍为旧上报时间（直至新定位数据真正到达）。
   3. 不据 ACKED 回复宣称「已获取新位置」（协议回复 ≠ 新位置已更新）。
+
+## [P2] 验证 CANCELLED 与 EXPIRED 状态独立展示并可分别筛选
+- 测试类型
+  - 功能
+- 前置条件
+  1. 记录 R7：整体状态 CANCELLED、最近结果 NOT_SENT
+  2. 记录 R8：整体状态 EXPIRED、最近结果 TIMEOUT
+  3. 列表另有 QUEUED、COMPLETED、REJECTED 状态记录各 1 条
+- 测试步骤
+  1. 查看 R7、R8 记录卡的整体状态和最近结果。
+  2. 仅筛选整体状态 CANCELLED 并应用。
+  3. 仅筛选整体状态 EXPIRED 并应用。
+  4. 对比 EXPIRED 与最近结果 TIMEOUT 的展示和筛选语义。
+- 预期结果
+  1. R7 分别显示整体 CANCELLED 与最近 NOT_SENT；R8 分别显示整体 EXPIRED 与最近 TIMEOUT。
+  2. CANCELLED 筛选仅命中 R7，不混入 R8 或其他状态记录。
+  3. EXPIRED 筛选仅命中 R8，不混入 CANCELLED、REJECTED 或 QUEUED。
+  4. EXPIRED 是整体状态，TIMEOUT 是最近结果，两者独立展示且不能互相替代或合并为单一失败状态。
