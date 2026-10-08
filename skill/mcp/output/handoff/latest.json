@@ -1,0 +1,22 @@
+{
+  "projectName": "【磐钴】星地多网融合指挥调度SaaS平台1期",
+  "timestamp": "2026-06-24T16:30:00+08:00",
+  "screenshotPaths": [
+    "C:\\Users\\33606\\.cursor\\projects\\c-Users-33606-Desktop-skills\\assets\\c__Users_33606_AppData_Roaming_Cursor_User_workspaceStorage_045547dc657a74cdecbad36698cb3cca_images_image-24f1f3eb-beb4-4306-ac4c-25522052e446.png"
+  ],
+  "bugsCreated": [
+    {
+      "id": 3300,
+      "title": "【通信消息】空对讲群外层预览显示「[语音]」",
+      "url": "https://zentao.pgiot.com/zentao/bug-view-3300.html",
+      "severity": 3,
+      "pri": 3
+    }
+  ],
+  "bugsFailed": [],
+  "reportOptions": {
+    "noClosed": true,
+    "openedBuild": "待确认"
+  },
+  "notes": ""
+}
