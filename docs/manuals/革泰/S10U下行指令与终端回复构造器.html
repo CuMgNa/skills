@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S10U 下行指令与终端回复构造器</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8e0ec;
+      --primary: #1f6feb;
+      --primary-soft: #eaf2ff;
+      --success: #138a5b;
+      --success-soft: #e9f8f1;
+      --warning: #b76b00;
+      --warning-soft: #fff6e5;
+      --danger: #c93636;
+      --danger-soft: #fff0f0;
+      --shadow: 0 12px 32px rgba(24, 39, 75, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 5% 0%, rgba(31, 111, 235, 0.10), transparent 28rem),
+        var(--bg);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { max-width: 1500px; margin: 0 auto; padding: 28px; }
+    .hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+    .hero h1 { margin: 0 0 6px; font-size: clamp(25px, 3vw, 38px); letter-spacing: -0.03em; }
+    .hero p { margin: 0; color: var(--muted); }
+    .hero-actions, .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-actions { justify-content: flex-end; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .badge { padding: 5px 10px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(390px, 0.9fr); gap: 22px; align-items: start; }
+    .stack { display: grid; gap: 18px; }
+    .panel { background: var(--panel); border: 1px solid rgba(216, 224, 236, 0.9); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #fff, #fbfcff); }
+    .panel-title { margin: 0; font-size: 17px; }
+    .panel-subtitle { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .panel-body { padding: 20px; }
+
+    .command-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+    .command-card { position: relative; display: block; padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel-soft); transition: 150ms ease; cursor: pointer; }
+    .command-card:hover { transform: translateY(-1px); border-color: #a9bee0; }
+    .command-card.selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 3px rgba(31,111,235,.10); }
+    .command-card.dangerous { border-color: #efc0c0; background: #fffafa; }
+    .command-card.dangerous.selected { border-color: var(--danger); background: var(--danger-soft); box-shadow: 0 0 0 3px rgba(201,54,54,.10); }
+    .command-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .command-name { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 800; font-size: 18px; }
+    .command-category { display: inline-flex; padding: 2px 7px; border-radius: 999px; color: #475467; background: #fff; border: 1px solid var(--line); font-size: 10px; font-weight: 750; }
+    .command-card.dangerous .command-category { color: var(--danger); border-color: #efb5b5; }
+    .command-card small { display: block; color: var(--muted); margin-top: 5px; }
+
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
+    .field { grid-column: span 4; min-width: 0; }
+    .field.span-3 { grid-column: span 3; }
+    .field.span-6 { grid-column: span 6; }
+    .field.span-8 { grid-column: span 8; }
+    .field.span-12 { grid-column: span 12; }
+    label.field-label { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 750; color: #344054; }
+    .required::after { content: " *"; color: var(--danger); }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 5px; }
+    input[type="text"], input[type="number"], select { width: 100%; min-height: 42px; padding: 9px 11px; color: var(--text); background: #fff; border: 1px solid var(--line); border-radius: 10px; outline: none; transition: 120ms ease; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,111,235,.10); }
+    input.invalid, select.invalid { border-color: var(--danger); background: var(--danger-soft); }
+    input[readonly] { color: #475467; background: #f2f4f7; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; color: #344054; background: #fff; font-weight: 750; transition: 120ms ease; }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); border-color: #a8b7cc; }
+    .btn.primary { color: #fff; border-color: var(--primary); background: var(--primary); }
+    .btn.success { color: #fff; border-color: var(--success); background: var(--success); }
+    .btn.danger { color: var(--danger); border-color: #f0b5b5; background: var(--danger-soft); }
+    .btn.small { min-height: 34px; padding: 6px 10px; font-size: 13px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .section-note { padding: 11px 13px; border-radius: 10px; color: #475467; background: #f6f8fb; border: 1px solid var(--line); font-size: 13px; margin-bottom: 16px; }
+    .section-note.warning { color: #805000; background: var(--warning-soft); border-color: #f0cf91; }
+    .section-note.danger { color: #992d2d; background: var(--danger-soft); border-color: #efb5b5; }
+    .parameter-section[hidden] { display: none; }
+    .choice-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .choice-card { position: relative; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); cursor: pointer; }
+    .choice-card:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
+    .choice-card input { margin-right: 6px; accent-color: var(--primary); }
+    .choice-card strong { font-size: 13px; }
+    .choice-card small { display: block; margin: 3px 0 0 22px; color: var(--muted); font-size: 11px; }
+
+    .sticky { position: sticky; top: 18px; }
+    .status-banner { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 11px; margin-bottom: 14px; }
+    .status-banner.valid { color: #05603d; background: var(--success-soft); border: 1px solid #a7e3ca; }
+    .status-banner.invalid { color: #9d2424; background: var(--danger-soft); border: 1px solid #efb5b5; }
+    .status-banner strong, .status-banner small { display: block; }
+    .status-banner small { opacity: .85; }
+    .error-list { margin: 0 0 14px; padding: 10px 12px 10px 30px; color: #9d2424; background: #fff8f8; border: 1px solid #f3c7c7; border-radius: 10px; font-size: 13px; }
+    .error-list li + li { margin-top: 4px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .metric { padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); }
+    .metric span { display: block; color: var(--muted); font-size: 11px; }
+    .metric strong { display: block; margin-top: 3px; font-size: 18px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .output-block { margin-top: 14px; }
+    .output-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .output-head strong { font-size: 13px; }
+    .output { min-height: 72px; max-height: 210px; overflow: auto; white-space: pre-wrap; word-break: break-all; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #101828; color: #e6edf7; font: 12px/1.65 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; }
+    .output.reply { background: #0e2f27; color: #d9fff1; }
+    .breakdown { display: grid; gap: 7px; margin-top: 14px; }
+    .breakdown-row { display: grid; grid-template-columns: 108px 1fr; gap: 10px; padding: 8px 10px; border-radius: 8px; background: #f7f9fc; font-size: 12px; }
+    .breakdown-row span:first-child { color: var(--muted); }
+    .breakdown-row code { overflow-wrap: anywhere; }
+
+    .records { margin-top: 22px; }
+    .record-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+    .record-list { display: grid; gap: 10px; }
+    .record-empty { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+    .record-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel-soft); }
+    .record-top { display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .record-meta { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; font-size: 12px; color: var(--muted); }
+    .record-command { padding: 3px 8px; border-radius: 999px; color: #174ea6; background: var(--primary-soft); font-weight: 800; }
+    .record-pair { display: grid; gap: 7px; margin-top: 10px; }
+    .record-message { padding: 9px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font: 11px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; word-break: break-all; }
+    .record-message span { display: inline-block; width: 66px; color: var(--muted); font-family: Inter, "PingFang SC", sans-serif; font-weight: 750; }
+
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 50; padding: 11px 15px; border-radius: 10px; color: #fff; background: #101828; box-shadow: 0 12px 30px rgba(16,24,40,.24); opacity: 0; transform: translateY(12px); pointer-events: none; transition: 180ms ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1120px) { .layout { grid-template-columns: 1fr; } .sticky { position: static; } }
+    @media (max-width: 760px) {
+      .app { padding: 16px; }
+      .hero { flex-direction: column; }
+      .hero-actions { justify-content: flex-start; }
+      .field, .field.span-3, .field.span-6, .field.span-8 { grid-column: span 12; }
+      .choice-grid, .metric-grid { grid-template-columns: 1fr; }
+      .record-top { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <h1>S10U 下行指令与终端回复构造器</h1>
+        <p>平台下行与终端正常回复成对生成 · 七类指令 · LEN 自动计算</p>
+        <div class="badge-row">
+          <span class="badge">单文件纯离线</span>
+          <span class="badge">ASCII 严格校验</span>
+          <span class="badge">双向报文成对预览</span>
+          <span class="badge">不执行真实设备动作</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn" id="resetBtn" type="button">重置示例参数</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="stack">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">1. 选择下行指令</h2>
+              <p class="panel-subtitle">RESET / POWEROFF 仅作报文构造，高危标识不代表页面会执行操作</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="command-grid" id="commandGrid"></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">2. 报文头与指令参数</h2>
+              <p class="panel-subtitle">厂商固定为 3G；平台下行和终端回复共用同一设备 ID</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="section-note warning">页面中的 UPLOAD、ZONE 和版本号是构造示例，不代表设备当前配置或真实固件版本。</div>
+            <div class="grid">
+              <div class="field span-3">
+                <label class="field-label">厂商标识</label>
+                <input id="vendor" type="text" value="3G" readonly>
+              </div>
+              <div class="field span-6">
+                <label class="field-label required" for="deviceId">设备 ID</label>
+                <input id="deviceId" type="text" inputmode="numeric" maxlength="10" placeholder="请输入10位设备ID" autocomplete="off">
+                <div class="hint">初始留空；必须为 10 位数字。</div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label">当前命令</label>
+                <input id="currentCommand" type="text" readonly>
+              </div>
+
+              <div class="field span-12 parameter-section" id="uploadSection">
+                <label class="field-label required">上传间隔</label>
+                <div class="choice-grid">
+                  <label class="choice-card"><input type="radio" name="uploadMode" value="1"><strong>1 分钟</strong><small>协议值 60 秒</small></label>
+                  <label class="choice-card"><input type="radio" name="uploadMode" value="10" checked><strong>10 分钟</strong><small>协议值 600 秒</small></label>
+                  <label class="choice-card"><input type="radio" name="uploadMode" value="60"><strong>1 小时</strong><small>协议值 3600 秒</small></label>
+                  <label class="choice-card"><input type="radio" name="uploadMode" value="custom"><strong>自定义</strong><small>1–1440 分钟整数</small></label>
+                </div>
+                <div style="margin-top: 12px; max-width: 320px;">
+                  <label class="field-label" for="customMinutes">自定义分钟数</label>
+                  <input id="customMinutes" type="number" min="1" max="1440" step="1" value="5" disabled>
+                </div>
+              </div>
+
+              <div class="field span-8 parameter-section" id="zoneSection" hidden>
+                <label class="field-label required" for="zonePreset">设备时区 UTC 偏移</label>
+                <select id="zonePreset"></select>
+                <div class="hint">显示友好偏移，协议内容只写数字，例如 UTC+05:30 → ZONE,5.5。</div>
+              </div>
+              <div class="field span-4 parameter-section" id="zoneCustomSection" hidden>
+                <label class="field-label required" for="customZone">自定义偏移数字</label>
+                <input id="customZone" type="number" min="-12" max="14" step="0.25" value="5.5" disabled>
+                <div class="hint">范围 -12～+14，必须为 0.25 的倍数。</div>
+              </div>
+
+              <div class="field span-8 parameter-section" id="versionSection" hidden>
+                <label class="field-label required" for="version">终端回复版本号</label>
+                <input id="version" type="text" maxlength="64" value="S10U-SIM-1.0" autocomplete="off">
+                <div class="hint">最多 64 个可打印 ASCII 字符；首尾不能有空格，且不能包含逗号、方括号或星号。</div>
+              </div>
+
+              <div class="field span-12 parameter-section" id="noParameterSection" hidden>
+                <div class="section-note" style="margin-bottom: 0;">此指令不携带参数；平台下行与终端正常回复的内容段均为命令字。</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">3. 已确认的正常回复规则</h2>
+              <p class="panel-subtitle">未定义的拒绝回文、错误码和原因字段不在本页面编造</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="section-note" id="replyRuleNote"></div>
+            <div class="section-note danger" id="dangerNote" hidden>高危指令仅生成报文文本。本页面不会关机、重启、断开连接或触发任何真实设备动作。</div>
+          </div>
+        </article>
+      </section>
+
+      <aside class="panel sticky">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">双向报文实时预览</h2>
+            <p class="panel-subtitle">校验通过后可分别复制或成对加入记录</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="validationBanner" class="status-banner invalid"></div>
+          <ul id="errorList" class="error-list"></ul>
+          <div class="section-note warning">LEN 是内容段的 ASCII 字节数，以四位十六进制显示，并非时间值。例如 0006 表示 6 字节；UPLOAD,4500 共 11 字节，LEN 为 000B。协议勘误：文档中的 UPLOAD,600 样例 LEN 标为 0009，但内容实际为 10 个 ASCII 字节；本工具生成正确值 000A。</div>
+
+          <div class="metric-grid">
+            <div class="metric"><span>命令</span><strong id="metricCommand">UPLOAD</strong></div>
+            <div class="metric"><span>下行 LEN</span><strong id="metricDownLength">----</strong></div>
+            <div class="metric"><span>回复 LEN</span><strong id="metricReplyLength">----</strong></div>
+          </div>
+
+          <div class="output-block">
+            <div class="output-head"><strong>平台下行完整报文</strong><button class="btn small" id="copyDownBtn" type="button" disabled>复制下行</button></div>
+            <div class="output" id="downlinkOutput"></div>
+          </div>
+
+          <div class="output-block">
+            <div class="output-head"><strong>终端正常回复完整报文</strong><button class="btn small" id="copyReplyBtn" type="button" disabled>复制回复</button></div>
+            <div class="output reply" id="replyOutput"></div>
+          </div>
+
+          <div class="inline-actions" style="margin-top: 12px;">
+            <button class="btn primary" id="copyPairBtn" type="button" disabled>复制报文对</button>
+            <button class="btn success" id="addRecordBtn" type="button" disabled>成对加入记录</button>
+          </div>
+
+          <div class="breakdown" id="breakdown"></div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel records">
+      <div class="panel-header record-toolbar">
+        <div>
+          <h2 class="panel-title">当前会话报文对记录 <span id="recordCount">(0)</span></h2>
+          <p class="panel-subtitle">刷新页面后自动清空，不写入浏览器本地存储</p>
+        </div>
+        <div class="inline-actions">
+          <button class="btn small" id="copyAllBtn" type="button" disabled>批量复制</button>
+          <button class="btn small danger" id="clearRecordsBtn" type="button" disabled>清空记录</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="record-list" id="recordList"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const commands = [
+        { command: 'UPLOAD', label: '设置上传间隔', category: '参数设置', description: '分钟自动换算为协议秒值', icon: '⏱' },
+        { command: 'ZONE', label: '设置设备时区', category: '参数设置', description: 'UTC 偏移转换为协议数字', icon: '🌐' },
+        { command: 'VERNO', label: '查询版本', category: '常用指令', description: '回复携带预设版本号', icon: 'ℹ' },
+        { command: 'CR', label: '立即定位', category: '常用指令', description: '下行与回复均无参数', icon: '📍' },
+        { command: 'FIND', label: '找手表', category: '现场操作', description: '模拟查找设备正常回执', icon: '🔔' },
+        { command: 'RESET', label: '远程重启', category: '高危控制', description: '仅构造文本，不执行重启', icon: '↻', dangerous: true },
+        { command: 'POWEROFF', label: '远程关机', category: '高危控制', description: '仅构造文本，不执行关机', icon: '⏻', dangerous: true }
+      ];
+
+      const replyRules = {
+        UPLOAD: '上传间隔仅在平台下行中动态变化；终端正常回复固定为 UPLOAD，不回显时间参数。',
+        ZONE: '终端正常回复 ZONE,时区参数，回显本次设置的协议值。',
+        VERNO: '终端正常回复 VERNO,版本号；版本号来自当前页面输入。',
+        CR: '终端正常回复 CR；页面不会启动 GPS 或自动上报位置。',
+        FIND: '终端正常回复 FIND；页面不会触发响铃。',
+        RESET: '终端正常回复 RESET；页面不会重启自身或断开连接。',
+        POWEROFF: '终端正常回复 POWEROFF；页面不会关闭任何设备或程序。'
+      };
+
+      const extraZoneOffsets = [-9.5, -3.5, 3.5, 4.5, 5.5, 5.75, 6.5, 8.75, 9.5, 10.5, 12.75, 13.75];
+      const records = [];
+      let currentSnapshot = null;
+      let toastTimer = null;
+
+      const $ = (id) => document.getElementById(id);
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, (char) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        })[char]);
+      }
+
+      function showToast(message) {
+        const toast = $('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+
+      async function copyText(text) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const area = document.createElement('textarea');
+            area.value = text;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            const ok = document.execCommand('copy');
+            area.remove();
+            if (!ok) throw new Error('copy failed');
+          }
+          showToast('已复制到剪贴板');
+        } catch (error) {
+          showToast('复制失败，请手动选择报文');
+        }
+      }
+
+      function renderCommandCards() {
+        $('commandGrid').innerHTML = commands.map((item, index) => `
+          <label class="command-card ${item.dangerous ? 'dangerous' : ''} ${index === 0 ? 'selected' : ''}" data-command="${item.command}">
+            <input type="radio" name="command" value="${item.command}" ${index === 0 ? 'checked' : ''}>
+            <span class="command-name">${item.command}<span>${item.icon}</span></span>
+            <span class="command-category">${item.category}</span>
+            <small>${item.label} · ${item.description}</small>
+          </label>`).join('');
+      }
+
+      function formatOffset(value) {
+        const sign = value < 0 ? '-' : '+';
+        const absolute = Math.abs(value);
+        const hours = Math.floor(absolute);
+        const minutes = Math.round((absolute - hours) * 60);
+        return `UTC${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      }
+
+      function renderZoneOptions() {
+        const integers = Array.from({ length: 27 }, (_, index) => index - 12);
+        const values = [...new Set([...integers, ...extraZoneOffsets])].sort((a, b) => a - b);
+        $('zonePreset').innerHTML = values.map((value) => `<option value="${value}" ${value === 8 ? 'selected' : ''}>${formatOffset(value)} · 协议值 ${value}</option>`).join('')
+          + '<option value="custom">自定义协议数字…</option>';
+      }
+
+      function getCommand() {
+        return document.querySelector('input[name="command"]:checked').value;
+      }
+
+      function getCommandMeta(command) {
+        return commands.find((item) => item.command === command);
+      }
+
+      function markInvalid(id, invalid) {
+        const element = $(id);
+        if (element) element.classList.toggle('invalid', invalid);
+      }
+
+      function syncCommandUI() {
+        const command = getCommand();
+        document.querySelectorAll('.command-card').forEach((card) => card.classList.toggle('selected', card.dataset.command === command));
+        $('currentCommand').value = `${command} · ${getCommandMeta(command).label}`;
+        $('uploadSection').hidden = command !== 'UPLOAD';
+        $('zoneSection').hidden = command !== 'ZONE';
+        $('zoneCustomSection').hidden = command !== 'ZONE';
+        $('versionSection').hidden = command !== 'VERNO';
+        $('noParameterSection').hidden = ['UPLOAD', 'ZONE', 'VERNO'].includes(command);
+        $('replyRuleNote').textContent = replyRules[command];
+        $('dangerNote').hidden = !getCommandMeta(command).dangerous;
+        syncParameterControls();
+      }
+
+      function syncParameterControls() {
+        const uploadMode = document.querySelector('input[name="uploadMode"]:checked')?.value;
+        $('customMinutes').disabled = uploadMode !== 'custom';
+        $('customZone').disabled = $('zonePreset').value !== 'custom';
+      }
+
+      function isPrintableAscii(value) {
+        return /^[\x20-\x7E]*$/.test(value);
+      }
+
+      function atomValid(value) {
+        return value !== '' && isPrintableAscii(value) && !/[\[\],*]/.test(value);
+      }
+
+      function canonicalNumber(value) {
+        return Object.is(value, -0) || value === 0 ? '0' : String(value);
+      }
+
+      function collectParameter(command, errors) {
+        if (command === 'UPLOAD') {
+          const mode = document.querySelector('input[name="uploadMode"]:checked')?.value;
+          const raw = mode === 'custom' ? $('customMinutes').value.trim() : mode;
+          const minutes = Number(raw);
+          const valid = raw !== '' && /^\d+$/.test(raw) && Number.isInteger(minutes) && minutes >= 1 && minutes <= 1440;
+          markInvalid('customMinutes', mode === 'custom' && !valid);
+          if (!valid) errors.push('UPLOAD 自定义分钟必须是 1–1440 的整数。');
+          return { wire: valid ? String(minutes * 60) : raw, summary: valid ? `${minutes} 分钟 → ${minutes * 60} 秒` : '参数无效' };
+        }
+
+        markInvalid('customMinutes', false);
+        if (command === 'ZONE') {
+          const preset = $('zonePreset').value;
+          const raw = preset === 'custom' ? $('customZone').value.trim() : preset;
+          const value = Number(raw);
+          const quarterStep = Number.isFinite(value) && Math.abs(value * 4 - Math.round(value * 4)) < 1e-9;
+          const valid = raw !== '' && Number.isFinite(value) && value >= -12 && value <= 14 && quarterStep;
+          markInvalid('customZone', preset === 'custom' && !valid);
+          if (!valid) errors.push('ZONE 自定义偏移必须在 -12～+14 之间，且为 0.25 的倍数。');
+          return { wire: valid ? canonicalNumber(value) : raw, summary: valid ? `${formatOffset(value)} → 协议值 ${canonicalNumber(value)}` : '参数无效' };
+        }
+
+        markInvalid('customZone', false);
+        if (command === 'VERNO') {
+          const version = $('version').value;
+          const hasOuterWhitespace = version !== version.trim();
+          const valid = !hasOuterWhitespace && atomValid(version) && version.length <= 64;
+          markInvalid('version', !valid);
+          if (hasOuterWhitespace) {
+            errors.push('VERNO 版本号首尾不能包含空格。');
+          } else if (!valid) {
+            errors.push('VERNO 版本号必须为 1–64 个可打印 ASCII 字符，且不能包含逗号、方括号或星号。');
+          }
+          return { wire: version, summary: valid ? version : '参数无效' };
+        }
+
+        markInvalid('version', false);
+        return { wire: '', summary: '无参数' };
+      }
+
+      function frame(content, deviceId, valid) {
+        const ascii = isPrintableAscii(content);
+        const length = ascii ? content.length : 0;
+        const lengthHex = valid && ascii && length <= 0xFFFF ? length.toString(16).toUpperCase().padStart(4, '0') : '----';
+        return { content, length, lengthHex, message: `[3G*${deviceId}*${lengthHex}*${content}]` };
+      }
+
+      function pairText(snapshot) {
+        return `平台下行: ${snapshot.downlink.message}\r\n终端回复: ${snapshot.reply.message}`;
+      }
+
+      function update() {
+        const command = getCommand();
+        const deviceId = $('deviceId').value;
+        const errors = [];
+        const validDevice = /^\d{10}$/.test(deviceId);
+        markInvalid('deviceId', !validDevice && deviceId !== '');
+        if (!validDevice) errors.push('设备 ID 必须原样填写为 10 位数字，不能包含空格。');
+
+        const parameter = collectParameter(command, errors);
+        const parameterizedCommands = ['UPLOAD', 'ZONE'];
+        const downContent = parameterizedCommands.includes(command) ? `${command},${parameter.wire}` : command;
+        const replyContent = ['ZONE', 'VERNO'].includes(command) ? `${command},${parameter.wire}` : command;
+        if (!isPrintableAscii(downContent) || !isPrintableAscii(replyContent)) errors.push('内容段包含非可打印 ASCII 字符。');
+        if (downContent.length > 0xFFFF || replyContent.length > 0xFFFF) errors.push('内容段超过四位十六进制 LEN 可表示的最大长度 65535。');
+
+        const valid = errors.length === 0;
+        const downlink = frame(downContent, deviceId, valid);
+        const reply = frame(replyContent, deviceId, valid);
+        currentSnapshot = { command, deviceId, parameter, downlink, reply, errors, valid, dangerous: !!getCommandMeta(command).dangerous };
+
+        $('metricCommand').textContent = command;
+        $('metricDownLength').textContent = valid ? downlink.lengthHex : '----';
+        $('metricReplyLength').textContent = valid ? reply.lengthHex : '----';
+        $('downlinkOutput').textContent = downlink.message;
+        $('replyOutput').textContent = reply.message;
+        ['copyDownBtn', 'copyReplyBtn', 'copyPairBtn', 'addRecordBtn'].forEach((id) => { $(id).disabled = !valid; });
+
+        const banner = $('validationBanner');
+        banner.className = `status-banner ${valid ? 'valid' : 'invalid'}`;
+        banner.innerHTML = valid
+          ? '<div>✓</div><div><strong>报文对校验通过</strong><small>下行与回复 LEN 已按各自 ASCII 内容自动计算。</small></div>'
+          : `<div>!</div><div><strong>发现 ${errors.length} 个问题</strong><small>修正后才能复制或加入记录。</small></div>`;
+        $('errorList').hidden = valid;
+        $('errorList').innerHTML = errors.map((error) => `<li>${escapeHtml(error)}</li>`).join('');
+
+        const rows = [
+          ['厂商 / 设备', `3G / ${deviceId || '—'}`],
+          ['指令', `${command} · ${getCommandMeta(command).label}`],
+          ['参数解释', parameter.summary],
+          ['下行内容段', downContent],
+          ['下行长度', `${downlink.length} 字节 / ${valid ? downlink.lengthHex : '----'}`],
+          ['回复内容段', replyContent],
+          ['回复长度', `${reply.length} 字节 / ${valid ? reply.lengthHex : '----'}`],
+          ['动作边界', getCommandMeta(command).dangerous ? '仅构造高危指令文本，不执行动作' : '仅构造报文，不执行设备动作']
+        ];
+        $('breakdown').innerHTML = rows.map(([label, value]) => `<div class="breakdown-row"><span>${escapeHtml(label)}</span><code>${escapeHtml(value)}</code></div>`).join('');
+      }
+
+      function renderRecords() {
+        $('recordCount').textContent = `(${records.length})`;
+        $('copyAllBtn').disabled = records.length === 0;
+        $('clearRecordsBtn').disabled = records.length === 0;
+        if (!records.length) {
+          $('recordList').innerHTML = '<div class="record-empty">尚未加入报文对。校验通过后，点击“成对加入记录”。</div>';
+          return;
+        }
+        $('recordList').innerHTML = records.map((record, index) => `
+          <div class="record-card">
+            <div class="record-top">
+              <div class="record-meta">
+                <span class="record-command">${record.command}</span>
+                <span>${escapeHtml(record.deviceId)}</span>
+                <span>${escapeHtml(record.parameterSummary)}</span>
+                <span>下行 ${record.downLength} / 回复 ${record.replyLength}</span>
+              </div>
+              <div class="inline-actions">
+                <button class="btn small copy-record-down" type="button" data-index="${index}">复制下行</button>
+                <button class="btn small copy-record-reply" type="button" data-index="${index}">复制回复</button>
+                <button class="btn small copy-record-pair" type="button" data-index="${index}">复制报文对</button>
+                <button class="btn small danger remove-record" type="button" data-index="${index}">删除</button>
+              </div>
+            </div>
+            <div class="record-pair">
+              <div class="record-message"><span>平台下行</span>${escapeHtml(record.downlink)}</div>
+              <div class="record-message"><span>终端回复</span>${escapeHtml(record.reply)}</div>
+            </div>
+          </div>`).join('');
+      }
+
+      function addRecord() {
+        if (!currentSnapshot?.valid) return;
+        records.push({
+          command: currentSnapshot.command,
+          deviceId: currentSnapshot.deviceId,
+          parameterSummary: currentSnapshot.parameter.summary,
+          downLength: currentSnapshot.downlink.lengthHex,
+          replyLength: currentSnapshot.reply.lengthHex,
+          downlink: currentSnapshot.downlink.message,
+          reply: currentSnapshot.reply.message
+        });
+        renderRecords();
+        showToast(`已加入第 ${records.length} 组报文`);
+      }
+
+      function recordPairText(record) {
+        return `平台下行: ${record.downlink}\r\n终端回复: ${record.reply}`;
+      }
+
+      function resetForm(showMessage = true) {
+        $('deviceId').value = '';
+        document.querySelector('input[name="command"][value="UPLOAD"]').checked = true;
+        document.querySelector('input[name="uploadMode"][value="10"]').checked = true;
+        $('customMinutes').value = '5';
+        $('zonePreset').value = '8';
+        $('customZone').value = '5.5';
+        $('version').value = 'S10U-SIM-1.0';
+        syncCommandUI();
+        update();
+        if (showMessage) showToast('已重置示例参数；设备 ID 保持为空');
+      }
+
+      document.addEventListener('input', (event) => {
+        if (event.target.matches('#deviceId, #customMinutes, #customZone, #version')) update();
+      });
+
+      document.addEventListener('change', (event) => {
+        if (event.target.matches('input[name="command"]')) syncCommandUI();
+        if (event.target.matches('input[name="uploadMode"], #zonePreset')) syncParameterControls();
+        update();
+      });
+
+      $('copyDownBtn').addEventListener('click', () => currentSnapshot?.valid && copyText(currentSnapshot.downlink.message));
+      $('copyReplyBtn').addEventListener('click', () => currentSnapshot?.valid && copyText(currentSnapshot.reply.message));
+      $('copyPairBtn').addEventListener('click', () => currentSnapshot?.valid && copyText(pairText(currentSnapshot)));
+      $('addRecordBtn').addEventListener('click', addRecord);
+      $('resetBtn').addEventListener('click', () => resetForm(true));
+      $('copyAllBtn').addEventListener('click', () => records.length && copyText(records.map(recordPairText).join('\r\n\r\n')));
+      $('clearRecordsBtn').addEventListener('click', () => {
+        records.splice(0, records.length);
+        renderRecords();
+        showToast('记录已清空');
+      });
+
+      $('recordList').addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-index]');
+        if (!button) return;
+        const index = Number(button.dataset.index);
+        const record = records[index];
+        if (!record) return;
+        if (button.classList.contains('copy-record-down')) copyText(record.downlink);
+        if (button.classList.contains('copy-record-reply')) copyText(record.reply);
+        if (button.classList.contains('copy-record-pair')) copyText(recordPairText(record));
+        if (button.classList.contains('remove-record')) {
+          records.splice(index, 1);
+          renderRecords();
+        }
+      });
+
+      renderCommandCards();
+      renderZoneOptions();
+      resetForm(false);
+      renderRecords();
+    })();
+  </script>
+</body>
+</html>

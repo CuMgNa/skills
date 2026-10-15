@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机字符串生成器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d8deea;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #15803d;
+      --danger: #dc2626;
+      --shadow: 0 18px 50px rgba(23, 32, 51, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .generator {
+      width: min(720px, 100%);
+      padding: 30px;
+      border: 1px solid rgba(216, 222, 234, 0.8);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 5vw, 34px);
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 9px;
+      font-weight: 700;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      height: 46px;
+      padding: 0 13px;
+    }
+
+    textarea {
+      min-height: 112px;
+      padding: 13px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+    }
+
+    .check-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-card:hover {
+      border-color: #9fb5e6;
+      background: #f8faff;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .custom-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 11px;
+    }
+
+    .custom-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    .result-wrap {
+      position: relative;
+    }
+
+    #result {
+      padding-right: 92px;
+      overflow-wrap: anywhere;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      min-width: 70px;
+      height: 36px;
+      border: 0;
+      border-radius: 9px;
+      background: #eaf0ff;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .copy-button:hover {
+      background: #dce7ff;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      padding: 0 20px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button-primary {
+      flex: 1;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .button-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .button-secondary {
+      background: #eef2f7;
+      color: var(--text);
+    }
+
+    .button-secondary:hover {
+      background: #e3e8f0;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 11px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .message.success {
+      color: var(--success);
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .tip {
+      margin-top: 22px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f7f9fc;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 560px) {
+      .generator {
+        padding: 22px;
+      }
+
+      .type-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .custom-row {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="generator">
+    <h1>随机字符串生成器</h1>
+    <p class="subtitle">自定义字符长度和字符类型，生成后可一键复制。</p>
+
+    <section class="field">
+      <label class="field-label" for="length">字符长度</label>
+      <input id="length" type="number" min="1" max="10000" value="16" inputmode="numeric">
+    </section>
+
+    <section class="field">
+      <span class="field-label">字符类型</span>
+      <div class="type-grid">
+        <label class="check-card">
+          <input id="lowercase" type="checkbox" checked>
+          <span>小写字母 <small>(a-z)</small></span>
+        </label>
+        <label class="check-card">
+          <input id="uppercase" type="checkbox" checked>
+          <span>大写字母 <small>(A-Z)</small></span>
+        </label>
+        <label class="check-card">
+          <input id="numbers" type="checkbox" checked>
+          <span>数字 <small>(0-9)</small></span>
+        </label>
+        <label class="check-card">
+          <input id="symbols" type="checkbox">
+          <span>特殊符号 <small>(!@#$...)</small></span>
+        </label>
+        <label class="check-card">
+          <input id="chinese" type="checkbox">
+          <span>中文汉字 <small>(基础汉字区)</small></span>
+        </label>
+      </div>
+
+      <div class="custom-row">
+        <label class="custom-toggle">
+          <input id="useCustom" type="checkbox">
+          自定义字符
+        </label>
+        <input id="customChars" type="text" placeholder="例如：中文ABC123-_" disabled>
+      </div>
+    </section>
+
+    <section class="field options">
+      <label class="option">
+        <input id="excludeAmbiguous" type="checkbox">
+        排除易混淆字符（0、O、o、1、I、l）
+      </label>
+      <label class="option">
+        <input id="ensureEachType" type="checkbox" checked>
+        每种已选类型至少出现一次
+      </label>
+    </section>
+
+    <section class="field">
+      <label class="field-label" for="result">生成结果</label>
+      <div class="result-wrap">
+        <textarea id="result" readonly spellcheck="false" placeholder="点击“生成字符串”"></textarea>
+        <button id="copyButton" class="copy-button" type="button">复制</button>
+      </div>
+      <div id="message" class="message" aria-live="polite"></div>
+    </section>
+
+    <div class="actions">
+      <button id="generateButton" class="button button-primary" type="button">生成字符串</button>
+      <button id="clearButton" class="button button-secondary" type="button">清空</button>
+    </div>
+
+    <div class="tip">
+      随机值由浏览器的 <code>crypto.getRandomValues</code> 生成，适合生成随机标识或密码候选值。请勿在不可信设备上处理真实敏感密码。
+    </div>
+  </main>
+
+  <script>
+    function createCharacterRange(startCodePoint, endCodePoint) {
+      return Array.from(
+        { length: endCodePoint - startCodePoint + 1 },
+        (_, index) => String.fromCodePoint(startCodePoint + index)
+      );
+    }
+
+    const characterSets = {
+      lowercase: "abcdefghijklmnopqrstuvwxyz",
+      uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      numbers: "0123456789",
+      symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?/",
+      chinese: createCharacterRange(0x4E00, 0x9FA5)
+    };
+
+    const ambiguousCharacters = new Set(Array.from("0Oo1Il"));
+    const lengthInput = document.getElementById("length");
+    const customInput = document.getElementById("customChars");
+    const useCustomInput = document.getElementById("useCustom");
+    const resultOutput = document.getElementById("result");
+    const message = document.getElementById("message");
+    const copyButton = document.getElementById("copyButton");
+
+    function setMessage(text, type = "") {
+      message.textContent = text;
+      message.className = `message ${type}`.trim();
+    }
+
+    function uniqueCharacters(value) {
+      return Array.from(new Set(Array.from(value)));
+    }
+
+    function randomIndex(max) {
+      if (!Number.isSafeInteger(max) || max <= 0) {
+        throw new Error("可选字符集不能为空。");
+      }
+
+      const range = 0x100000000;
+      const limit = range - (range % max);
+      const randomValue = new Uint32Array(1);
+
+      do {
+        crypto.getRandomValues(randomValue);
+      } while (randomValue[0] >= limit);
+
+      return randomValue[0] % max;
+    }
+
+    function pickRandom(characters) {
+      return characters[randomIndex(characters.length)];
+    }
+
+    function secureShuffle(values) {
+      for (let index = values.length - 1; index > 0; index -= 1) {
+        const target = randomIndex(index + 1);
+        [values[index], values[target]] = [values[target], values[index]];
+      }
+      return values;
+    }
+
+    function getSelectedGroups() {
+      const excludeAmbiguous = document.getElementById("excludeAmbiguous").checked;
+      const groups = [];
+
+      Object.entries(characterSets).forEach(([id, characters]) => {
+        if (!document.getElementById(id).checked) {
+          return;
+        }
+
+        const filtered = uniqueCharacters(characters).filter(
+          character => !excludeAmbiguous || !ambiguousCharacters.has(character)
+        );
+
+        if (filtered.length > 0) {
+          groups.push(filtered);
+        }
+      });
+
+      if (useCustomInput.checked) {
+        const customCharacters = uniqueCharacters(customInput.value).filter(
+          character => !excludeAmbiguous || !ambiguousCharacters.has(character)
+        );
+
+        if (customCharacters.length === 0) {
+          throw new Error("已启用自定义字符，请至少输入一个可用字符。");
+        }
+        groups.push(customCharacters);
+      }
+
+      return groups;
+    }
+
+    function generateString() {
+      setMessage("");
+
+      const length = Number(lengthInput.value);
+      if (!Number.isInteger(length) || length < 1 || length > 10000) {
+        setMessage("字符长度必须是 1～10000 之间的整数。", "error");
+        return;
+      }
+
+      try {
+        const groups = getSelectedGroups();
+        if (groups.length === 0) {
+          setMessage("请至少选择一种字符类型。", "error");
+          return;
+        }
+
+        const ensureEachType = document.getElementById("ensureEachType").checked;
+        if (ensureEachType && length < groups.length) {
+          setMessage(`字符长度不能小于已选字符类型数量（${groups.length}）。`, "error");
+          return;
+        }
+
+        const allCharacters = uniqueCharacters(groups.flat());
+        const result = [];
+
+        if (ensureEachType) {
+          groups.forEach(group => result.push(pickRandom(group)));
+        }
+
+        while (result.length < length) {
+          result.push(pickRandom(allCharacters));
+        }
+
+        resultOutput.value = secureShuffle(result).join("");
+        setMessage(`已生成 ${length} 个字符。`, "success");
+      } catch (error) {
+        setMessage(error.message || "生成失败，请检查输入。", "error");
+      }
+    }
+
+    async function copyResult() {
+      const value = resultOutput.value;
+      if (!value) {
+        setMessage("请先生成字符串。", "error");
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+        } else {
+          resultOutput.focus();
+          resultOutput.select();
+          const copied = document.execCommand("copy");
+          resultOutput.setSelectionRange(0, 0);
+          if (!copied) {
+            throw new Error("浏览器未允许复制");
+          }
+        }
+
+        copyButton.textContent = "已复制";
+        setMessage("字符串已复制到剪贴板。", "success");
+        window.setTimeout(() => {
+          copyButton.textContent = "复制";
+        }, 1500);
+      } catch (error) {
+        setMessage("自动复制失败，请手动选中结果复制。", "error");
+      }
+    }
+
+    useCustomInput.addEventListener("change", () => {
+      customInput.disabled = !useCustomInput.checked;
+      if (useCustomInput.checked) {
+        customInput.focus();
+      }
+    });
+
+    document.getElementById("generateButton").addEventListener("click", generateString);
+    copyButton.addEventListener("click", copyResult);
+    document.getElementById("clearButton").addEventListener("click", () => {
+      resultOutput.value = "";
+      setMessage("");
+      copyButton.textContent = "复制";
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.isComposing) {
+        event.preventDefault();
+        generateString();
+      }
+    });
+
+    generateString();
+  </script>
+</body>
+</html>

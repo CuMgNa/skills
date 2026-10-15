@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S10U 协议数据构造器</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8e0ec;
+      --primary: #1f6feb;
+      --primary-soft: #eaf2ff;
+      --success: #138a5b;
+      --success-soft: #e9f8f1;
+      --warning: #b76b00;
+      --warning-soft: #fff6e5;
+      --danger: #c93636;
+      --danger-soft: #fff0f0;
+      --shadow: 0 12px 32px rgba(24, 39, 75, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 5% 0%, rgba(31, 111, 235, 0.10), transparent 28rem),
+        var(--bg);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app { max-width: 1500px; margin: 0 auto; padding: 28px; }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 { margin: 0 0 6px; font-size: clamp(25px, 3vw, 38px); letter-spacing: -0.03em; }
+    .hero p { margin: 0; color: var(--muted); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(360px, 0.85fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .stack { display: grid; gap: 18px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(216, 224, 236, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+
+    .panel-title { margin: 0; font-size: 17px; }
+    .panel-subtitle { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .panel-body { padding: 20px; }
+
+    .command-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .command-card {
+      position: relative;
+      display: block;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--panel-soft);
+      transition: 150ms ease;
+      cursor: pointer;
+    }
+    .command-card:hover { transform: translateY(-1px); border-color: #a9bee0; }
+    .command-card.selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 3px rgba(31,111,235,.10); }
+    .command-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .command-name { display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 18px; }
+    .command-card small { display: block; color: var(--muted); margin-top: 4px; }
+
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; }
+    .field { grid-column: span 4; min-width: 0; }
+    .field.span-2 { grid-column: span 2; }
+    .field.span-3 { grid-column: span 3; }
+    .field.span-6 { grid-column: span 6; }
+    .field.span-8 { grid-column: span 8; }
+    .field.span-12 { grid-column: span 12; }
+
+    label.field-label { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 750; color: #344054; }
+    .required::after { content: " *"; color: var(--danger); }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 5px; }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 11px;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      transition: 120ms ease;
+    }
+    textarea { min-height: 116px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,111,235,.10); }
+    input.invalid, select.invalid { border-color: var(--danger); background: var(--danger-soft); }
+    input[readonly] { color: #475467; background: #f2f4f7; }
+
+    .input-with-action { display: flex; align-items: stretch; gap: 8px; }
+    .input-with-action > input { flex: 1 1 auto; min-width: 0; }
+    .input-with-action .field-refresh {
+      flex: 0 0 42px;
+      width: 42px;
+      padding: 0;
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: #344054;
+      background: #fff;
+      font-weight: 750;
+      transition: 120ms ease;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); border-color: #a8b7cc; }
+    .btn.primary { color: #fff; border-color: var(--primary); background: var(--primary); }
+    .btn.success { color: #fff; border-color: var(--success); background: var(--success); }
+    .btn.danger { color: var(--danger); border-color: #f0b5b5; background: var(--danger-soft); }
+    .btn.small { min-height: 34px; padding: 6px 10px; font-size: 13px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .section-note {
+      padding: 11px 13px;
+      border-radius: 10px;
+      color: #475467;
+      background: #f6f8fb;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .section-note.warning { color: #805000; background: var(--warning-soft); border-color: #f0cf91; }
+
+    .bit-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .bit-group { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel-soft); }
+    .bit-group h3 { margin: 0 0 10px; font-size: 14px; }
+    .checkbox-list { display: grid; gap: 8px; }
+    .check-item { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; }
+    .check-item input { margin-top: 3px; accent-color: var(--primary); }
+    .check-item.disabled { opacity: .5; }
+    .bit-number { margin-left: auto; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+
+    .status-preview { display: grid; grid-template-columns: 180px 1fr; gap: 12px; margin-top: 14px; }
+    .mono-box {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #101828;
+      color: #d1e9ff;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+    .mono-label { display: block; color: #98a2b3; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+
+    .entry-list { display: grid; gap: 12px; }
+    .entry-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel-soft); }
+    .entry-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .entry-head strong { font-size: 14px; }
+    .entry-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .entry-grid .mini { min-width: 0; }
+    .entry-grid .mini label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .entry-grid .mini input { min-height: 38px; padding: 7px 9px; }
+
+    .sticky { position: sticky; top: 18px; }
+    .status-banner { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 11px; margin-bottom: 14px; }
+    .status-banner.valid { color: #05603d; background: var(--success-soft); border: 1px solid #a7e3ca; }
+    .status-banner.invalid { color: #9d2424; background: var(--danger-soft); border: 1px solid #efb5b5; }
+    .status-banner strong { display: block; }
+    .status-banner small { display: block; opacity: .85; }
+
+    .error-list { margin: 0 0 14px; padding: 10px 12px 10px 30px; color: #9d2424; background: #fff8f8; border: 1px solid #f3c7c7; border-radius: 10px; font-size: 13px; }
+    .error-list li + li { margin-top: 4px; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .metric { padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); }
+    .metric span { display: block; color: var(--muted); font-size: 11px; }
+    .metric strong { display: block; margin-top: 3px; font-size: 18px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+    .output-block { margin-top: 12px; }
+    .output-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .output-head strong { font-size: 13px; }
+    .output {
+      min-height: 80px;
+      max-height: 240px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #101828;
+      color: #e6edf7;
+      font: 12px/1.65 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    }
+
+    .breakdown { display: grid; gap: 7px; margin-top: 12px; }
+    .breakdown-row { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 8px 10px; border-radius: 8px; background: #f7f9fc; font-size: 12px; }
+    .breakdown-row span:first-child { color: var(--muted); }
+    .breakdown-row code { overflow-wrap: anywhere; }
+
+    .records { margin-top: 22px; }
+    .record-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+    .record-list { display: grid; gap: 10px; }
+    .record-empty { padding: 28px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+    .record-card { border: 1px solid var(--line); border-radius: 12px; padding: 13px; background: var(--panel-soft); }
+    .record-top { display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .record-meta { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; font-size: 12px; color: var(--muted); }
+    .record-command { padding: 3px 8px; border-radius: 999px; color: #174ea6; background: var(--primary-soft); font-weight: 800; }
+    .record-message { margin-top: 9px; padding: 9px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font: 11px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; word-break: break-all; }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      padding: 11px 15px;
+      border-radius: 10px;
+      color: #fff;
+      background: #101828;
+      box-shadow: 0 12px 30px rgba(16,24,40,.24);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; }
+      .sticky { position: static; }
+    }
+    @media (max-width: 760px) {
+      .app { padding: 16px; }
+      .hero { flex-direction: column; }
+      .hero-actions { justify-content: flex-start; }
+      .command-grid, .bit-groups { grid-template-columns: 1fr; }
+      .field, .field.span-2, .field.span-3, .field.span-6, .field.span-8 { grid-column: span 12; }
+      .entry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .status-preview { grid-template-columns: 1fr; }
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <h1>S10U 协议数据构造器</h1>
+        <p>位置数据上报（UD） · 盲点补传（UD2） · 报警数据上报（AL）</p>
+        <div class="badge-row">
+          <span class="badge">单文件纯离线</span>
+          <span class="badge">ASCII 严格校验</span>
+          <span class="badge">LEN 自动计算</span>
+          <span class="badge">数据仅保留在当前页面</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn" id="fillNowBtn" type="button">使用当前时间</button>
+        <button class="btn" id="resetBtn" type="button">重置示例</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="stack">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">1. 报文类型</h2>
+              <p class="panel-subtitle">三类命令共用同一套位置数据结构</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="command-grid" id="commandGrid">
+              <label class="command-card selected" data-command="UD">
+                <input type="radio" name="command" value="UD" checked>
+                <span class="command-name">UD <span>📍</span></span>
+                <small>位置数据上报 · 平台无需回复</small>
+              </label>
+              <label class="command-card" data-command="UD2">
+                <input type="radio" name="command" value="UD2">
+                <span class="command-name">UD2 <span>↥</span></span>
+                <small>盲点补传 · 平台无需回复</small>
+              </label>
+              <label class="command-card" data-command="AL">
+                <input type="radio" name="command" value="AL">
+                <span class="command-name">AL <span>🚨</span></span>
+                <small>报警上报 · 平台回复同命令确认</small>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">2. 包头与位置数据</h2>
+              <p class="panel-subtitle">厂商固定为 3G；设备 ID 必须为 10 位数字</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="grid">
+              <div class="field span-3">
+                <label class="field-label">厂商标识</label>
+                <input id="vendor" type="text" value="3G" readonly>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="deviceId">设备 ID</label>
+                <input id="deviceId" type="text" inputmode="numeric" maxlength="10" value="2016001000">
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="date">日期 DDMMYY</label>
+                <div class="input-with-action">
+                  <input id="date" type="text" inputmode="numeric" maxlength="6">
+                  <button class="btn field-refresh" type="button" data-refresh="datetime" title="刷新当前日期和时间" aria-label="刷新当前日期和时间">↻</button>
+                </div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="time">时间 HHMMSS</label>
+                <div class="input-with-action">
+                  <input id="time" type="text" inputmode="numeric" maxlength="6">
+                  <button class="btn field-refresh" type="button" data-refresh="datetime" title="刷新当前日期和时间" aria-label="刷新当前日期和时间">↻</button>
+                </div>
+              </div>
+
+              <div class="field span-2">
+                <label class="field-label" for="fix">定位状态</label>
+                <select id="fix"><option value="A">A · 有效</option><option value="V">V · 未定位</option></select>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="latitude">纬度</label>
+                <div class="input-with-action">
+                  <input id="latitude" type="text" inputmode="decimal" value="22.570720">
+                  <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
+                </div>
+              </div>
+              <div class="field span-2">
+                <label class="field-label" for="latHemisphere">纬度标识</label>
+                <select id="latHemisphere"><option value="N">N · 北纬</option><option value="S">S · 南纬</option></select>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="longitude">经度</label>
+                <div class="input-with-action">
+                  <input id="longitude" type="text" inputmode="decimal" value="113.8620167">
+                  <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
+                </div>
+              </div>
+              <div class="field span-2">
+                <label class="field-label" for="lonHemisphere">经度标识</label>
+                <select id="lonHemisphere"><option value="E">E · 东经</option><option value="W">W · 西经</option></select>
+              </div>
+
+              <div class="field span-3">
+                <label class="field-label required" for="speed">速度 km/h</label>
+                <div class="input-with-action"><input id="speed" type="text" inputmode="decimal" value="0.00"><button class="btn field-refresh" type="button" data-refresh="speed" title="刷新速度" aria-label="刷新速度">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="direction">方向 0–359°</label>
+                <div class="input-with-action"><input id="direction" type="number" min="0" max="359" value="188.6"><button class="btn field-refresh" type="button" data-refresh="direction" title="刷新方向" aria-label="刷新方向">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="altitude">海拔 m</label>
+                <div class="input-with-action"><input id="altitude" type="text" inputmode="decimal" value="0.0"><button class="btn field-refresh" type="button" data-refresh="altitude" title="刷新海拔" aria-label="刷新海拔">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="satellites">卫星个数</label>
+                <div class="input-with-action"><input id="satellites" type="number" min="0" step="1" value="9"><button class="btn field-refresh" type="button" data-refresh="satellites" title="刷新卫星个数" aria-label="刷新卫星个数">↻</button></div>
+              </div>
+
+              <div class="field span-3">
+                <label class="field-label required" for="gsmSignal">GSM 信号 0–100</label>
+                <div class="input-with-action"><input id="gsmSignal" type="number" min="0" max="100" step="1" value="100"><button class="btn field-refresh" type="button" data-refresh="gsmSignal" title="刷新 GSM 信号" aria-label="刷新 GSM 信号">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="battery">电量 0–100%</label>
+                <div class="input-with-action"><input id="battery" type="number" min="0" max="100" step="1" value="51"><button class="btn field-refresh" type="button" data-refresh="battery" title="刷新电量" aria-label="刷新电量">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="steps">计步数</label>
+                <div class="input-with-action"><input id="steps" type="number" min="0" step="1" value="14188"><button class="btn field-refresh" type="button" data-refresh="steps" title="刷新计步数" aria-label="刷新计步数">↻</button></div>
+              </div>
+              <div class="field span-3">
+                <label class="field-label required" for="rolls">翻滚次数</label>
+                <div class="input-with-action"><input id="rolls" type="number" min="0" step="1" value="0"><button class="btn field-refresh" type="button" data-refresh="rolls" title="刷新翻滚次数" aria-label="刷新翻滚次数">↻</button></div>
+              </div>
+
+              <div class="field span-6">
+                <label class="field-label required" for="accuracy">定位精度 m</label>
+                <div class="input-with-action"><input id="accuracy" type="text" inputmode="decimal" value="22.4"><button class="btn field-refresh" type="button" data-refresh="accuracy" title="刷新定位精度" aria-label="刷新定位精度">↻</button></div>
+                <div class="hint">协议字段 n；必须为大于或等于 0 的数字</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">3. 终端状态与报警位</h2>
+              <p class="panel-subtitle">低 16 bit 为状态，高 16 bit 为报警；自动生成 8 位十六进制</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="section-note warning" id="alarmRuleNote">UD / UD2 严格按普通位置数据处理，高 16 位报警必须全部为 0。</div>
+            <div class="bit-groups">
+              <div class="bit-group">
+                <h3>普通状态（低 16 bit）</h3>
+                <div class="checkbox-list" id="stateBits"></div>
+              </div>
+              <div class="bit-group">
+                <h3>报警状态（高 16 bit）</h3>
+                <div class="checkbox-list" id="alarmBits"></div>
+              </div>
+            </div>
+            <div class="status-preview">
+              <div class="mono-box"><span class="mono-label">Hex</span><strong id="statusHex">00000010</strong></div>
+              <div class="mono-box"><span class="mono-label">Binary · bit31 → bit0</span><span id="statusBinary">0000 0000 0000 0000 0000 0000 0001 0000</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">4. 基站信息</h2>
+              <p class="panel-subtitle">第 1 条为连接基站；后续条目为附近基站</p>
+            </div>
+            <button class="btn small" id="addStationBtn" type="button">+ 添加基站</button>
+          </div>
+          <div class="panel-body">
+            <div class="section-note">协议未定义基站最大数量，工具不设置业务上限；为避免浏览器页面失控，最多添加 50 条。</div>
+            <div class="entry-list" id="stationList"></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">5. WiFi 信息</h2>
+              <p class="panel-subtitle">最多 5 条，建议按信号强度从强到弱排列</p>
+            </div>
+            <button class="btn small" id="addWifiBtn" type="button">+ 添加 WiFi</button>
+          </div>
+          <div class="panel-body">
+            <div class="entry-list" id="wifiList"></div>
+          </div>
+        </article>
+      </section>
+
+      <aside class="panel sticky">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">报文实时预览</h2>
+            <p class="panel-subtitle">所有校验通过后才可复制或加入记录</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="validationBanner" class="status-banner valid"></div>
+          <ul id="errorList" class="error-list" hidden></ul>
+          <div class="section-note warning">协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。</div>
+
+          <div class="metric-grid">
+            <div class="metric"><span>命令</span><strong id="metricCommand">UD</strong></div>
+            <div class="metric"><span>内容长度</span><strong id="metricDecimal">0</strong></div>
+            <div class="metric"><span>LEN (HEX)</span><strong id="metricHex">0000</strong></div>
+          </div>
+
+          <div class="output-block">
+            <div class="output-head"><strong>完整报文</strong></div>
+            <div class="output" id="messageOutput"></div>
+          </div>
+
+          <div class="inline-actions" style="margin-top: 12px;">
+            <button class="btn primary" id="copyBtn" type="button">复制报文</button>
+            <button class="btn success" id="addRecordBtn" type="button">加入记录</button>
+          </div>
+
+          <div class="output-block">
+            <div class="output-head"><strong>内容段（LEN 计算范围）</strong></div>
+            <div class="output" id="contentOutput"></div>
+          </div>
+
+          <div class="breakdown" id="breakdown"></div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel records">
+      <div class="panel-header record-toolbar">
+        <div>
+          <h2 class="panel-title">当前会话报文记录 <span id="recordCount">0</span></h2>
+          <p class="panel-subtitle">刷新页面后自动清空，不写入浏览器本地存储</p>
+        </div>
+        <div class="inline-actions">
+          <button class="btn small" id="copyAllBtn" type="button" disabled>批量复制</button>
+          <button class="btn small danger" id="clearRecordsBtn" type="button" disabled>清空记录</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="record-list" id="recordList"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const stateDefinitions = [
+        { bit: 0, label: '低电状态' },
+        { bit: 1, label: '出围栏状态' },
+        { bit: 2, label: '进围栏状态' },
+        { bit: 3, label: '手环戴上/取下状态' },
+        { bit: 4, label: '手表运行/静止状态', checked: true }
+      ];
+
+      const alarmDefinitions = [
+        { bit: 16, label: 'SOS 报警' },
+        { bit: 17, label: '低电报警' },
+        { bit: 18, label: '出围栏报警' },
+        { bit: 19, label: '进围栏报警' },
+        { bit: 20, label: '手环拆除报警' },
+        { bit: 21, label: '老人手表 SOS / 跌倒报警' },
+        { bit: 22, label: '心率异常报警' }
+      ];
+
+      const defaultStations = [
+        { ta: '255', mcc: '460', mnc: '0', lac: '9360', cid: '5081', rssi: '156' },
+        { lac: '9360', cid: '4081', rssi: '129' },
+        { lac: '9360', cid: '4151', rssi: '128' },
+        { lac: '9360', cid: '5082', rssi: '127' },
+        { lac: '9360', cid: '4723', rssi: '122' },
+        { lac: '9360', cid: '4082', rssi: '120' }
+      ];
+
+      const defaultWifi = [
+        { ssid: 'buyaoxialian', mac: 'a0:c5:f2:b0:74:d0', rssi: '-34' },
+        { ssid: '3gtc-5g', mac: '92:76:9f:48:4f:20', rssi: '-48' },
+        { ssid: '726', mac: '38:37:8b:07:cf:99', rssi: '-54' },
+        { ssid: '3gtc', mac: 'd0:ae:ec:96:10:54', rssi: '-63' },
+        { ssid: 'ceshi', mac: 'd0:ae:ec:96:10:55', rssi: '-64' }
+      ];
+
+      const refreshDefaults = {
+        latitude: 22.570720,
+        longitude: 113.8620167,
+        speed: 0,
+        direction: 188.6,
+        altitude: 0,
+        satellites: 9,
+        gsmSignal: 100,
+        battery: 51,
+        steps: 14188,
+        rolls: 0,
+        accuracy: 22.4
+      };
+
+      const refreshLabels = {
+        speed: '速度',
+        direction: '方向',
+        altitude: '海拔',
+        satellites: '卫星个数',
+        gsmSignal: 'GSM 信号',
+        battery: '电量',
+        steps: '计步数',
+        rolls: '翻滚次数',
+        accuracy: '定位精度'
+      };
+
+      const refreshRules = {
+        speed: { decimals: 2, min: 0, delta: () => randomBetween(-1, 1) },
+        altitude: { decimals: 1, delta: () => randomBetween(-2, 2) },
+        satellites: { decimals: 0, integer: true, min: 0, delta: () => randomInteger(-1, 1) },
+        gsmSignal: { decimals: 0, integer: true, min: 0, max: 100, delta: () => randomInteger(-3, 3) },
+        battery: { decimals: 0, integer: true, min: 0, max: 100, delta: () => randomInteger(-1, 0) },
+        steps: { decimals: 0, integer: true, min: 0, delta: () => randomInteger(1, 20) },
+        rolls: { decimals: 0, integer: true, min: 0, delta: () => randomInteger(0, 1) },
+        accuracy: { decimals: 1, min: 0, delta: () => randomBetween(-2, 2) }
+      };
+
+      const records = [];
+      let stations = [];
+      let wifiEntries = [];
+      let currentSnapshot = null;
+      let toastTimer = null;
+
+      const $ = (id) => document.getElementById(id);
+      const formIds = [
+        'deviceId', 'date', 'time', 'fix', 'latitude', 'latHemisphere', 'longitude',
+        'lonHemisphere', 'speed', 'direction', 'altitude', 'satellites', 'gsmSignal',
+        'battery', 'steps', 'rolls', 'accuracy'
+      ];
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, (char) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        })[char]);
+      }
+
+      function showToast(message) {
+        const toast = $('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+
+      async function copyText(text) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const area = document.createElement('textarea');
+            area.value = text;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            const ok = document.execCommand('copy');
+            area.remove();
+            if (!ok) throw new Error('copy failed');
+          }
+          showToast('已复制到剪贴板');
+        } catch (error) {
+          showToast('复制失败，请手动选择报文');
+        }
+      }
+
+      function formatNow() {
+        const now = new Date();
+        const pad = (value) => String(value).padStart(2, '0');
+        return {
+          date: `${pad(now.getDate())}${pad(now.getMonth() + 1)}${pad(now.getFullYear() % 100)}`,
+          time: `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
+        };
+      }
+
+      function setCurrentTime() {
+        const now = formatNow();
+        $('date').value = now.date;
+        $('time').value = now.time;
+        update();
+      }
+
+      function clamp(value, min = -Infinity, max = Infinity) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function randomBetween(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function randomInteger(min, max) {
+        return Math.floor(randomBetween(min, max + 1));
+      }
+
+      function readRefreshValue(id, rule) {
+        const raw = $(id).value.trim();
+        const parsed = Number(raw);
+        const valid = raw !== '' && Number.isFinite(parsed)
+          && (!rule.integer || Number.isInteger(parsed))
+          && (rule.min === undefined || parsed >= rule.min)
+          && (rule.max === undefined || parsed <= rule.max);
+        return { value: valid ? parsed : refreshDefaults[id], usedFallback: !valid };
+      }
+
+      function refreshDynamicField(id) {
+        if (id === 'direction') {
+          const raw = $('direction').value.trim();
+          const parsed = Number(raw);
+          const valid = raw !== '' && Number.isFinite(parsed) && parsed >= 0 && parsed <= 359;
+          const base = valid ? parsed : refreshDefaults.direction;
+          let next = (base + randomBetween(-10, 10)) % 360;
+          if (next < 0) next += 360;
+          next = Number(next.toFixed(1));
+          if (next > 359) next = 0;
+          $('direction').value = next.toFixed(1);
+          update();
+          if (!valid) showToast('方向值无效，已基于示例值刷新');
+          return;
+        }
+
+        const rule = refreshRules[id];
+        if (!rule) return;
+        const current = readRefreshValue(id, rule);
+        const next = clamp(current.value + rule.delta(), rule.min, rule.max);
+        $(id).value = rule.integer ? String(Math.round(next)) : next.toFixed(rule.decimals);
+        update();
+        if (current.usedFallback) showToast(`${refreshLabels[id]}值无效，已基于示例值刷新`);
+      }
+
+      function refreshCoordinates() {
+        const latitudeRaw = $('latitude').value.trim();
+        const longitudeRaw = $('longitude').value.trim();
+        const latitudeNumber = Number(latitudeRaw);
+        const longitudeNumber = Number(longitudeRaw);
+        const latitudeValid = /^\d{1,2}\.\d{1,8}$/.test(latitudeRaw)
+          && Number.isFinite(latitudeNumber) && latitudeNumber >= 0 && latitudeNumber <= 90;
+        const longitudeValid = /^\d{1,3}\.\d{1,8}$/.test(longitudeRaw)
+          && Number.isFinite(longitudeNumber) && longitudeNumber >= 0 && longitudeNumber <= 180;
+        const usedFallback = !latitudeValid || !longitudeValid;
+
+        const latitude = (latitudeValid ? latitudeNumber : refreshDefaults.latitude)
+          * ((latitudeValid ? $('latHemisphere').value : 'N') === 'S' ? -1 : 1);
+        const longitude = (longitudeValid ? longitudeNumber : refreshDefaults.longitude)
+          * ((longitudeValid ? $('lonHemisphere').value : 'E') === 'W' ? -1 : 1);
+
+        const earthRadius = 6371000;
+        const angularDistance = 100 / earthRadius;
+        const bearing = randomBetween(0, Math.PI * 2);
+        const latitudeRadians = latitude * Math.PI / 180;
+        const longitudeRadians = longitude * Math.PI / 180;
+        const nextLatitudeRadians = Math.asin(
+          Math.sin(latitudeRadians) * Math.cos(angularDistance)
+          + Math.cos(latitudeRadians) * Math.sin(angularDistance) * Math.cos(bearing)
+        );
+        const nextLongitudeRadians = longitudeRadians + Math.atan2(
+          Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(latitudeRadians),
+          Math.cos(angularDistance) - Math.sin(latitudeRadians) * Math.sin(nextLatitudeRadians)
+        );
+        const nextLatitude = nextLatitudeRadians * 180 / Math.PI;
+        const nextLongitude = ((nextLongitudeRadians * 180 / Math.PI + 540) % 360) - 180;
+
+        $('latitude').value = Math.abs(nextLatitude).toFixed(6);
+        $('latHemisphere').value = nextLatitude < 0 ? 'S' : 'N';
+        $('longitude').value = Math.abs(nextLongitude).toFixed(6);
+        $('lonHemisphere').value = nextLongitude < 0 ? 'W' : 'E';
+        update();
+        if (usedFallback) showToast('坐标值无效，已基于示例坐标移动约 100 米');
+      }
+
+      function renderBitControls() {
+        $('stateBits').innerHTML = stateDefinitions.map((item) => `
+          <label class="check-item">
+            <input type="checkbox" class="status-bit" data-bit="${item.bit}" ${item.checked ? 'checked' : ''}>
+            <span>${escapeHtml(item.label)}</span><span class="bit-number">bit ${item.bit}</span>
+          </label>`).join('');
+        $('alarmBits').innerHTML = alarmDefinitions.map((item) => `
+          <label class="check-item disabled">
+            <input type="checkbox" class="status-bit alarm-bit" data-bit="${item.bit}" disabled>
+            <span>${escapeHtml(item.label)}</span><span class="bit-number">bit ${item.bit}</span>
+          </label>`).join('');
+      }
+
+      function getCommand() {
+        return document.querySelector('input[name="command"]:checked').value;
+      }
+
+      function syncCommandUI() {
+        const command = getCommand();
+        document.querySelectorAll('.command-card').forEach((card) => {
+          card.classList.toggle('selected', card.dataset.command === command);
+        });
+        const alarmInputs = [...document.querySelectorAll('.alarm-bit')];
+        const isAlarm = command === 'AL';
+        alarmInputs.forEach((input) => {
+          input.disabled = !isAlarm;
+          input.closest('.check-item').classList.toggle('disabled', !isAlarm);
+          if (!isAlarm) input.checked = false;
+        });
+        if (isAlarm && !alarmInputs.some((input) => input.checked)) {
+          const sos = alarmInputs.find((input) => Number(input.dataset.bit) === 16);
+          if (sos) sos.checked = true;
+        }
+        $('alarmRuleNote').textContent = isAlarm
+          ? 'AL 为报警上报，严格要求高 16 位至少包含一个报警位；默认勾选 SOS 报警。'
+          : 'UD / UD2 严格按普通位置数据处理，高 16 位报警必须全部为 0。';
+      }
+
+      function getStatusValue() {
+        let value = 0;
+        document.querySelectorAll('.status-bit:checked').forEach((input) => {
+          value = (value | (1 << Number(input.dataset.bit))) >>> 0;
+        });
+        return value >>> 0;
+      }
+
+      function statusHex(value) {
+        return value.toString(16).toUpperCase().padStart(8, '0');
+      }
+
+      function statusBinary(value) {
+        return value.toString(2).padStart(32, '0').match(/.{1,4}/g).join(' ');
+      }
+
+      function renderStations() {
+        $('stationList').innerHTML = stations.length ? stations.map((station, index) => {
+          const connected = index === 0;
+          const fields = connected
+            ? [
+                ['ta', 'TA', station.ta], ['mcc', 'MCC', station.mcc], ['mnc', 'MNC', station.mnc],
+                ['lac', 'LAC', station.lac], ['cid', 'CID', station.cid], ['rssi', '信号', station.rssi]
+              ]
+            : [['lac', 'LAC', station.lac], ['cid', 'CID', station.cid], ['rssi', '信号', station.rssi]];
+          return `<div class="entry-card" data-station-index="${index}">
+            <div class="entry-head">
+              <strong>${connected ? '连接基站' : `附近基站 ${index}`}</strong>
+              <button type="button" class="btn small danger remove-station" data-index="${index}">删除</button>
+            </div>
+            <div class="entry-grid">
+              ${fields.map(([key, label, value]) => `<div class="mini"><label>${label}</label><input type="text" inputmode="numeric" data-station-field="${key}" value="${escapeHtml(value ?? '')}"></div>`).join('')}
+            </div>
+          </div>`;
+        }).join('') : '<div class="record-empty">未添加基站；协议将上报基站个数 0。</div>';
+        $('addStationBtn').disabled = stations.length >= 50;
+      }
+
+      function renderWifi() {
+        $('wifiList').innerHTML = wifiEntries.length ? wifiEntries.map((entry, index) => `
+          <div class="entry-card" data-wifi-index="${index}">
+            <div class="entry-head">
+              <strong>WiFi ${index + 1}</strong>
+              <button type="button" class="btn small danger remove-wifi" data-index="${index}">删除</button>
+            </div>
+            <div class="entry-grid">
+              <div class="mini" style="grid-column: span 2"><label>SSID</label><input type="text" data-wifi-field="ssid" value="${escapeHtml(entry.ssid)}"></div>
+              <div class="mini" style="grid-column: span 2"><label>MAC 地址</label><input type="text" data-wifi-field="mac" value="${escapeHtml(entry.mac)}"></div>
+              <div class="mini" style="grid-column: span 2"><label>信号强度</label><input type="text" inputmode="numeric" data-wifi-field="rssi" value="${escapeHtml(entry.rssi)}"></div>
+            </div>
+          </div>`).join('') : '<div class="record-empty">未添加 WiFi；协议将上报 WiFi 个数 0。</div>';
+        $('addWifiBtn').disabled = wifiEntries.length >= 5;
+      }
+
+      function addStation() {
+        if (stations.length >= 50) return;
+        stations.push(stations.length === 0
+          ? { ta: '0', mcc: '460', mnc: '0', lac: '0', cid: '0', rssi: '0' }
+          : { lac: '0', cid: '0', rssi: '0' });
+        renderStations();
+        update();
+      }
+
+      function addWifi() {
+        if (wifiEntries.length >= 5) return;
+        wifiEntries.push({ ssid: `wifi-${wifiEntries.length + 1}`, mac: '00:00:00:00:00:00', rssi: '-60' });
+        renderWifi();
+        update();
+      }
+
+      function isAscii(value) {
+        return /^[\x00-\x7F]*$/.test(value);
+      }
+
+      function validDate(value) {
+        if (!/^\d{6}$/.test(value)) return false;
+        const day = Number(value.slice(0, 2));
+        const month = Number(value.slice(2, 4));
+        const year = 2000 + Number(value.slice(4, 6));
+        const date = new Date(year, month - 1, day);
+        return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+      }
+
+      function validTime(value) {
+        if (!/^\d{6}$/.test(value)) return false;
+        const hour = Number(value.slice(0, 2));
+        const minute = Number(value.slice(2, 4));
+        const second = Number(value.slice(4, 6));
+        return hour <= 23 && minute <= 59 && second <= 59;
+      }
+
+      function numeric(value, min = -Infinity, max = Infinity) {
+        if (!/^-?\d+(?:\.\d+)?$/.test(value)) return false;
+        const number = Number(value);
+        return Number.isFinite(number) && number >= min && number <= max;
+      }
+
+      function integer(value, min = -Infinity, max = Infinity) {
+        if (!/^-?\d+$/.test(value)) return false;
+        const number = Number(value);
+        return Number.isSafeInteger(number) && number >= min && number <= max;
+      }
+
+      function markInvalid(id, invalid) {
+        const element = $(id);
+        if (element) element.classList.toggle('invalid', invalid);
+      }
+
+      function validate(values, command, statusValue) {
+        const errors = [];
+        formIds.forEach((id) => markInvalid(id, false));
+
+        const add = (message, id) => {
+          errors.push(message);
+          if (id) markInvalid(id, true);
+        };
+
+        if (!/^\d{10}$/.test(values.deviceId)) add('设备 ID 必须为 10 位数字。', 'deviceId');
+        if (!validDate(values.date)) add('日期必须是有效的 DDMMYY，例如 120414。', 'date');
+        if (!validTime(values.time)) add('时间必须是有效的 HHMMSS，例如 101930。', 'time');
+        if (!/^\d{1,2}\.\d{1,8}$/.test(values.latitude) || !numeric(values.latitude, 0, 90)) add('纬度必须为 0–90 的小数，最多 8 位小数。', 'latitude');
+        if (!/^\d{1,3}\.\d{1,8}$/.test(values.longitude) || !numeric(values.longitude, 0, 180)) add('经度必须为 0–180 的小数，最多 8 位小数。', 'longitude');
+        if (!numeric(values.speed, 0)) add('速度必须为大于或等于 0 的数字。', 'speed');
+        if (!numeric(values.direction, 0, 359)) add('方向必须在 0–359 度之间。', 'direction');
+        if (!numeric(values.altitude)) add('海拔必须为数字，可为负数。', 'altitude');
+        if (!integer(values.satellites, 0)) add('卫星个数必须为非负整数。', 'satellites');
+        if (!integer(values.gsmSignal, 0, 100)) add('GSM 信号强度必须为 0–100 的整数。', 'gsmSignal');
+        if (!integer(values.battery, 0, 100)) add('电量必须为 0–100 的整数。', 'battery');
+        if (!integer(values.steps, 0)) add('计步数必须为非负整数。', 'steps');
+        if (!integer(values.rolls, 0)) add('翻滚次数必须为非负整数。', 'rolls');
+        if (!numeric(values.accuracy, 0)) add('定位精度必须为大于或等于 0 的数字。', 'accuracy');
+
+        const high16 = statusValue >>> 16;
+        if ((command === 'UD' || command === 'UD2') && high16 !== 0) errors.push(`${command} 普通位置报文不允许设置报警位。`);
+        if (command === 'AL' && high16 === 0) errors.push('AL 报警报文必须至少设置一个报警位。');
+
+        if (stations.length > 50) errors.push('基站数量不能超过页面保护上限 50。');
+        stations.forEach((station, index) => {
+          const prefix = index === 0 ? '连接基站' : `附近基站 ${index}`;
+          if (index === 0) {
+            if (!integer(station.ta, 0, 255)) errors.push(`${prefix} TA 必须为 0–255 的整数。`);
+            if (!/^\d{3}$/.test(station.mcc)) errors.push(`${prefix} MCC 必须为 3 位数字。`);
+            if (!/^\d{1,3}$/.test(station.mnc)) errors.push(`${prefix} MNC 必须为 1–3 位数字。`);
+          }
+          if (!integer(station.lac, 0, 65535)) errors.push(`${prefix} LAC 必须为 0–65535 的整数。`);
+          if (!integer(station.cid, 0, 65535)) errors.push(`${prefix} CID 必须为 0–65535 的整数。`);
+          if (!integer(station.rssi, 0, 255)) errors.push(`${prefix} 信号强度必须为 0–255 的整数。`);
+        });
+
+        if (wifiEntries.length > 5) errors.push('WiFi 数量不能超过 5。');
+        wifiEntries.forEach((entry, index) => {
+          const prefix = `WiFi ${index + 1}`;
+          if (!entry.ssid.trim()) errors.push(`${prefix} SSID 不能为空。`);
+          if (!isAscii(entry.ssid)) errors.push(`${prefix} SSID 含非 ASCII 字符。`);
+          if (/[,\[\]*]/.test(entry.ssid)) errors.push(`${prefix} SSID 不能包含逗号、方括号或星号。`);
+          if (!/^[0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){5}$/.test(entry.mac)) errors.push(`${prefix} MAC 格式应为 XX:XX:XX:XX:XX:XX。`);
+          if (!integer(entry.rssi, -127, 0)) errors.push(`${prefix} 信号强度必须为 -127–0 的整数。`);
+        });
+
+        Object.entries(values).forEach(([key, value]) => {
+          if (!isAscii(String(value))) errors.push(`${key} 含非 ASCII 字符。`);
+        });
+
+        return [...new Set(errors)];
+      }
+
+      function collectValues() {
+        return Object.fromEntries(formIds.map((id) => [id, $(id).value.trim()]));
+      }
+
+      function buildContent(command, values, status) {
+        const fields = [
+          values.date, values.time, values.fix, values.latitude, values.latHemisphere,
+          values.longitude, values.lonHemisphere, values.speed, values.direction,
+          values.altitude, values.satellites, values.gsmSignal, values.battery,
+          values.steps, values.rolls, statusHex(status), String(stations.length)
+        ];
+
+        stations.forEach((station, index) => {
+          if (index === 0) fields.push(station.ta, station.mcc, station.mnc, station.lac, station.cid, station.rssi);
+          else fields.push(station.lac, station.cid, station.rssi);
+        });
+
+        fields.push(String(wifiEntries.length));
+        wifiEntries.forEach((entry) => fields.push(entry.ssid, entry.mac.toLowerCase(), entry.rssi));
+        fields.push(values.accuracy);
+        return `${command},${fields.join(',')}`;
+      }
+
+      function renderBreakdown(snapshot) {
+        const rows = [
+          ['厂商', '3G（固定）'],
+          ['设备 ID', snapshot.values.deviceId || '—'],
+          ['LEN', `${snapshot.lengthHex}（十进制 ${snapshot.lengthDecimal}）`],
+          ['命令', snapshot.command],
+          ['日期时间', `${snapshot.values.date || '—'} / ${snapshot.values.time || '—'}`],
+          ['坐标', `${snapshot.values.latitude || '—'} ${snapshot.values.latHemisphere}, ${snapshot.values.longitude || '—'} ${snapshot.values.lonHemisphere}`],
+          ['终端状态', `${snapshot.statusHex} · ${snapshot.statusBinary}`],
+          ['基站 / WiFi', `${stations.length} / ${wifiEntries.length}`],
+          ['平台回复', snapshot.command === 'AL' ? `[3G*${snapshot.values.deviceId || 'YYYYYYYYYY'}*0002*AL]` : '无需回复']
+        ];
+        $('breakdown').innerHTML = rows.map(([label, value]) => `<div class="breakdown-row"><span>${escapeHtml(label)}</span><code>${escapeHtml(value)}</code></div>`).join('');
+      }
+
+      function update() {
+        const command = getCommand();
+        const values = collectValues();
+        const status = getStatusValue();
+        const hexStatus = statusHex(status);
+        const binaryStatus = statusBinary(status);
+        const content = buildContent(command, values, status);
+        let errors = validate(values, command, status);
+        const ascii = isAscii(content);
+        const lengthDecimal = ascii ? content.length : 0;
+        if (!ascii) errors.push('内容段包含非 ASCII 字符，无法按协议计算 LEN。');
+        if (lengthDecimal > 0xFFFF) errors.push('内容段超过 LEN 四位十六进制可表示的最大长度 65535。');
+        errors = [...new Set(errors)];
+        const lengthHex = ascii && lengthDecimal <= 0xFFFF ? lengthDecimal.toString(16).toUpperCase().padStart(4, '0') : '----';
+        const message = `[3G*${values.deviceId}*${lengthHex}*${content}]`;
+        const valid = errors.length === 0;
+
+        currentSnapshot = {
+          command, values, status, statusHex: hexStatus, statusBinary: binaryStatus,
+          content, lengthDecimal, lengthHex, message, errors, valid
+        };
+
+        $('statusHex').textContent = hexStatus;
+        $('statusBinary').textContent = binaryStatus;
+        $('metricCommand').textContent = command;
+        $('metricDecimal').textContent = ascii ? String(lengthDecimal) : '—';
+        $('metricHex').textContent = lengthHex;
+        $('messageOutput').textContent = message;
+        $('contentOutput').textContent = content;
+        $('copyBtn').disabled = !valid;
+        $('addRecordBtn').disabled = !valid;
+
+        const banner = $('validationBanner');
+        banner.className = `status-banner ${valid ? 'valid' : 'invalid'}`;
+        banner.innerHTML = valid
+          ? '<div>✓</div><div><strong>报文校验通过</strong><small>LEN 已按 ASCII 内容字节数自动计算。</small></div>'
+          : `<div>!</div><div><strong>发现 ${errors.length} 个问题</strong><small>修正后才能复制或加入记录。</small></div>`;
+
+        const errorList = $('errorList');
+        errorList.hidden = valid;
+        errorList.innerHTML = errors.map((error) => `<li>${escapeHtml(error)}</li>`).join('');
+        renderBreakdown(currentSnapshot);
+      }
+
+      function renderRecords() {
+        $('recordCount').textContent = `(${records.length})`;
+        $('copyAllBtn').disabled = records.length === 0;
+        $('clearRecordsBtn').disabled = records.length === 0;
+        if (!records.length) {
+          $('recordList').innerHTML = '<div class="record-empty">尚未加入报文。校验通过后，点击“加入记录”。</div>';
+          return;
+        }
+        $('recordList').innerHTML = records.map((record, index) => `
+          <div class="record-card">
+            <div class="record-top">
+              <div class="record-meta">
+                <span class="record-command">${record.command}</span>
+                <span>${escapeHtml(record.deviceId)}</span>
+                <span>${escapeHtml(record.date)} ${escapeHtml(record.time)}</span>
+                <span>LEN ${record.lengthHex}</span>
+              </div>
+              <div class="inline-actions">
+                <button class="btn small copy-record" type="button" data-index="${index}">复制</button>
+                <button class="btn small danger remove-record" type="button" data-index="${index}">删除</button>
+              </div>
+            </div>
+            <div class="record-message">${escapeHtml(record.message)}</div>
+          </div>`).join('');
+      }
+
+      function addRecord() {
+        if (!currentSnapshot || !currentSnapshot.valid) return;
+        records.push({
+          command: currentSnapshot.command,
+          deviceId: currentSnapshot.values.deviceId,
+          date: currentSnapshot.values.date,
+          time: currentSnapshot.values.time,
+          lengthHex: currentSnapshot.lengthHex,
+          message: currentSnapshot.message
+        });
+        renderRecords();
+        showToast(`已加入第 ${records.length} 条报文`);
+      }
+
+      function resetExample() {
+        const now = formatNow();
+        const values = {
+          deviceId: '2016001000', date: now.date, time: now.time, fix: 'A',
+          latitude: '22.570720', latHemisphere: 'N', longitude: '113.8620167',
+          lonHemisphere: 'E', speed: '0.00', direction: '188.6', altitude: '0.0',
+          satellites: '9', gsmSignal: '100', battery: '51', steps: '14188',
+          rolls: '0', accuracy: '22.4'
+        };
+        Object.entries(values).forEach(([id, value]) => { $(id).value = value; });
+        document.querySelector('input[name="command"][value="UD"]').checked = true;
+        renderBitControls();
+        stations = defaultStations.map((item) => ({ ...item }));
+        wifiEntries = defaultWifi.map((item) => ({ ...item }));
+        renderStations();
+        renderWifi();
+        syncCommandUI();
+        update();
+        showToast('已重置为协议示例');
+      }
+
+      document.addEventListener('click', (event) => {
+        const refreshButton = event.target.closest('.field-refresh');
+        if (!refreshButton) return;
+        const target = refreshButton.dataset.refresh;
+        if (target === 'datetime') setCurrentTime();
+        else if (target === 'coordinates') refreshCoordinates();
+        else refreshDynamicField(target);
+      });
+
+      document.addEventListener('input', (event) => {
+        const stationInput = event.target.closest('[data-station-field]');
+        if (stationInput) {
+          const card = stationInput.closest('[data-station-index]');
+          stations[Number(card.dataset.stationIndex)][stationInput.dataset.stationField] = stationInput.value.trim();
+        }
+        const wifiInput = event.target.closest('[data-wifi-field]');
+        if (wifiInput) {
+          const card = wifiInput.closest('[data-wifi-index]');
+          wifiEntries[Number(card.dataset.wifiIndex)][wifiInput.dataset.wifiField] = wifiInput.value.trim();
+        }
+        update();
+      });
+
+      document.addEventListener('change', (event) => {
+        if (event.target.matches('input[name="command"]')) {
+          syncCommandUI();
+          update();
+        }
+        if (event.target.matches('.status-bit')) update();
+      });
+
+      $('stationList').addEventListener('click', (event) => {
+        const button = event.target.closest('.remove-station');
+        if (!button) return;
+        stations.splice(Number(button.dataset.index), 1);
+        if (stations.length > 0 && !Object.prototype.hasOwnProperty.call(stations[0], 'ta')) {
+          stations[0] = { ta: '0', mcc: '460', mnc: '0', ...stations[0] };
+        }
+        renderStations();
+        update();
+      });
+
+      $('wifiList').addEventListener('click', (event) => {
+        const button = event.target.closest('.remove-wifi');
+        if (!button) return;
+        wifiEntries.splice(Number(button.dataset.index), 1);
+        renderWifi();
+        update();
+      });
+
+      $('recordList').addEventListener('click', (event) => {
+        const copyButton = event.target.closest('.copy-record');
+        if (copyButton) copyText(records[Number(copyButton.dataset.index)].message);
+        const removeButton = event.target.closest('.remove-record');
+        if (removeButton) {
+          records.splice(Number(removeButton.dataset.index), 1);
+          renderRecords();
+        }
+      });
+
+      $('addStationBtn').addEventListener('click', addStation);
+      $('addWifiBtn').addEventListener('click', addWifi);
+      $('fillNowBtn').addEventListener('click', setCurrentTime);
+      $('resetBtn').addEventListener('click', resetExample);
+      $('copyBtn').addEventListener('click', () => currentSnapshot?.valid && copyText(currentSnapshot.message));
+      $('addRecordBtn').addEventListener('click', addRecord);
+      $('copyAllBtn').addEventListener('click', () => records.length && copyText(records.map((item) => item.message).join('\r\n')));
+      $('clearRecordsBtn').addEventListener('click', () => {
+        records.splice(0, records.length);
+        renderRecords();
+        showToast('记录已清空');
+      });
+
+      resetExample();
+      renderRecords();
+    })();
+  </script>
+</body>
+</html>
