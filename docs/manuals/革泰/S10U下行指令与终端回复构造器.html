@@ -327,7 +327,7 @@
 
       const replyRules = {
         UPLOAD: '上传间隔仅在平台下行中动态变化；终端正常回复固定为 UPLOAD，不回显时间参数。',
-        ZONE: '终端正常回复 ZONE,时区参数，回显本次设置的协议值。',
+        ZONE: '终端正常回复固定为 ZONE，不回显本次设置的时区参数。',
         VERNO: '终端正常回复 VERNO,版本号；版本号来自当前页面输入。',
         CR: '终端正常回复 CR；页面不会启动 GPS 或自动上报位置。',
         FIND: '终端正常回复 FIND；页面不会触发响铃。',
@@ -510,7 +510,7 @@
         const parameter = collectParameter(command, errors);
         const parameterizedCommands = ['UPLOAD', 'ZONE'];
         const downContent = parameterizedCommands.includes(command) ? `${command},${parameter.wire}` : command;
-        const replyContent = ['ZONE', 'VERNO'].includes(command) ? `${command},${parameter.wire}` : command;
+        const replyContent = command === 'VERNO' ? `${command},${parameter.wire}` : command;
         if (!isPrintableAscii(downContent) || !isPrintableAscii(replyContent)) errors.push('内容段包含非可打印 ASCII 字符。');
         if (downContent.length > 0xFFFF || replyContent.length > 0xFFFF) errors.push('内容段超过四位十六进制 LEN 可表示的最大长度 65535。');
 
