@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>经纬度缩减</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f1ea;
+      --ink: #1c1915;
+      --muted: #6f675e;
+      --line: #ddd4c6;
+      --card: #fffdf9;
+      --accent: #8a3d2f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    main {
+      width: min(640px, calc(100% - 32px));
+      margin: 48px auto;
+    }
+    h1 { margin: 0 0 8px; font-size: 22px; font-weight: 650; }
+    p { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
+    textarea, button, .value {
+      font-family: Consolas, "Cascadia Mono", monospace;
+    }
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--ink);
+      font-size: 15px;
+      resize: vertical;
+    }
+    textarea:focus { outline: 2px solid #c9a08a; border-color: transparent; }
+    .row {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+    .label { font-size: 14px; color: var(--muted); }
+    .value {
+      min-height: 36px;
+      padding: 8px 10px;
+      background: #f7f3ec;
+      border-radius: 8px;
+      font-size: 16px;
+      word-break: break-all;
+    }
+    button {
+      height: 36px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .error { min-height: 20px; margin-top: 10px; color: #9b2c2c; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>经纬度缩减</h1>
+    <p>粘贴「经度,纬度」，四舍五入到 6 位小数。经度、纬度分开，点按钮即可复制。</p>
+    <textarea id="raw" placeholder="113.50001476633189,23.154618704052833" autofocus></textarea>
+    <div class="row">
+      <span class="label">经度</span>
+      <div class="value" id="lng">—</div>
+      <button id="copy-lng" type="button" disabled>复制</button>
+    </div>
+    <div class="row">
+      <span class="label">纬度</span>
+      <div class="value" id="lat">—</div>
+      <button id="copy-lat" type="button" disabled>复制</button>
+    </div>
+    <div class="error" id="error"></div>
+  </main>
+  <script>
+    const raw = document.getElementById("raw");
+    const lngEl = document.getElementById("lng");
+    const latEl = document.getElementById("lat");
+    const copyLng = document.getElementById("copy-lng");
+    const copyLat = document.getElementById("copy-lat");
+    const error = document.getElementById("error");
+
+    function round6(n) {
+      return (Math.round((n + Number.EPSILON) * 1e6) / 1e6).toFixed(6);
+    }
+
+    function parsePair(text) {
+      const parts = text.trim().split(/[,，\s]+/).filter(Boolean);
+      if (parts.length !== 2) return null;
+      const lng = Number(parts[0]);
+      const lat = Number(parts[1]);
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+      if (lng < -180 || lng > 180 || lat < -90 || lat > 90) return null;
+      return { lng: round6(lng), lat: round6(lat) };
+    }
+
+    async function copy(text, button) {
+      await navigator.clipboard.writeText(text);
+      const old = button.textContent;
+      button.textContent = "已复制";
+      setTimeout(() => { button.textContent = old; }, 800);
+    }
+
+    function render() {
+      const parsed = parsePair(raw.value);
+      if (!raw.value.trim()) {
+        lngEl.textContent = "—";
+        latEl.textContent = "—";
+        copyLng.disabled = copyLat.disabled = true;
+        error.textContent = "";
+        return;
+      }
+      if (!parsed) {
+        lngEl.textContent = "—";
+        latEl.textContent = "—";
+        copyLng.disabled = copyLat.disabled = true;
+        error.textContent = "格式不对。请粘贴「经度,纬度」，例如 113.50001476633189,23.154618704052833";
+        return;
+      }
+      lngEl.textContent = parsed.lng;
+      latEl.textContent = parsed.lat;
+      copyLng.disabled = copyLat.disabled = false;
+      error.textContent = "";
+    }
+
+    raw.addEventListener("input", render);
+    copyLng.addEventListener("click", () => copy(lngEl.textContent, copyLng));
+    copyLat.addEventListener("click", () => copy(latEl.textContent, copyLat));
+    raw.value = "113.50001476633189,23.154618704052833";
+    render();
+  </script>
+</body>
+</html>
