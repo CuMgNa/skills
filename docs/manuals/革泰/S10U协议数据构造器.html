@@ -94,7 +94,8 @@
     .panel-subtitle { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
     .panel-body { padding: 20px; }
 
-    .command-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .command-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .field.hidden, .panel.hidden { display: none; }
     .command-card {
       position: relative;
       display: block;
@@ -297,7 +298,7 @@
     <header class="hero">
       <div>
         <h1>S10U 协议数据构造器</h1>
-        <p>位置数据上报（UD） · 盲点补传（UD2） · 报警数据上报（AL）</p>
+        <p>链路保持（LK） · 位置数据上报（UD） · 盲点补传（UD2） · 报警数据上报（AL）</p>
         <div class="badge-row">
           <span class="badge">单文件纯离线</span>
           <span class="badge">ASCII 严格校验</span>
@@ -317,11 +318,16 @@
           <div class="panel-header">
             <div>
               <h2 class="panel-title">1. 报文类型</h2>
-              <p class="panel-subtitle">三类命令共用同一套位置数据结构</p>
+              <p class="panel-subtitle">LK 只带步数、翻滚次数、电量；UD / UD2 / AL 共用位置数据结构</p>
             </div>
           </div>
           <div class="panel-body">
             <div class="command-grid" id="commandGrid">
+              <label class="command-card" data-command="LK">
+                <input type="radio" name="command" value="LK">
+                <span class="command-name">LK <span>♥</span></span>
+                <small>链路保持 · 平台回复 [3G*ID*0002*LK]</small>
+              </label>
               <label class="command-card selected" data-command="UD">
                 <input type="radio" name="command" value="UD" checked>
                 <span class="command-name">UD <span>📍</span></span>
@@ -344,8 +350,8 @@
         <article class="panel">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">2. 包头与位置数据</h2>
-              <p class="panel-subtitle">厂商固定为 3G；设备 ID 必须为 10 位数字</p>
+              <h2 class="panel-title" id="payloadTitle">2. 包头与位置数据</h2>
+              <p class="panel-subtitle" id="payloadSubtitle">厂商固定为 3G；设备 ID 必须为 10 位数字</p>
             </div>
           </div>
           <div class="panel-body">
@@ -358,14 +364,14 @@
                 <label class="field-label required" for="deviceId">设备 ID</label>
                 <input id="deviceId" type="text" inputmode="numeric" maxlength="10" value="2016001000">
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="date">日期 DDMMYY</label>
                 <div class="input-with-action">
                   <input id="date" type="text" inputmode="numeric" maxlength="6">
                   <button class="btn field-refresh" type="button" data-refresh="datetime" title="刷新当前日期和时间" aria-label="刷新当前日期和时间">↻</button>
                 </div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="time">时间 HHMMSS</label>
                 <div class="input-with-action">
                   <input id="time" type="text" inputmode="numeric" maxlength="6">
@@ -373,51 +379,51 @@
                 </div>
               </div>
 
-              <div class="field span-2">
+              <div class="field span-2 position-only">
                 <label class="field-label" for="fix">定位状态</label>
                 <select id="fix"><option value="A">A · 有效</option><option value="V">V · 未定位</option></select>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="latitude">纬度</label>
                 <div class="input-with-action">
                   <input id="latitude" type="text" inputmode="decimal" value="22.570720">
                   <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
                 </div>
               </div>
-              <div class="field span-2">
+              <div class="field span-2 position-only">
                 <label class="field-label" for="latHemisphere">纬度标识</label>
                 <select id="latHemisphere"><option value="N">N · 北纬</option><option value="S">S · 南纬</option></select>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="longitude">经度</label>
                 <div class="input-with-action">
                   <input id="longitude" type="text" inputmode="decimal" value="113.8620167">
                   <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
                 </div>
               </div>
-              <div class="field span-2">
+              <div class="field span-2 position-only">
                 <label class="field-label" for="lonHemisphere">经度标识</label>
                 <select id="lonHemisphere"><option value="E">E · 东经</option><option value="W">W · 西经</option></select>
               </div>
 
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="speed">速度 km/h</label>
                 <div class="input-with-action"><input id="speed" type="text" inputmode="decimal" value="0.00"><button class="btn field-refresh" type="button" data-refresh="speed" title="刷新速度" aria-label="刷新速度">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="direction">方向 0–359°</label>
                 <div class="input-with-action"><input id="direction" type="number" min="0" max="359" value="188.6"><button class="btn field-refresh" type="button" data-refresh="direction" title="刷新方向" aria-label="刷新方向">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="altitude">海拔 m</label>
                 <div class="input-with-action"><input id="altitude" type="text" inputmode="decimal" value="0.0"><button class="btn field-refresh" type="button" data-refresh="altitude" title="刷新海拔" aria-label="刷新海拔">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="satellites">卫星个数</label>
                 <div class="input-with-action"><input id="satellites" type="number" min="0" step="1" value="9"><button class="btn field-refresh" type="button" data-refresh="satellites" title="刷新卫星个数" aria-label="刷新卫星个数">↻</button></div>
               </div>
 
-              <div class="field span-3">
+              <div class="field span-3 position-only">
                 <label class="field-label required" for="gsmSignal">GSM 信号 0–100</label>
                 <div class="input-with-action"><input id="gsmSignal" type="number" min="0" max="100" step="1" value="100"><button class="btn field-refresh" type="button" data-refresh="gsmSignal" title="刷新 GSM 信号" aria-label="刷新 GSM 信号">↻</button></div>
               </div>
@@ -434,7 +440,7 @@
                 <div class="input-with-action"><input id="rolls" type="number" min="0" step="1" value="0"><button class="btn field-refresh" type="button" data-refresh="rolls" title="刷新翻滚次数" aria-label="刷新翻滚次数">↻</button></div>
               </div>
 
-              <div class="field span-6">
+              <div class="field span-6 position-only">
                 <label class="field-label required" for="accuracy">定位精度 m</label>
                 <div class="input-with-action"><input id="accuracy" type="text" inputmode="decimal" value="22.4"><button class="btn field-refresh" type="button" data-refresh="accuracy" title="刷新定位精度" aria-label="刷新定位精度">↻</button></div>
                 <div class="hint">协议字段 n；必须为大于或等于 0 的数字</div>
@@ -443,7 +449,7 @@
           </div>
         </article>
 
-        <article class="panel">
+        <article class="panel position-panel">
           <div class="panel-header">
             <div>
               <h2 class="panel-title">3. 终端状态与报警位</h2>
@@ -469,7 +475,7 @@
           </div>
         </article>
 
-        <article class="panel">
+        <article class="panel position-panel">
           <div class="panel-header">
             <div>
               <h2 class="panel-title">4. 基站信息</h2>
@@ -483,7 +489,7 @@
           </div>
         </article>
 
-        <article class="panel">
+        <article class="panel position-panel">
           <div class="panel-header">
             <div>
               <h2 class="panel-title">5. WiFi 信息</h2>
@@ -507,7 +513,7 @@
         <div class="panel-body">
           <div id="validationBanner" class="status-banner valid"></div>
           <ul id="errorList" class="error-list" hidden></ul>
-          <div class="section-note warning">协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。</div>
+          <div class="section-note warning" id="lenNote">协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。</div>
 
           <div class="metric-grid">
             <div class="metric"><span>命令</span><strong id="metricCommand">UD</strong></div>
@@ -798,11 +804,26 @@
         return document.querySelector('input[name="command"]:checked').value;
       }
 
+      function isLinkKeep(command = getCommand()) {
+        return command === 'LK';
+      }
+
       function syncCommandUI() {
         const command = getCommand();
+        const linkKeep = isLinkKeep(command);
         document.querySelectorAll('.command-card').forEach((card) => {
           card.classList.toggle('selected', card.dataset.command === command);
         });
+        document.querySelectorAll('.position-only, .position-panel').forEach((element) => {
+          element.classList.toggle('hidden', linkKeep);
+        });
+        $('payloadTitle').textContent = linkKeep ? '2. 链路保持数据' : '2. 包头与位置数据';
+        $('payloadSubtitle').textContent = linkKeep
+          ? '内容为 LK,步数,翻滚次数,电量百分数；日期、位置、基站、WiFi 不进入报文'
+          : '厂商固定为 3G；设备 ID 必须为 10 位数字';
+        $('lenNote').textContent = linkKeep
+          ? '链路保持按协议原文拼装：内容字节数即 LEN。文档样例 [3G*8800000015*000D*LK,50,100,100] 的 000D 与实际 13 字节一致。未收到平台回复时，协议要求终端重新建连；本页只构造报文，不模拟重连。'
+          : '协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。';
         const alarmInputs = [...document.querySelectorAll('.alarm-bit')];
         const isAlarm = command === 'AL';
         alarmInputs.forEach((input) => {
@@ -937,6 +958,18 @@
         };
 
         if (!/^\d{10}$/.test(values.deviceId)) add('设备 ID 必须为 10 位数字。', 'deviceId');
+        if (!integer(values.battery, 0, 100)) add('电量必须为 0–100 的整数。', 'battery');
+        if (!integer(values.steps, 0)) add('计步数必须为非负整数。', 'steps');
+        if (!integer(values.rolls, 0)) add('翻滚次数必须为非负整数。', 'rolls');
+
+        if (isLinkKeep(command)) {
+          ['steps', 'rolls', 'battery'].forEach((id) => {
+            if (!isAscii(values[id])) errors.push(`${id} 含非 ASCII 字符。`);
+          });
+          if (!isAscii(values.deviceId)) errors.push('deviceId 含非 ASCII 字符。');
+          return [...new Set(errors)];
+        }
+
         if (!validDate(values.date)) add('日期必须是有效的 DDMMYY，例如 120414。', 'date');
         if (!validTime(values.time)) add('时间必须是有效的 HHMMSS，例如 101930。', 'time');
         if (!/^\d{1,2}\.\d{1,8}$/.test(values.latitude) || !numeric(values.latitude, 0, 90)) add('纬度必须为 0–90 的小数，最多 8 位小数。', 'latitude');
@@ -946,9 +979,6 @@
         if (!numeric(values.altitude)) add('海拔必须为数字，可为负数。', 'altitude');
         if (!integer(values.satellites, 0)) add('卫星个数必须为非负整数。', 'satellites');
         if (!integer(values.gsmSignal, 0, 100)) add('GSM 信号强度必须为 0–100 的整数。', 'gsmSignal');
-        if (!integer(values.battery, 0, 100)) add('电量必须为 0–100 的整数。', 'battery');
-        if (!integer(values.steps, 0)) add('计步数必须为非负整数。', 'steps');
-        if (!integer(values.rolls, 0)) add('翻滚次数必须为非负整数。', 'rolls');
         if (!numeric(values.accuracy, 0)) add('定位精度必须为大于或等于 0 的数字。', 'accuracy');
 
         const high16 = statusValue >>> 16;
@@ -990,6 +1020,7 @@
       }
 
       function buildContent(command, values, status) {
+        if (isLinkKeep(command)) return `LK,${values.steps},${values.rolls},${values.battery}`;
         const fields = [
           values.date, values.time, values.fix, values.latitude, values.latHemisphere,
           values.longitude, values.lonHemisphere, values.speed, values.direction,
@@ -1008,8 +1039,28 @@
         return `${command},${fields.join(',')}`;
       }
 
+      function platformReply(snapshot) {
+        const deviceId = snapshot.values.deviceId || 'YYYYYYYYYY';
+        if (snapshot.command === 'LK') return `[3G*${deviceId}*0002*LK]`;
+        if (snapshot.command === 'AL') return `[3G*${deviceId}*0002*AL]`;
+        return '无需回复';
+      }
+
       function renderBreakdown(snapshot) {
-        const rows = [
+        const linkKeep = isLinkKeep(snapshot.command);
+        const rows = linkKeep
+          ? [
+              ['厂商', '3G（固定）'],
+              ['设备 ID', snapshot.values.deviceId || '—'],
+              ['LEN', `${snapshot.lengthHex}（十进制 ${snapshot.lengthDecimal}）`],
+              ['命令', 'LK'],
+              ['步数', snapshot.values.steps || '—'],
+              ['翻滚次数', snapshot.values.rolls || '—'],
+              ['电量百分数', snapshot.values.battery || '—'],
+              ['平台回复', platformReply(snapshot)],
+              ['无回复行为', '协议要求终端重新建立连接；本页不自动重连']
+            ]
+          : [
           ['厂商', '3G（固定）'],
           ['设备 ID', snapshot.values.deviceId || '—'],
           ['LEN', `${snapshot.lengthHex}（十进制 ${snapshot.lengthDecimal}）`],
@@ -1018,7 +1069,7 @@
           ['坐标', `${snapshot.values.latitude || '—'} ${snapshot.values.latHemisphere}, ${snapshot.values.longitude || '—'} ${snapshot.values.lonHemisphere}`],
           ['终端状态', `${snapshot.statusHex} · ${snapshot.statusBinary}`],
           ['基站 / WiFi', `${stations.length} / ${wifiEntries.length}`],
-          ['平台回复', snapshot.command === 'AL' ? `[3G*${snapshot.values.deviceId || 'YYYYYYYYYY'}*0002*AL]` : '无需回复']
+          ['平台回复', platformReply(snapshot)]
         ];
         $('breakdown').innerHTML = rows.map(([label, value]) => `<div class="breakdown-row"><span>${escapeHtml(label)}</span><code>${escapeHtml(value)}</code></div>`).join('');
       }
@@ -1081,7 +1132,7 @@
               <div class="record-meta">
                 <span class="record-command">${record.command}</span>
                 <span>${escapeHtml(record.deviceId)}</span>
-                <span>${escapeHtml(record.date)} ${escapeHtml(record.time)}</span>
+                <span>${record.command === 'LK' ? `步数 ${escapeHtml(record.steps)} · 翻滚 ${escapeHtml(record.rolls)} · 电量 ${escapeHtml(record.battery)}%` : `${escapeHtml(record.date)} ${escapeHtml(record.time)}`}</span>
                 <span>LEN ${record.lengthHex}</span>
               </div>
               <div class="inline-actions">
@@ -1100,6 +1151,9 @@
           deviceId: currentSnapshot.values.deviceId,
           date: currentSnapshot.values.date,
           time: currentSnapshot.values.time,
+          steps: currentSnapshot.values.steps,
+          rolls: currentSnapshot.values.rolls,
+          battery: currentSnapshot.values.battery,
           lengthHex: currentSnapshot.lengthHex,
           message: currentSnapshot.message
         });
