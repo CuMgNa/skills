@@ -94,8 +94,8 @@
     .panel-subtitle { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
     .panel-body { padding: 20px; }
 
-    .command-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .field.hidden, .panel.hidden { display: none; }
+    .command-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .field.hidden, .panel.hidden, .hint.hidden { display: none; }
     .command-card {
       position: relative;
       display: block;
@@ -119,6 +119,7 @@
     .field.span-6 { grid-column: span 6; }
     .field.span-8 { grid-column: span 8; }
     .field.span-12 { grid-column: span 12; }
+    .field.iccid-lead { grid-column: 1 / span 4; }
 
     label.field-label { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 750; color: #344054; }
     .required::after { content: " *"; color: var(--danger); }
@@ -250,6 +251,17 @@
     .breakdown-row span:first-child { color: var(--muted); }
     .breakdown-row code { overflow-wrap: anywhere; }
 
+    .reverse-panel { margin-top: 22px; }
+    .reverse-table-wrap { overflow: auto; }
+    .reverse-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .reverse-table th, .reverse-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .reverse-table th { color: var(--muted); font-size: 12px; font-weight: 750; background: #f8fafc; }
+    .reverse-table td:nth-child(1) { width: 52px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .reverse-table td:nth-child(2) { width: 168px; font-weight: 700; }
+    .reverse-table td:nth-child(3) { width: 28%; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    .reverse-table td:nth-child(4) { white-space: pre-wrap; color: #344054; }
+    .status-banner.warning { color: #805000; background: var(--warning-soft); border: 1px solid #f0cf91; }
+
     .records { margin-top: 22px; }
     .record-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
     .record-list { display: grid; gap: 10px; }
@@ -298,12 +310,13 @@
     <header class="hero">
       <div>
         <h1>S10U 协议数据构造器</h1>
-        <p>链路保持（LK） · 位置数据上报（UD） · 盲点补传（UD2） · 报警数据上报（AL）</p>
+        <p>链路保持（LK） · ICCID 指令 · 位置数据上报（UD / UD_LTE） · 盲点补传（UD2） · 报警数据上报（AL） · 反向解析</p>
         <div class="badge-row">
           <span class="badge">单文件纯离线</span>
           <span class="badge">ASCII 严格校验</span>
           <span class="badge">LEN 自动计算</span>
           <span class="badge">数据仅保留在当前页面</span>
+          <span class="badge">可反向逐字段解析</span>
         </div>
       </div>
       <div class="hero-actions">
@@ -318,20 +331,38 @@
           <div class="panel-header">
             <div>
               <h2 class="panel-title">1. 报文类型</h2>
-              <p class="panel-subtitle">LK 只带步数、翻滚次数、电量；UD / UD2 / AL 共用位置数据结构</p>
+              <p class="panel-subtitle">LK、ICCID、UD、UD2、UD_LTE、AL 会写回对应指令。其余 3G/4G 命令只解析，不改写成 UD</p>
             </div>
           </div>
           <div class="panel-body">
+            <label class="field-label" for="reverseInput">报文</label>
+            <textarea id="reverseInput" spellcheck="false" placeholder="[3G*1034508225*0050*UD,271026,170226,A,23.157080,N,113.494316,E,0.20,276,19,6,28,67,0,0,00000000,0,0]"></textarea>
+            <div id="reverseBanner" class="status-banner" hidden></div>
+            <ul id="reverseNotes" class="error-list" hidden></ul>
+            <div class="inline-actions" style="margin-bottom: 16px;">
+              <button class="btn small" id="reverseSampleBtn" type="button">填入示例</button>
+              <button class="btn small" id="reverseClearBtn" type="button">清空报文</button>
+            </div>
             <div class="command-grid" id="commandGrid">
               <label class="command-card" data-command="LK">
                 <input type="radio" name="command" value="LK">
                 <span class="command-name">LK <span>♥</span></span>
                 <small>链路保持 · 平台回复 [3G*ID*0002*LK]</small>
               </label>
+              <label class="command-card" data-command="ICCID">
+                <input type="radio" name="command" value="ICCID">
+                <span class="command-name">ICCID <span>▣</span></span>
+                <small>终端上报 · 平台不需要回复</small>
+              </label>
               <label class="command-card selected" data-command="UD">
                 <input type="radio" name="command" value="UD" checked>
                 <span class="command-name">UD <span>📍</span></span>
                 <small>位置数据上报 · 平台无需回复</small>
+              </label>
+              <label class="command-card" data-command="UD_LTE">
+                <input type="radio" name="command" value="UD_LTE">
+                <span class="command-name">UD_LTE <span>4G</span></span>
+                <small>4G 非 CDMA 上报 · 位置数据见附录一 · 平台无需回复</small>
               </label>
               <label class="command-card" data-command="UD2">
                 <input type="radio" name="command" value="UD2">
@@ -361,8 +392,34 @@
                 <input id="vendor" type="text" value="3G" readonly>
               </div>
               <div class="field span-3">
-                <label class="field-label required" for="deviceId">设备 ID</label>
+                <label class="field-label required" id="deviceIdLabel" for="deviceId">设备 ID</label>
                 <input id="deviceId" type="text" inputmode="numeric" maxlength="10" value="2016001000">
+                <div class="hint iccid-only hidden">写入报文头，对应协议里的设备 ID。文档实例为 0708590578。</div>
+              </div>
+              <div class="field span-4 iccid-only iccid-lead hidden">
+                <label class="field-label required" for="iccid">ICCID</label>
+                <input id="iccid" type="text" inputmode="numeric" maxlength="20" value="89860325157552119221" autocomplete="off">
+                <div class="hint">文档实例 20 位。19 位 ICCID 也可构造。</div>
+              </div>
+              <div class="field span-4 iccid-only hidden">
+                <label class="field-label required" for="imei">IMEI</label>
+                <input id="imei" type="text" inputmode="numeric" maxlength="15" value="865907085905784" autocomplete="off">
+                <div class="hint">文档实例 15 位数字。</div>
+              </div>
+              <div class="field span-4 iccid-only hidden">
+                <label class="field-label required" for="imsi">IMSI</label>
+                <input id="imsi" type="text" inputmode="numeric" maxlength="15" value="460115058784818" autocomplete="off">
+                <div class="hint">文档实例 15 位数字。</div>
+              </div>
+              <div class="field span-6 position-only">
+                <label class="field-label" for="timezone">定位时间时区</label>
+                <select id="timezone"></select>
+                <div class="hint" id="timezoneHint">报文不含时区字段。切换后按该时区当前钟面重写日期和时间，日期随跨日一起变。</div>
+              </div>
+              <div class="field span-3 position-only" id="timezoneCustomField" hidden>
+                <label class="field-label" for="timezoneOffset">自定义偏移</label>
+                <input id="timezoneOffset" type="text" inputmode="text" value="+08:00" placeholder="+05:30" autocomplete="off">
+                <div class="hint">15 分钟一档，范围 -12:00 到 +14:00。非法值不重写时间。</div>
               </div>
               <div class="field span-3 position-only">
                 <label class="field-label required" for="date">日期 DDMMYY</label>
@@ -384,7 +441,7 @@
                 <select id="fix"><option value="A">A · 有效</option><option value="V">V · 未定位</option></select>
               </div>
               <div class="field span-3 position-only">
-                <label class="field-label required" for="latitude">纬度</label>
+                <label class="field-label" for="latitude">纬度</label>
                 <div class="input-with-action">
                   <input id="latitude" type="text" inputmode="decimal" value="22.570720">
                   <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
@@ -395,7 +452,7 @@
                 <select id="latHemisphere"><option value="N">N · 北纬</option><option value="S">S · 南纬</option></select>
               </div>
               <div class="field span-3 position-only">
-                <label class="field-label required" for="longitude">经度</label>
+                <label class="field-label" for="longitude">经度</label>
                 <div class="input-with-action">
                   <input id="longitude" type="text" inputmode="decimal" value="113.8620167">
                   <button class="btn field-refresh" type="button" data-refresh="coordinates" title="随机方向移动约 100 米" aria-label="刷新经纬度，随机方向移动约 100 米">↻</button>
@@ -407,43 +464,43 @@
               </div>
 
               <div class="field span-3 position-only">
-                <label class="field-label required" for="speed">速度 km/h</label>
+                <label class="field-label" for="speed">速度 km/h</label>
                 <div class="input-with-action"><input id="speed" type="text" inputmode="decimal" value="0.00"><button class="btn field-refresh" type="button" data-refresh="speed" title="刷新速度" aria-label="刷新速度">↻</button></div>
               </div>
               <div class="field span-3 position-only">
-                <label class="field-label required" for="direction">方向 0–359°</label>
+                <label class="field-label" for="direction">方向 0–359°</label>
                 <div class="input-with-action"><input id="direction" type="number" min="0" max="359" value="188.6"><button class="btn field-refresh" type="button" data-refresh="direction" title="刷新方向" aria-label="刷新方向">↻</button></div>
               </div>
               <div class="field span-3 position-only">
-                <label class="field-label required" for="altitude">海拔 m</label>
+                <label class="field-label" for="altitude">海拔 m</label>
                 <div class="input-with-action"><input id="altitude" type="text" inputmode="decimal" value="0.0"><button class="btn field-refresh" type="button" data-refresh="altitude" title="刷新海拔" aria-label="刷新海拔">↻</button></div>
               </div>
               <div class="field span-3 position-only">
-                <label class="field-label required" for="satellites">卫星个数</label>
+                <label class="field-label" for="satellites">卫星个数</label>
                 <div class="input-with-action"><input id="satellites" type="number" min="0" step="1" value="9"><button class="btn field-refresh" type="button" data-refresh="satellites" title="刷新卫星个数" aria-label="刷新卫星个数">↻</button></div>
               </div>
 
               <div class="field span-3 position-only">
-                <label class="field-label required" for="gsmSignal">GSM 信号 0–100</label>
+                <label class="field-label" for="gsmSignal">GSM 信号 0–100</label>
                 <div class="input-with-action"><input id="gsmSignal" type="number" min="0" max="100" step="1" value="100"><button class="btn field-refresh" type="button" data-refresh="gsmSignal" title="刷新 GSM 信号" aria-label="刷新 GSM 信号">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 link-only">
                 <label class="field-label required" for="battery">电量 0–100%</label>
                 <div class="input-with-action"><input id="battery" type="number" min="0" max="100" step="1" value="51"><button class="btn field-refresh" type="button" data-refresh="battery" title="刷新电量" aria-label="刷新电量">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 link-only">
                 <label class="field-label required" for="steps">计步数</label>
                 <div class="input-with-action"><input id="steps" type="number" min="0" step="1" value="14188"><button class="btn field-refresh" type="button" data-refresh="steps" title="刷新计步数" aria-label="刷新计步数">↻</button></div>
               </div>
-              <div class="field span-3">
+              <div class="field span-3 link-only">
                 <label class="field-label required" for="rolls">翻滚次数</label>
                 <div class="input-with-action"><input id="rolls" type="number" min="0" step="1" value="0"><button class="btn field-refresh" type="button" data-refresh="rolls" title="刷新翻滚次数" aria-label="刷新翻滚次数">↻</button></div>
               </div>
 
               <div class="field span-6 position-only">
-                <label class="field-label required" for="accuracy">定位精度 m</label>
+                <label class="field-label" for="accuracy">定位精度 m</label>
                 <div class="input-with-action"><input id="accuracy" type="text" inputmode="decimal" value="22.4"><button class="btn field-refresh" type="button" data-refresh="accuracy" title="刷新定位精度" aria-label="刷新定位精度">↻</button></div>
-                <div class="hint">协议字段 n；必须为大于或等于 0 的数字</div>
+                <div class="hint">可留空、填 0 或手改。空值、0 和越界仍可复制；含逗号、星号、方括号时只警告。</div>
               </div>
             </div>
           </div>
@@ -457,7 +514,7 @@
             </div>
           </div>
           <div class="panel-body">
-            <div class="section-note warning" id="alarmRuleNote">UD / UD2 严格按普通位置数据处理，高 16 位报警必须全部为 0。</div>
+            <div class="section-note warning" id="alarmRuleNote">UD / UD2 / UD_LTE 按普通位置数据处理，高 16 位报警必须全部为 0。</div>
             <div class="bit-groups">
               <div class="bit-group">
                 <h3>普通状态（低 16 bit）</h3>
@@ -493,7 +550,7 @@
           <div class="panel-header">
             <div>
               <h2 class="panel-title">5. WiFi 信息</h2>
-              <p class="panel-subtitle">最多 5 条，建议按信号强度从强到弱排列</p>
+              <p class="panel-subtitle" id="wifiSubtitle">UD / UD2 / AL 最多 5 条。UD_LTE 按实测样例放行到 6 条，SSID 可空</p>
             </div>
             <button class="btn small" id="addWifiBtn" type="button">+ 添加 WiFi</button>
           </div>
@@ -529,6 +586,7 @@
           <div class="inline-actions" style="margin-top: 12px;">
             <button class="btn primary" id="copyBtn" type="button">复制报文</button>
             <button class="btn success" id="addRecordBtn" type="button">加入记录</button>
+            <button class="btn" id="sendReverseBtn" type="button">反向解析这条</button>
           </div>
 
           <div class="output-block">
@@ -540,6 +598,25 @@
         </div>
       </aside>
     </div>
+
+    <section class="panel reverse-panel" id="reversePanel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">字段对照</h2>
+          <p class="panel-subtitle">LK、ICCID、UD、UD2、UD_LTE、AL 写入上方指令。UD_WCDMA、UD_TDSCDMA 按第三节走附录一；UD_CDMA 和 AL_CDMA 按附录二。不把这些命令改写成 UD 或 AL。</p>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="reverse-table-wrap">
+          <table class="reverse-table" id="reverseTable" hidden>
+            <thead>
+              <tr><th>#</th><th>字段</th><th>原始值</th><th>协议含义</th></tr>
+            </thead>
+            <tbody id="reverseBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
     <section class="panel records">
       <div class="panel-header record-toolbar">
@@ -644,7 +721,7 @@
 
       const $ = (id) => document.getElementById(id);
       const formIds = [
-        'deviceId', 'date', 'time', 'fix', 'latitude', 'latHemisphere', 'longitude',
+        'deviceId', 'iccid', 'imei', 'imsi', 'date', 'time', 'fix', 'latitude', 'latHemisphere', 'longitude',
         'lonHemisphere', 'speed', 'direction', 'altitude', 'satellites', 'gsmSignal',
         'battery', 'steps', 'rolls', 'accuracy'
       ];
@@ -684,16 +761,105 @@
         }
       }
 
-      function formatNow() {
-        const now = new Date();
-        const pad = (value) => String(value).padStart(2, '0');
+      const timezoneChoices = [
+        { id: 'UTC', label: 'UTC', mode: 'fixed', offset: 0 },
+        { id: 'UTC+8', label: 'UTC+8', mode: 'iana', zone: 'Asia/Shanghai' },
+        { id: 'india', label: '印度', mode: 'iana', zone: 'Asia/Kolkata' },
+        { id: 'nepal', label: '尼泊尔', mode: 'iana', zone: 'Asia/Kathmandu' },
+        { id: 'tehran', label: '德黑兰', mode: 'iana', zone: 'Asia/Tehran' },
+        { id: 'adelaide', label: '澳中', mode: 'iana', zone: 'Australia/Adelaide' },
+        { id: 'newfoundland', label: '纽芬兰', mode: 'iana', zone: 'America/St_Johns' },
+        { id: 'lordhowe', label: '豪勋爵岛', mode: 'iana', zone: 'Australia/Lord_Howe' },
+        { id: 'chatham', label: '查塔姆群岛', mode: 'iana', zone: 'Pacific/Chatham' },
+        { id: 'custom', label: '自定义', mode: 'custom' }
+      ];
+
+      function pad2(value) {
+        return String(value).padStart(2, '0');
+      }
+
+      function formatOffset(minutes) {
+        const sign = minutes < 0 ? '-' : '+';
+        const absolute = Math.abs(minutes);
+        return `UTC${sign}${pad2(Math.floor(absolute / 60))}:${pad2(absolute % 60)}`;
+      }
+
+      function formatClock(date) {
         return {
-          date: `${pad(now.getDate())}${pad(now.getMonth() + 1)}${pad(now.getFullYear() % 100)}`,
-          time: `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
+          date: `${pad2(date.getUTCDate())}${pad2(date.getUTCMonth() + 1)}${pad2(date.getUTCFullYear() % 100)}`,
+          time: `${pad2(date.getUTCHours())}${pad2(date.getUTCMinutes())}${pad2(date.getUTCSeconds())}`
         };
       }
 
+      function ianaOffsetMinutes(zone, date) {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: zone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }).formatToParts(date);
+        const pick = (type) => Number(parts.find((part) => part.type === type).value);
+        const zoned = Date.UTC(pick('year'), pick('month') - 1, pick('day'), pick('hour'), pick('minute'), pick('second'));
+        return Math.round((zoned - date.getTime()) / 60000);
+      }
+
+      function parseCustomOffset(raw) {
+        const match = String(raw).trim().match(/^([+-])(\d{1,2}):([0-5]\d)$/);
+        if (!match) return null;
+        const minutes = (Number(match[2]) * 60 + Number(match[3])) * (match[1] === '-' ? -1 : 1);
+        if (minutes < -12 * 60 || minutes > 14 * 60 || minutes % 15 !== 0) return null;
+        return minutes;
+      }
+
+      function currentTimezone() {
+        const selected = $('timezone') ? $('timezone').value : 'UTC+8';
+        const choice = timezoneChoices.find((item) => item.id === selected) || timezoneChoices[1];
+        if (choice.mode === 'fixed') return { label: formatOffset(choice.offset), minutes: choice.offset, valid: true };
+        if (choice.mode === 'custom') {
+          const minutes = parseCustomOffset($('timezoneOffset') ? $('timezoneOffset').value : '');
+          return minutes === null
+            ? { label: '自定义偏移无效', minutes: null, valid: false }
+            : { label: formatOffset(minutes), minutes, valid: true };
+        }
+        try {
+          const minutes = ianaOffsetMinutes(choice.zone, new Date());
+          return { label: `${choice.label} ${formatOffset(minutes)}`, minutes, valid: true };
+        } catch (error) {
+          return { label: `${choice.label} 无法取到时区`, minutes: null, valid: false };
+        }
+      }
+
+      function renderTimezoneChoices() {
+        const select = $('timezone');
+        if (!select || select.options.length) return;
+        select.innerHTML = timezoneChoices.map((choice) => `<option value="${choice.id}">${escapeHtml(choice.label)}</option>`).join('');
+        select.value = 'UTC+8';
+      }
+
+      function syncTimezoneUI() {
+        const custom = $('timezone') && $('timezone').value === 'custom';
+        const field = $('timezoneCustomField');
+        if (field) field.hidden = !custom;
+        const zone = currentTimezone();
+        const hint = $('timezoneHint');
+        if (hint) {
+          hint.textContent = zone.valid
+            ? `当前按 ${zone.label} 填写。报文不含时区字段。切换后重写日期和时间，日期随跨日一起变。`
+            : '当前偏移无效，没有重写日期和时间。自定义偏移须为 15 分钟一档，范围 -12:00 到 +14:00。';
+        }
+        return zone;
+      }
+
+      function formatNow() {
+        const zone = currentTimezone();
+        const shifted = new Date(Date.now() + (zone.valid ? zone.minutes : 0) * 60000);
+        return formatClock(shifted);
+      }
+
       function setCurrentTime() {
+        const zone = syncTimezoneUI();
+        if (!zone.valid) {
+          update();
+          return;
+        }
         const now = formatNow();
         $('date').value = now.date;
         $('time').value = now.time;
@@ -808,22 +974,38 @@
         return command === 'LK';
       }
 
+      function isIccid(command = getCommand()) {
+        return command === 'ICCID';
+      }
+
       function syncCommandUI() {
         const command = getCommand();
         const linkKeep = isLinkKeep(command);
+        const iccid = isIccid(command);
         document.querySelectorAll('.command-card').forEach((card) => {
           card.classList.toggle('selected', card.dataset.command === command);
         });
         document.querySelectorAll('.position-only, .position-panel').forEach((element) => {
-          element.classList.toggle('hidden', linkKeep);
+          element.classList.toggle('hidden', linkKeep || iccid);
         });
-        $('payloadTitle').textContent = linkKeep ? '2. 链路保持数据' : '2. 包头与位置数据';
-        $('payloadSubtitle').textContent = linkKeep
-          ? '内容为 LK,步数,翻滚次数,电量百分数；日期、位置、基站、WiFi 不进入报文'
-          : '厂商固定为 3G；设备 ID 必须为 10 位数字';
-        $('lenNote').textContent = linkKeep
-          ? '链路保持按协议原文拼装：内容字节数即 LEN。文档样例 [3G*8800000015*000D*LK,50,100,100] 的 000D 与实际 13 字节一致。未收到平台回复时，协议要求终端重新建连；本页只构造报文，不模拟重连。'
-          : '协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。';
+        document.querySelectorAll('.link-only').forEach((element) => {
+          element.classList.toggle('hidden', iccid);
+        });
+        document.querySelectorAll('.iccid-only').forEach((element) => {
+          element.classList.toggle('hidden', !iccid);
+        });
+        $('deviceIdLabel').textContent = iccid ? '卡号' : '设备 ID';
+        $('payloadTitle').textContent = iccid ? '2. ICCID 数据' : (linkKeep ? '2. 链路保持数据' : '2. 包头与位置数据');
+        $('payloadSubtitle').textContent = iccid
+          ? '只需填写卡号、ICCID、IMEI、IMSI。内容为 ICCID,ICCID值,IMEI,IMSI，字段间逗号后不加空格'
+          : (linkKeep
+            ? '内容为 LK,步数,翻滚次数,电量百分数；日期、位置、基站、WiFi 不进入报文'
+            : '厂商固定为 3G；设备 ID 必须为 10 位数字');
+        $('lenNote').textContent = iccid
+          ? 'ICCID 按协议原文拼装，内容字节数即 LEN。文档实例 [3G*0708590578*003A*ICCID,89860325157552119221,865907085905784,460115058784818] 的 003A 等于 58，与去掉排版空格后的内容一致。平台不需要回复。说明写明终端在重连网络时上报；本页只构造报文。'
+          : (linkKeep
+            ? '链路保持按协议原文拼装：内容字节数即 LEN。文档样例 [3G*8800000015*000D*LK,50,100,100] 的 000D 与实际 13 字节一致。未收到平台回复时，协议要求终端重新建连；本页只构造报文，不模拟重连。'
+            : '协议勘误：第 3 节完整示例内容实际为 334 个 ASCII 字节（LEN = 014E），原文标注的 00BC 与其内容不一致。本工具始终按实际内容自动计算 LEN。');
         const alarmInputs = [...document.querySelectorAll('.alarm-bit')];
         const isAlarm = command === 'AL';
         alarmInputs.forEach((input) => {
@@ -837,7 +1019,10 @@
         }
         $('alarmRuleNote').textContent = isAlarm
           ? 'AL 为报警上报，严格要求高 16 位至少包含一个报警位；默认勾选 SOS 报警。'
-          : 'UD / UD2 严格按普通位置数据处理，高 16 位报警必须全部为 0。';
+          : 'UD / UD2 / UD_LTE 按普通位置数据处理，高 16 位报警必须全部为 0。';
+        $('wifiSubtitle').textContent = command === 'UD_LTE'
+          ? 'UD_LTE 按实测样例放行到 6 条，SSID 可空。附录一写明最多 5 个。'
+          : '最多 5 条，建议按信号强度从强到弱排列。';
       }
 
       function getStatusValue() {
@@ -891,7 +1076,7 @@
               <div class="mini" style="grid-column: span 2"><label>信号强度</label><input type="text" inputmode="numeric" data-wifi-field="rssi" value="${escapeHtml(entry.rssi)}"></div>
             </div>
           </div>`).join('') : '<div class="record-empty">未添加 WiFi；协议将上报 WiFi 个数 0。</div>';
-        $('addWifiBtn').disabled = wifiEntries.length >= 5;
+        $('addWifiBtn').disabled = wifiEntries.length >= (getCommand() === 'UD_LTE' ? 6 : 5);
       }
 
       function addStation() {
@@ -904,7 +1089,7 @@
       }
 
       function addWifi() {
-        if (wifiEntries.length >= 5) return;
+        if (wifiEntries.length >= (getCommand() === 'UD_LTE' ? 6 : 5)) return;
         wifiEntries.push({ ssid: `wifi-${wifiEntries.length + 1}`, mac: '00:00:00:00:00:00', rssi: '-60' });
         renderWifi();
         update();
@@ -948,41 +1133,60 @@
         if (element) element.classList.toggle('invalid', invalid);
       }
 
+      const flexibleFields = ['latitude', 'longitude', 'speed', 'direction', 'altitude', 'satellites', 'gsmSignal', 'accuracy'];
+
+      function flexibleFieldWarnings(values) {
+        return flexibleFields.flatMap((id) => {
+          const value = values[id];
+          if (!value || !/[,\[\]*]/.test(value)) return [];
+          return [`${id} 含逗号、星号或方括号，报文可能错位。`];
+        });
+      }
+
       function validate(values, command, statusValue) {
         const errors = [];
+        const warnings = [];
         formIds.forEach((id) => markInvalid(id, false));
 
         const add = (message, id) => {
           errors.push(message);
           if (id) markInvalid(id, true);
         };
+        const warn = (message) => warnings.push(message);
 
-        if (!/^\d{10}$/.test(values.deviceId)) add('设备 ID 必须为 10 位数字。', 'deviceId');
-        if (!integer(values.battery, 0, 100)) add('电量必须为 0–100 的整数。', 'battery');
-        if (!integer(values.steps, 0)) add('计步数必须为非负整数。', 'steps');
-        if (!integer(values.rolls, 0)) add('翻滚次数必须为非负整数。', 'rolls');
+        if (!/^\d{10}$/.test(values.deviceId)) {
+          add(isIccid(command) ? '卡号必须为 10 位数字。' : '设备 ID 必须为 10 位数字。', 'deviceId');
+        }
+        if (!isIccid(command)) {
+          if (!integer(values.battery, 0, 100)) add('电量必须为 0–100 的整数。', 'battery');
+          if (!integer(values.steps, 0)) add('计步数必须为非负整数。', 'steps');
+          if (!integer(values.rolls, 0)) add('翻滚次数必须为非负整数。', 'rolls');
+        }
+
+        if (isIccid(command)) {
+          if (!/^\d{19,20}$/.test(values.iccid)) add('ICCID 必须为 19 或 20 位数字。文档实例为 20 位。', 'iccid');
+          if (!/^\d{15}$/.test(values.imei)) add('IMEI 必须为 15 位数字。', 'imei');
+          if (!/^\d{15}$/.test(values.imsi)) add('IMSI 必须为 15 位数字。', 'imsi');
+          ['deviceId', 'iccid', 'imei', 'imsi'].forEach((id) => {
+            if (!isAscii(values[id])) errors.push(`${id} 含非 ASCII 字符。`);
+          });
+          return { errors: [...new Set(errors)], warnings: [] };
+        }
 
         if (isLinkKeep(command)) {
           ['steps', 'rolls', 'battery'].forEach((id) => {
             if (!isAscii(values[id])) errors.push(`${id} 含非 ASCII 字符。`);
           });
           if (!isAscii(values.deviceId)) errors.push('deviceId 含非 ASCII 字符。');
-          return [...new Set(errors)];
+          return { errors: [...new Set(errors)], warnings: [] };
         }
 
         if (!validDate(values.date)) add('日期必须是有效的 DDMMYY，例如 120414。', 'date');
         if (!validTime(values.time)) add('时间必须是有效的 HHMMSS，例如 101930。', 'time');
-        if (!/^\d{1,2}\.\d{1,8}$/.test(values.latitude) || !numeric(values.latitude, 0, 90)) add('纬度必须为 0–90 的小数，最多 8 位小数。', 'latitude');
-        if (!/^\d{1,3}\.\d{1,8}$/.test(values.longitude) || !numeric(values.longitude, 0, 180)) add('经度必须为 0–180 的小数，最多 8 位小数。', 'longitude');
-        if (!numeric(values.speed, 0)) add('速度必须为大于或等于 0 的数字。', 'speed');
-        if (!numeric(values.direction, 0, 359)) add('方向必须在 0–359 度之间。', 'direction');
-        if (!numeric(values.altitude)) add('海拔必须为数字，可为负数。', 'altitude');
-        if (!integer(values.satellites, 0)) add('卫星个数必须为非负整数。', 'satellites');
-        if (!integer(values.gsmSignal, 0, 100)) add('GSM 信号强度必须为 0–100 的整数。', 'gsmSignal');
-        if (!numeric(values.accuracy, 0)) add('定位精度必须为大于或等于 0 的数字。', 'accuracy');
+        flexibleFieldWarnings(values).forEach(warn);
 
         const high16 = statusValue >>> 16;
-        if ((command === 'UD' || command === 'UD2') && high16 !== 0) errors.push(`${command} 普通位置报文不允许设置报警位。`);
+        if ((command === 'UD' || command === 'UD2' || command === 'UD_LTE') && high16 !== 0) errors.push(`${command} 普通位置报文不允许设置报警位。`);
         if (command === 'AL' && high16 === 0) errors.push('AL 报警报文必须至少设置一个报警位。');
 
         if (stations.length > 50) errors.push('基站数量不能超过页面保护上限 50。');
@@ -994,14 +1198,17 @@
             if (!/^\d{1,3}$/.test(station.mnc)) errors.push(`${prefix} MNC 必须为 1–3 位数字。`);
           }
           if (!integer(station.lac, 0, 65535)) errors.push(`${prefix} LAC 必须为 0–65535 的整数。`);
-          if (!integer(station.cid, 0, 65535)) errors.push(`${prefix} CID 必须为 0–65535 的整数。`);
+          if (command === 'UD_LTE') {
+            if (!/^\d+$/.test(String(station.cid ?? ''))) errors.push(`${prefix} CID 必须为非负整数。UD_LTE 不限制 65535。`);
+          } else if (!integer(station.cid, 0, 65535)) errors.push(`${prefix} CID 必须为 0–65535 的整数。`);
           if (!integer(station.rssi, 0, 255)) errors.push(`${prefix} 信号强度必须为 0–255 的整数。`);
         });
 
-        if (wifiEntries.length > 5) errors.push('WiFi 数量不能超过 5。');
+        const wifiLimit = command === 'UD_LTE' ? 6 : 5;
+        if (wifiEntries.length > wifiLimit) errors.push(`WiFi 数量不能超过 ${wifiLimit}。`);
         wifiEntries.forEach((entry, index) => {
           const prefix = `WiFi ${index + 1}`;
-          if (!entry.ssid.trim()) errors.push(`${prefix} SSID 不能为空。`);
+          if (!entry.ssid.trim() && command !== 'UD_LTE') errors.push(`${prefix} SSID 不能为空。`);
           if (!isAscii(entry.ssid)) errors.push(`${prefix} SSID 含非 ASCII 字符。`);
           if (/[,\[\]*]/.test(entry.ssid)) errors.push(`${prefix} SSID 不能包含逗号、方括号或星号。`);
           if (!/^[0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){5}$/.test(entry.mac)) errors.push(`${prefix} MAC 格式应为 XX:XX:XX:XX:XX:XX。`);
@@ -1012,7 +1219,7 @@
           if (!isAscii(String(value))) errors.push(`${key} 含非 ASCII 字符。`);
         });
 
-        return [...new Set(errors)];
+        return { errors: [...new Set(errors)], warnings: [...new Set(warnings)] };
       }
 
       function collectValues() {
@@ -1020,6 +1227,7 @@
       }
 
       function buildContent(command, values, status) {
+        if (isIccid(command)) return `ICCID,${values.iccid},${values.imei},${values.imsi}`;
         if (isLinkKeep(command)) return `LK,${values.steps},${values.rolls},${values.battery}`;
         const fields = [
           values.date, values.time, values.fix, values.latitude, values.latHemisphere,
@@ -1048,7 +1256,20 @@
 
       function renderBreakdown(snapshot) {
         const linkKeep = isLinkKeep(snapshot.command);
-        const rows = linkKeep
+        const iccid = isIccid(snapshot.command);
+        const rows = iccid
+          ? [
+              ['厂商', '3G（固定）'],
+              ['卡号', snapshot.values.deviceId || '—'],
+              ['LEN', `${snapshot.lengthHex}（十进制 ${snapshot.lengthDecimal}）`],
+              ['命令', 'ICCID'],
+              ['ICCID', snapshot.values.iccid || '—'],
+              ['IMEI', snapshot.values.imei || '—'],
+              ['IMSI', snapshot.values.imsi || '—'],
+              ['平台回复', '无需回复'],
+              ['上报时机', '协议说明为终端重连网络时上报；本页不自动发送']
+            ]
+          : linkKeep
           ? [
               ['厂商', '3G（固定）'],
               ['设备 ID', snapshot.values.deviceId || '—'],
@@ -1065,7 +1286,7 @@
           ['设备 ID', snapshot.values.deviceId || '—'],
           ['LEN', `${snapshot.lengthHex}（十进制 ${snapshot.lengthDecimal}）`],
           ['命令', snapshot.command],
-          ['日期时间', `${snapshot.values.date || '—'} / ${snapshot.values.time || '—'}`],
+          ['日期时间', `${snapshot.values.date || '—'} / ${snapshot.values.time || '—'} · ${currentTimezone().label}`],
           ['坐标', `${snapshot.values.latitude || '—'} ${snapshot.values.latHemisphere}, ${snapshot.values.longitude || '—'} ${snapshot.values.lonHemisphere}`],
           ['终端状态', `${snapshot.statusHex} · ${snapshot.statusBinary}`],
           ['基站 / WiFi', `${stations.length} / ${wifiEntries.length}`],
@@ -1081,7 +1302,9 @@
         const hexStatus = statusHex(status);
         const binaryStatus = statusBinary(status);
         const content = buildContent(command, values, status);
-        let errors = validate(values, command, status);
+        const checked = validate(values, command, status);
+        let errors = checked.errors;
+        const warnings = checked.warnings;
         const ascii = isAscii(content);
         const lengthDecimal = ascii ? content.length : 0;
         if (!ascii) errors.push('内容段包含非 ASCII 字符，无法按协议计算 LEN。');
@@ -1109,12 +1332,15 @@
         const banner = $('validationBanner');
         banner.className = `status-banner ${valid ? 'valid' : 'invalid'}`;
         banner.innerHTML = valid
-          ? '<div>✓</div><div><strong>报文校验通过</strong><small>LEN 已按 ASCII 内容字节数自动计算。</small></div>'
+          ? (warnings.length
+            ? `<div>!</div><div><strong>可复制，含 ${warnings.length} 条字段警告</strong><small>空值、0 和越界已放行。警告不阻止复制。</small></div>`
+            : '<div>✓</div><div><strong>报文校验通过</strong><small>LEN 已按 ASCII 内容字节数自动计算。</small></div>')
           : `<div>!</div><div><strong>发现 ${errors.length} 个问题</strong><small>修正后才能复制或加入记录。</small></div>`;
+        if (valid && warnings.length) banner.className = 'status-banner warning';
 
         const errorList = $('errorList');
-        errorList.hidden = valid;
-        errorList.innerHTML = errors.map((error) => `<li>${escapeHtml(error)}</li>`).join('');
+        errorList.hidden = valid && warnings.length === 0;
+        errorList.innerHTML = [...errors, ...warnings].map((error) => `<li>${escapeHtml(error)}</li>`).join('');
         renderBreakdown(currentSnapshot);
       }
 
@@ -1132,7 +1358,7 @@
               <div class="record-meta">
                 <span class="record-command">${record.command}</span>
                 <span>${escapeHtml(record.deviceId)}</span>
-                <span>${record.command === 'LK' ? `步数 ${escapeHtml(record.steps)} · 翻滚 ${escapeHtml(record.rolls)} · 电量 ${escapeHtml(record.battery)}%` : `${escapeHtml(record.date)} ${escapeHtml(record.time)}`}</span>
+                <span>${record.command === 'LK' ? `步数 ${escapeHtml(record.steps)} · 翻滚 ${escapeHtml(record.rolls)} · 电量 ${escapeHtml(record.battery)}%` : (record.command === 'ICCID' ? `ICCID ${escapeHtml(record.iccid)} · IMEI ${escapeHtml(record.imei)}` : `${escapeHtml(record.date)} ${escapeHtml(record.time)}`)}</span>
                 <span>LEN ${record.lengthHex}</span>
               </div>
               <div class="inline-actions">
@@ -1154,6 +1380,9 @@
           steps: currentSnapshot.values.steps,
           rolls: currentSnapshot.values.rolls,
           battery: currentSnapshot.values.battery,
+          iccid: currentSnapshot.values.iccid,
+          imei: currentSnapshot.values.imei,
+          imsi: currentSnapshot.values.imsi,
           lengthHex: currentSnapshot.lengthHex,
           message: currentSnapshot.message
         });
@@ -1168,7 +1397,8 @@
           latitude: '22.570720', latHemisphere: 'N', longitude: '113.8620167',
           lonHemisphere: 'E', speed: '0.00', direction: '188.6', altitude: '0.0',
           satellites: '9', gsmSignal: '100', battery: '51', steps: '14188',
-          rolls: '0', accuracy: '22.4'
+          rolls: '0', accuracy: '22.4',
+          iccid: '89860325157552119221', imei: '865907085905784', imsi: '460115058784818'
         };
         Object.entries(values).forEach(([id, value]) => { $(id).value = value; });
         document.querySelector('input[name="command"][value="UD"]').checked = true;
@@ -1179,7 +1409,409 @@
         renderWifi();
         syncCommandUI();
         update();
+        $('reverseInput').value = '';
+        renderReverse();
         showToast('已重置为协议示例');
+      }
+
+      const reverseSample = '[3G*1034508225*0050*UD,271026,170226,A,23.157080,N,113.494316,E,0.20,276,19,6,28,67,0,0,00000000,0,0]';
+
+      const statusBitMeanings = [
+        [0, '低电状态'],
+        [1, '出围栏状态'],
+        [2, '进围栏状态'],
+        [3, '手环戴上取下状态'],
+        [4, '手表运行静止状态'],
+        [16, 'SOS报警'],
+        [17, '低电报警'],
+        [18, '出围栏报警'],
+        [19, '进围栏报警'],
+        [20, '手环拆除报警'],
+        [21, '老人手表sos报警(跌倒)'],
+        [22, '心率异常报警']
+      ];
+
+      function explainDate(raw) {
+        if (!validDate(raw)) return '协议格式为 DDMMYY（日月年）。当前值不能按这个格式换成日期。';
+        return `日月年。20${raw.slice(4)}年${Number(raw.slice(2, 4))}月${Number(raw.slice(0, 2))}日`;
+      }
+
+      function explainTime(raw) {
+        if (!validTime(raw)) return '协议格式为 HHMMSS（时分秒）。当前值不能按这个格式换成时间。';
+        const zone = currentTimezone();
+        return `时分秒。${raw.slice(0, 2)}点${raw.slice(2, 4)}分${raw.slice(4, 6)}秒。按当前控件 ${zone.label} 解释，报文本身无时区。`;
+      }
+
+      function explainFix(raw) {
+        if (raw === 'A') return 'A：定位';
+        if (raw === 'V') return 'V：未定位';
+        return '协议只写明 A 为定位、V 为未定位。';
+      }
+
+      function explainHemisphere(raw, kind) {
+        const table = kind === 'lat'
+          ? { N: 'N 表示北纬', S: 'S 表示南纬' }
+          : { E: 'E 表示东经', W: 'W 表示西经' };
+        return table[raw] || (kind === 'lat' ? '协议只写明 N 为北纬、S 为南纬。' : '协议只写明 E 为东经、W 为西经。');
+      }
+
+      const appendix2StatusBits = [
+        [0, '低电状态'],
+        [3, '手环戴上取下状态'],
+        [4, '手表运行静止状态'],
+        [16, 'SOS报警'],
+        [17, '低电报警'],
+        [20, '手环拆除报警'],
+        [21, '跌倒报警'],
+        [22, '心率异常报警']
+      ];
+
+      function locationProfile(command) {
+        if (command === 'UD' || command === 'UD2' || command === 'AL') {
+          return { id: 'appendix1', note: '位置数据见附录一。' };
+        }
+        if (command === 'UD_WCDMA' || command === 'UD_TDSCDMA' || command === 'UD_LTE') {
+          return { id: 'appendix1', note: '第三节第 1 条：非 CDMA 上报。UD_WCDMA、UD_TDSCDMA 为 3G，UD_LTE 为 4G。位置数据见附录一。' };
+        }
+        if (command === 'UD_CDMA') {
+          return { id: 'appendix2', note: '第三节第 2 条：CDMA 上报，位置数据见附录二。基站字段是 TA、MCC、MNC、SID、NID、BID。' };
+        }
+        if (command === 'AL_WCDMA' || command === 'AL_TDSCDMA' || command === 'AL_LTE') {
+          return { id: 'appendix2', note: '第三节第 3 条模板写 AL_类型的位置数据见附录二。该条标题是非 CDMA 上报。' };
+        }
+        if (command === 'AL_CDMA') {
+          return { id: 'appendix2', note: '第三节第 4 条：CDMA 报警上报，位置数据见附录二。基站字段是 TA、MCC、MNC、SID、NID、BID。' };
+        }
+        return null;
+      }
+
+      function explainStatus(raw, bits, markStationary) {
+        if (!/^[0-9A-Fa-f]{8}$/.test(raw)) return '协议要求用十六进制字符串表示。当前值不是 8 位十六进制。';
+        const value = parseInt(raw, 16);
+        const lines = ['高 16 bit 为报警，低 16 bit 为状态；1 为有效'];
+        bits.forEach(([bit, label]) => {
+          const on = (value & (1 << bit)) !== 0 ? 1 : 0;
+          if (bit === 4 && markStationary) {
+            lines.push(`bit${bit} ${label} = ${on}${on ? '，位置示例写明该位为 1 表示手表静止' : '，协议只写明 1 表示静止'}`);
+          } else {
+            lines.push(`bit${bit} ${label} = ${on}`);
+          }
+        });
+        lines.push(`二进制 ${value.toString(2).padStart(32, '0').match(/.{1,4}/g).join(' ')}`);
+        return lines.join('\n');
+      }
+
+      function commandMeaning(command) {
+        const table = {
+          LK: '链路保持。内容为步数、翻滚次数、电量百分数。平台回复 LK。',
+          ICCID: 'ICCID 指令。内容为 ICCID、IMEI、IMSI。平台不需要回复。终端在重连网络时上报。',
+          UD: '位置数据上报。后面按附录一。平台不需要回复。',
+          UD2: '盲点补传。位置数据同附录一。平台不需要回复。',
+          AL: '报警数据上报。位置数据同附录一。平台回复 AL。'
+        };
+        if (table[command]) return table[command];
+        const profile = locationProfile(command);
+        return profile ? profile.note : '协议正文没有给出这条命令的字段表。后面的逗号字段按原文列出。';
+      }
+
+      function parseFrame(input) {
+        const source = input.trim();
+        if (!source) return { empty: true };
+        let body = source;
+        const wrapped = body.startsWith('[') && body.endsWith(']');
+        if (body.startsWith('[')) body = body.slice(1);
+        if (body.endsWith(']')) body = body.slice(0, -1);
+        const parts = body.split('*');
+        if (parts.length < 4) return { error: '外层不是 [厂商*设备ID*内容长度*内容]。' };
+        return {
+          wrapped,
+          vendor: parts[0],
+          deviceId: parts[1],
+          lenHex: parts[2],
+          content: parts.slice(3).join('*')
+        };
+      }
+
+      function parseReverseMessage(input) {
+        const frame = parseFrame(input);
+        if (frame.empty) return { empty: true, rows: [], notes: [] };
+        if (frame.error) return { error: frame.error, rows: [], notes: [] };
+        const notes = [];
+        const rows = [];
+        if (!frame.wrapped) notes.push('报文外层缺少成对的方括号，仍按星号拆了厂商、设备 ID、LEN 和内容。');
+        rows.push({
+          name: '厂商标识',
+          raw: frame.vendor,
+          meaning: frame.vendor === '3G' ? '协议固定为两个字节，示例为 3G。' : '协议写明厂商标识固定为 3G。当前值不同。'
+        });
+        rows.push({
+          name: '设备 ID',
+          raw: frame.deviceId,
+          meaning: /^\d{10}$/.test(frame.deviceId) ? '10 位数字，与协议示例位数一致。' : '协议示例为 10 位数字。'
+        });
+        const lenOk = /^[0-9A-Fa-f]{4}$/.test(frame.lenHex);
+        const declared = lenOk ? parseInt(frame.lenHex, 16) : null;
+        const ascii = isAscii(frame.content);
+        const actual = ascii ? frame.content.length : null;
+        let lenMeaning = '协议内容长度是 4 位 ASCII 十六进制，高位在前。';
+        if (!lenOk) lenMeaning += '当前 LEN 不是 4 位十六进制。';
+        else if (!ascii) lenMeaning += `声明 ${frame.lenHex.toUpperCase()} = ${declared}。内容含非 ASCII，不能按字节数核对。`;
+        else lenMeaning += `声明 ${frame.lenHex.toUpperCase()} = ${declared}。内容实际 ${actual} 字节。${declared === actual ? '一致。' : '不一致。'}`;
+        if (!lenOk) notes.push('内容长度不是 4 位十六进制。');
+        else if (!ascii) notes.push('内容含非 ASCII，不能按协议的 ASCII 字节数核对 LEN。');
+        else if (declared !== actual) notes.push(`LEN 声明 ${frame.lenHex.toUpperCase()}（${declared}），内容实际 ${actual} 字节。`);
+        rows.push({ name: '内容长度 LEN', raw: frame.lenHex, meaning: lenMeaning });
+
+        const tokens = frame.content.split(',').map((item) => item.trim());
+        if (tokens.some((item) => item === '')) notes.push('内容里有空字段，后面的列可能因此错位。');
+        const command = tokens[0] || '';
+        rows.push({ name: '命令', raw: command, meaning: commandMeaning(command) });
+        const supported = command === 'LK' || command === 'ICCID' || command === 'UD' || command === 'UD2' || command === 'UD_LTE' || command === 'AL';
+        const form = supported ? { deviceId: frame.deviceId, values: {}, stations: [], wifi: [], status: '' } : null;
+
+        let index = 1;
+        const pull = (name, explain) => {
+          if (index >= tokens.length) {
+            notes.push(`缺少「${name}」。`);
+            rows.push({ name, raw: '', meaning: '报文中没有这个字段。' });
+            return null;
+          }
+          const raw = tokens[index++];
+          rows.push({ name, raw, meaning: explain(raw) });
+          return raw;
+        };
+        const keep = (id, name, explain) => {
+          const raw = pull(name, explain);
+          if (form) form.values[id] = raw ?? '';
+          return raw;
+        };
+
+        const profile = locationProfile(command);
+        if (command === 'LK') {
+          keep('steps', '步数', (raw) => `步数 ${raw}`);
+          keep('rolls', '翻滚次数', (raw) => `翻滚次数 ${raw}`);
+          keep('battery', '电量百分数', (raw) => `电量百分数 ${raw}`);
+        } else if (command === 'ICCID') {
+          keep('iccid', 'ICCID', (raw) => `ICCID ${raw}`);
+          keep('imei', 'IMEI', (raw) => `IMEI ${raw}`);
+          keep('imsi', 'IMSI', (raw) => `IMSI ${raw}`);
+        } else if (profile) {
+          const statusBits = profile.id === 'appendix2' ? appendix2StatusBits : statusBitMeanings;
+          keep('date', '日期', explainDate);
+          keep('time', '时间', explainTime);
+          keep('fix', '是否定位', explainFix);
+          keep('latitude', '纬度', (raw) => `按 DD.DDDDDD 格式。此纬度值为 ${raw}。`);
+          keep('latHemisphere', '纬度标识', (raw) => explainHemisphere(raw, 'lat'));
+          keep('longitude', '经度', (raw) => `按 DDD.DDDDDD 格式。此经度值为 ${raw}。`);
+          keep('lonHemisphere', '经度标识', (raw) => explainHemisphere(raw, 'lon'));
+          keep('speed', '速度', (raw) => `${raw} 公里/小时。`);
+          keep('direction', '方向', (raw) => `方向 ${raw} 度。`);
+          keep('altitude', '海拔', (raw) => `${raw}，单位为米。`);
+          keep('satellites', '卫星个数', (raw) => `GPS 卫星个数 ${raw}。`);
+          keep('gsmSignal', 'GSM信号强度', (raw) => `当前 GSM 信号强度 ${raw}。协议范围为 0–100。`);
+          keep('battery', '电量', (raw) => `当前电量等级百分比 ${raw}。`);
+          keep('steps', '计步数', (raw) => `计步数 ${raw}。`);
+          keep('rolls', '翻滚次数', (raw) => `翻滚次数 ${raw}。`);
+          const statusRaw = pull('终端状态', (raw) => explainStatus(raw, statusBits, profile.id === 'appendix1'));
+          if (form) form.status = statusRaw ?? '';
+          if (statusRaw && /^[0-9A-Fa-f]{8}$/.test(statusRaw)) {
+            const statusValue = parseInt(statusRaw, 16);
+            const knownMask = statusBits.reduce((mask, [bit]) => mask | (1 << bit), 0);
+            if (((statusValue & ~knownMask) >>> 0) !== 0) {
+              notes.push(profile.id === 'appendix2'
+                ? '终端状态还有附录二位表以外的 bit。'
+                : '终端状态还有协议位表以外的 bit。构造器只有位表里的勾选框，这些位填不进去。');
+            }
+          }
+          const stationCountRaw = pull('基站个数', (raw) => (
+            raw === '0' ? '0，表示不上报基站信息。' : `上报基站个数 ${raw}。`
+          ));
+          const stationCount = stationCountRaw !== null && /^\d+$/.test(stationCountRaw) ? Number(stationCountRaw) : null;
+          if (stationCountRaw !== null && stationCount === null) notes.push('基站个数不是十进制整数，后面的内容不再按基站和 WiFi 拆。');
+          let stationBroken = stationCount === null;
+          if (stationCount !== null) {
+            for (let station = 0; station < stationCount; station += 1) {
+              const fields = profile.id === 'appendix2'
+                ? [
+                    ['ta', `基站${station + 1} TA`, 'GSM 时延。'],
+                    ['mcc', `基站${station + 1} MCC国家码`, (raw) => raw === '460' ? '460 代表中国。' : '国家码。'],
+                    ['mnc', `基站${station + 1} MNC网号`, (raw) => raw === '02' ? '02 代表中国移动。' : '网号。'],
+                    ['sid', `基站${station + 1} SID`, '系统识别码。'],
+                    ['nid', `基站${station + 1} NID`, '网络识别码。'],
+                    ['bid', `基站${station + 1} BID`, '基站。']
+                  ]
+                : (station === 0
+                ? [
+                    ['ta', '连接基站 TA', 'GSM 时延。'],
+                    ['mcc', 'MCC国家码', (raw) => raw === '460' ? '460 代表中国。' : '国家码。'],
+                    ['mnc', 'MNC网号', (raw) => raw === '02' ? '02 代表中国移动。' : '网号。'],
+                    ['lac', '连接基站位置区域码', '区域码。'],
+                    ['cid', '连接基站编号', '基站编号。'],
+                    ['rssi', '连接基站信号强度', '信号强度。']
+                  ]
+                : [
+                    ['lac', `附近基站${station}位置区域码`, '区域码。'],
+                    ['cid', `附近基站${station}编号`, '基站编号。'],
+                    ['rssi', `附近基站${station}信号强度`, '信号强度。']
+                  ]);
+              const stationItem = {};
+              for (const [key, name, explain] of fields) {
+                if (index >= tokens.length) {
+                  stationBroken = true;
+                  notes.push('基站字段不够，停止按附录一继续拆后面的 WiFi。');
+                  break;
+                }
+                stationItem[key] = pull(name, typeof explain === 'function' ? explain : () => explain) ?? '';
+              }
+              if (form && Object.keys(stationItem).length) form.stations.push(stationItem);
+              if (stationBroken) break;
+            }
+          }
+          if (!stationBroken) {
+            const wifiCountRaw = pull('WiFi个数', (raw) => {
+              if (!/^\d+$/.test(raw)) return '协议此处是 WiFi 个数。';
+              const count = Number(raw);
+              return count > 5 ? `WiFi 个数 ${raw}。协议写明最多 5 个，按信号强度排序。` : `WiFi 个数 ${raw}。协议写明最多 5 个，按信号强度排序。`;
+            });
+            const wifiCount = wifiCountRaw !== null && /^\d+$/.test(wifiCountRaw) ? Number(wifiCountRaw) : null;
+            if (wifiCountRaw !== null && wifiCount === null) notes.push('WiFi 个数不是十进制整数，后面的内容不再按 WiFi 拆。');
+            let wifiBroken = wifiCount === null;
+            if (wifiCount !== null) {
+              for (let wifi = 1; wifi <= wifiCount; wifi += 1) {
+                const fields = [
+                  ['ssid', `WiFi ${wifi} 名字`, 'WiFi 名字。'],
+                  ['mac', `WiFi ${wifi} MAC地址`, 'MAC 地址。'],
+                  ['rssi', `WiFi ${wifi} 信号强度`, '信号强度。']
+                ];
+                const wifiItem = {};
+                for (const [key, name, meaning] of fields) {
+                  if (index >= tokens.length) {
+                    wifiBroken = true;
+                    notes.push('WiFi 字段不够，停止继续拆定位精度。');
+                    break;
+                  }
+                  wifiItem[key] = pull(name, () => meaning) ?? '';
+                }
+                if (form && Object.keys(wifiItem).length) form.wifi.push(wifiItem);
+                if (wifiBroken) break;
+              }
+            }
+            if (!wifiBroken && profile.id === 'appendix1') {
+              const rest = tokens.length - index;
+              if (rest === 1) {
+                const accuracy = pull('定位精度 n', (raw) => `${raw}，单位为米。`);
+                if (form) form.values.accuracy = accuracy ?? '';
+              } else if (rest === 0) {
+                notes.push('WiFi 个数之后没有字段。附录一在这里还有定位精度 n。');
+                if (form) form.values.accuracy = '';
+              }
+            }
+            if (!wifiBroken && profile.id === 'appendix2' && stationCount > 1) {
+              notes.push('附录二表格只列出一组基站字段。个数大于 1 时，按 TA、MCC、MNC、SID、NID、BID 重复拆。');
+            }
+          }
+        }
+
+        if (index < tokens.length) {
+          tokens.slice(index).forEach((raw, offset) => {
+            rows.push({
+              name: `剩余字段 ${offset + 1}`,
+              raw,
+              meaning: '协议这一条命令在前面的字段之后没有再定义这项。'
+            });
+          });
+          if (command === 'LK' || command === 'ICCID' || profile) {
+            notes.push(`还有 ${tokens.length - index} 个字段没有对应的协议定义。`);
+          }
+        }
+        return { rows, notes, command, form, profile, lenMatch: lenOk && ascii && declared === actual };
+      }
+
+      function applyToForm(result) {
+        const notes = [];
+        if (!result.form) return { filled: false, notes };
+        const radio = document.querySelector(`input[name="command"][value="${result.command}"]`);
+        if (!radio) return { filled: false, notes };
+        radio.checked = true;
+        $('deviceId').value = result.form.deviceId;
+        Object.entries(result.form.values).forEach(([id, value]) => {
+          const element = $(id);
+          if (!element) return;
+          if (element.tagName === 'SELECT') {
+            const allowed = [...element.options].some((option) => option.value === value);
+            if (allowed) element.value = value;
+            else if (value) notes.push(`「${element.previousElementSibling?.textContent || id}」的报文值 ${value} 不在选项里，下拉没有改。`);
+          } else {
+            element.value = value;
+          }
+        });
+        if (result.command === 'UD' || result.command === 'UD2' || result.command === 'UD_LTE' || result.command === 'AL') {
+          stations = result.form.stations.map((item) => ({ ...item }));
+          wifiEntries = result.form.wifi.map((item) => ({ ...item }));
+          renderStations();
+          renderWifi();
+        }
+        syncCommandUI();
+        if ((result.command === 'UD' || result.command === 'UD2' || result.command === 'UD_LTE' || result.command === 'AL') && /^[0-9A-Fa-f]{8}$/.test(result.form.status || '')) {
+          const status = parseInt(result.form.status, 16);
+          document.querySelectorAll('.status-bit').forEach((input) => {
+            input.checked = (status & (1 << Number(input.dataset.bit))) !== 0;
+          });
+        }
+        update();
+        return { filled: true, notes };
+      }
+
+      function renderReverse() {
+        const result = parseReverseMessage($('reverseInput').value);
+        const banner = $('reverseBanner');
+        const noteList = $('reverseNotes');
+        const table = $('reverseTable');
+        const body = $('reverseBody');
+        if (result.empty) {
+          banner.hidden = true;
+          noteList.hidden = true;
+          table.hidden = true;
+          body.innerHTML = '';
+          return;
+        }
+        banner.hidden = false;
+        if (result.error) {
+          banner.className = 'status-banner invalid';
+          banner.innerHTML = `<div>!</div><div><strong>无法拆外层</strong><small>${escapeHtml(result.error)}</small></div>`;
+          noteList.hidden = true;
+          table.hidden = true;
+          body.innerHTML = '';
+          return;
+        }
+        const source = $('reverseInput').value.trim();
+        const complete = source.startsWith('[') && source.endsWith(']');
+        const applied = complete ? applyToForm(result) : { filled: false, notes: [] };
+        result.notes.push(...applied.notes);
+        const structural = result.notes.filter((note) => !note.startsWith('WiFi 个数之后没有字段'));
+        const accuracyMissing = result.notes.some((note) => note.startsWith('WiFi 个数之后没有字段'));
+        const ok = result.lenMatch && structural.length === 0;
+        banner.className = `status-banner ${ok ? (accuracyMissing ? 'warning' : 'valid') : 'invalid'}`;
+        let summary = '已按能识别的位置拆开。';
+        if (applied.filled && ok && accuracyMissing) summary = `已写入上方 ${result.command}。LEN 一致。报文没有定位精度 n，表单里该项留空。`;
+        else if (applied.filled && ok) summary = `已写入上方 ${result.command}。LEN 与内容字节数一致。`;
+        else if (applied.filled) summary = `已写入上方 ${result.command}。请看下面 ${result.notes.length} 条核对说明。`;
+        else if (complete && result.profile && !applied.filled && ok && accuracyMissing) summary = `已按协议解析 ${result.command}。${result.profile.note} LEN 一致。WiFi 之后没有定位精度 n。构造器没有这条指令，没有写入表单。`;
+        else if (complete && result.profile && !applied.filled && ok) summary = `已按协议解析 ${result.command}。${result.profile.note} LEN 与内容字节数一致。构造器没有这条指令，没有写入表单。`;
+        else if (complete && result.profile && !applied.filled) summary = `已按协议解析 ${result.command}。${result.profile.note} 没有写入上方表单。请看下面 ${result.notes.length} 条核对说明。`;
+        else if (complete && !result.form) summary = '协议正文没有这条命令的字段表，没有写入上方表单。';
+        else if (!ok) summary = `已按能识别的位置拆开。请看下面 ${result.notes.length} 条核对说明。`;
+        banner.innerHTML = `<div>${ok && !accuracyMissing ? '✓' : '!'}</div><div><strong>${escapeHtml(result.command || '报文')} 对应解析</strong><small>${escapeHtml(summary)}</small></div>`;
+        noteList.hidden = result.notes.length === 0;
+        noteList.innerHTML = result.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join('');
+        table.hidden = false;
+        body.innerHTML = result.rows.map((item, rowIndex) => `
+          <tr>
+            <td>${rowIndex + 1}</td>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.raw || '—')}</td>
+            <td>${escapeHtml(item.meaning)}</td>
+          </tr>`).join('');
       }
 
       document.addEventListener('click', (event) => {
@@ -1209,6 +1841,10 @@
         if (event.target.matches('input[name="command"]')) {
           syncCommandUI();
           update();
+        }
+        if (event.target.id === 'timezone') {
+          syncTimezoneUI();
+          setCurrentTime();
         }
         if (event.target.matches('.status-bit')) update();
       });
@@ -1244,6 +1880,7 @@
 
       $('addStationBtn').addEventListener('click', addStation);
       $('addWifiBtn').addEventListener('click', addWifi);
+      $('timezoneOffset').addEventListener('change', setCurrentTime);
       $('fillNowBtn').addEventListener('click', setCurrentTime);
       $('resetBtn').addEventListener('click', resetExample);
       $('copyBtn').addEventListener('click', () => currentSnapshot?.valid && copyText(currentSnapshot.message));
@@ -1254,7 +1891,22 @@
         renderRecords();
         showToast('记录已清空');
       });
+      $('reverseInput').addEventListener('input', renderReverse);
+      $('reverseSampleBtn').addEventListener('click', () => {
+        $('reverseInput').value = reverseSample;
+        renderReverse();
+      });
+      $('reverseClearBtn').addEventListener('click', () => {
+        $('reverseInput').value = '';
+        renderReverse();
+      });
+      $('sendReverseBtn').addEventListener('click', () => {
+        $('reverseInput').value = $('messageOutput').textContent.trim();
+        renderReverse();
+        $('commandGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
 
+      renderTimezoneChoices();
       resetExample();
       renderRecords();
     })();
