@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSJ V3 协议构造器</title>
+<style>
+:root{
+  --bg:#f3f6fb;--panel:#fff;--soft:#f7f9fc;--text:#182033;--muted:#667085;
+  --line:#d9e1ec;--primary:#1f6feb;--primary-soft:#eaf2ff;--ok:#138a5b;--ok-soft:#e9f8f1;
+  --warn:#b76b00;--warn-soft:#fff6e5;--bad:#c93636;--bad-soft:#fff0f0;
+  --shadow:0 10px 28px rgba(24,39,75,.08);--radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text);background:radial-gradient(circle at 0 0,rgba(31,111,235,.10),transparent 26rem),var(--bg);
+  font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.app{max-width:1380px;margin:0 auto;padding:24px}
+.hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}
+h1{margin:0 0 4px;font-size:28px;letter-spacing:-.02em}
+.sub{margin:0;color:var(--muted);font-size:13px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.badge{padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:12px;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(380px,.9fr);gap:18px;align-items:start}
+.stack{display:grid;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff)}
+.panel-h h2{margin:0;font-size:16px}
+.panel-h p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.panel-b{padding:16px 18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.card{position:relative;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--soft);cursor:pointer}
+.card.selected{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 3px rgba(31,111,235,.10)}
+.card input{position:absolute;opacity:0;pointer-events:none}
+.card b{display:block;font-size:14px}
+.card small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.field{grid-column:span 4;min-width:0}
+.field.s2{grid-column:span 2}.field.s3{grid-column:span 3}.field.s6{grid-column:span 6}.field.s8{grid-column:span 8}.field.s12{grid-column:span 12}
+label.lbl{display:block;margin-bottom:4px;font-size:12px;font-weight:700}
+label.lbl em{font-style:normal;color:var(--muted);font-weight:500}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+textarea{resize:vertical;min-height:74px;font-family:Consolas,"Cascadia Mono",monospace;font-size:13px}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(31,111,235,.25);border-color:var(--primary)}
+.hint{margin-top:4px;color:var(--muted);font-size:12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;font-weight:700;font-size:13px}
+.btn:hover{border-color:#a9bee0}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.tiny{padding:7px 9px}
+.input-with-action{display:flex;align-items:stretch;gap:6px}
+.input-with-action>input{flex:1 1 auto;min-width:0}
+.field-refresh{flex:0 0 38px;width:38px;padding:0;font-size:18px;line-height:1}
+.check{display:flex;align-items:center;gap:6px;font-size:13px}
+.bits{display:flex;flex-wrap:wrap;gap:8px 14px}
+.group-title{grid-column:span 12;margin:6px 0 0;font-size:13px;font-weight:800;color:var(--primary)}
+.out{font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:10px;word-break:break-all}
+.panel-b{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td code{font-family:Consolas,"Cascadia Mono",monospace}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-size:12px;font-weight:700}
+tr.bad td{background:var(--bad-soft)}
+tr.warn td{background:var(--warn-soft)}
+.tag{display:inline-block;padding:1px 7px;border-radius:999px;font-size:12px;font-weight:700}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.frame{border:1px solid var(--line);border-radius:11px;margin-bottom:10px;overflow:hidden}
+.frame-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;background:var(--soft);cursor:pointer}
+.frame-h .hex{font-family:Consolas,monospace;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46%}
+.hidden{display:none !important}
+.templates{display:flex;flex-wrap:wrap;gap:6px}
+.templates button{font-family:Consolas,monospace}
+.summary{margin:10px 0;padding:10px 12px;border:1px solid #c9dcff;border-radius:11px;background:var(--primary-soft);font-size:13px}
+.summary-t{font-weight:800;color:var(--primary);margin-bottom:4px}
+.summary code{font-family:Consolas,monospace;background:#fff;padding:1px 5px;border-radius:5px}
+.hexstrip{font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;line-height:2.1;word-break:break-all;margin:4px 0 10px}
+.hexstrip span{display:inline-block;padding:0 4px;margin:1px 2px 1px 0;border-radius:5px;cursor:help}
+.hexstrip sup{font-size:10px;color:var(--muted);margin-right:2px}
+.hexstrip .c0{background:#eaf2ff}.hexstrip .c1{background:#e9f8f1}.hexstrip .c2{background:#fff6e5}.hexstrip .c3{background:#f3ecff}
+.hexstrip .bad{background:var(--bad-soft);color:var(--bad)}.hexstrip .warn{background:#ffe9c2}
+.fcards{display:grid;gap:8px}
+.fcard{min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px}
+.fcard.bad{background:var(--bad-soft);border-color:#f3c2c2}
+.fcard.warn{background:var(--warn-soft);border-color:#f1d6a6}
+.fcard-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.fno{display:inline-block;min-width:22px;padding:0 6px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--muted);font-size:11px;text-align:center}
+.fpos{color:var(--muted);font-size:12px}
+.fraw{font-family:Consolas,"Cascadia Mono",monospace;background:var(--soft);padding:1px 6px;border-radius:5px;word-break:break-all;overflow-wrap:anywhere}
+.fres{margin:4px 0 2px;font-weight:700;overflow-wrap:anywhere}
+.fcard ol.calc{color:#344054;overflow-wrap:anywhere}
+ol.calc{margin:0;padding-left:18px}
+ol.calc li{margin:1px 0}
+table.bits{margin-top:6px;width:100%;max-width:100%;table-layout:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+table.bits td{overflow-wrap:anywhere}
+table.bits th,table.bits td{padding:3px 8px;font-size:12px}
+@media(max-width:980px){.layout{grid-template-columns:1fr}.field,.field.s2,.field.s3{grid-column:span 6}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div>
+      <h1>BSJ V3 协议构造器</h1>
+      <p class="sub">依据《V3 车载终端通讯协议 V3.0.17（品宁）》。本地单文件，不连平台；包长度与 CRC-ITU 自动计算。</p>
+      <div class="badges">
+        <span class="badge">0x7878 … 0x0D0A</span>
+        <span class="badge">CRC-ITU 查表</span>
+        <span class="badge">GBK 为主</span>
+        <span class="badge">七协议号双向</span>
+      </div>
+    </div>
+    <div class="panel" style="padding:12px 14px;max-width:520px">
+      <label class="lbl" for="tzAlgo">时区算法 <em>登录包时区语言字段，构造与解析共用</em></label>
+      <select id="tzAlgo"></select>
+      <div class="hint" id="tzAlgoFormula"></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="panel">
+        <div class="panel-h"><div><h2>构造</h2><p>选包类型，填业务值，右侧实时出报文和逐字段解析。</p></div></div>
+        <div class="panel-b">
+          <div class="cards" id="kindCards"></div>
+          <div class="grid" id="form" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <div><h2>解析</h2><p>粘贴抓包 HEX，空格、逗号、换行、连写、<code>0x</code> 前缀都认。多帧按起止符切分。</p></div>
+          <div class="row">
+            <button class="btn primary" id="parseBtn" type="button">解析</button>
+            <button class="btn" id="fillBtn" type="button">填回当前帧到表单</button>
+          </div>
+        </div>
+        <div class="panel-b">
+          <textarea id="rawInput" placeholder="78 78 0A 13 04 06 03 00 02 00 03 69 1C 0D 0A"></textarea>
+          <div id="parseOut" style="margin-top:12px"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel">
+        <div class="panel-h"><div><h2>构造结果</h2><p id="buildStatus"></p></div></div>
+        <div class="panel-b">
+          <div class="row" style="margin-bottom:8px">
+            <span class="lbl" style="margin:0">空格分隔</span>
+            <button class="btn tiny" data-copy="spaced" type="button">复制</button>
+          </div>
+          <div class="out" id="outSpaced">—</div>
+          <div class="row" style="margin:10px 0 8px">
+            <span class="lbl" style="margin:0">连续 HEX</span>
+            <button class="btn tiny" data-copy="plain" type="button">复制</button>
+          </div>
+          <div class="out" id="outPlain">—</div>
+          <div id="buildIssues" style="margin-top:10px"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><div><h2>逐字段解析</h2><p>构造结果的字段拆解，坏项标红。</p></div></div>
+        <div class="panel-b" id="buildParse"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><div><h2>文档示例</h2><p>现场终端实报、附录 B 截获报文和正文 5.4.3 / 6.1 / 6.2 示例（CRC 已按附录 A 重算核对），一键填入表单。正文 5.2 / 5.3 字段表示例拼出的报文 CRC 与重算不符；0x82 示例的序列号和 CRC（00 02 / 18 F0）与心跳示例相同，按字段重算应为 72 F1，疑为照抄，故都不收录。</p></div></div>
+        <div class="panel-b" id="samples"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const CRC_TAB = [0x0000,0x1189,0x2312,0x329B,0x4624,0x57AD,0x6536,0x74BF,0x8C48,0x9DC1,0xAF5A,0xBED3,0xCA6C,0xDBE5,0xE97E,0xF8F7,0x1081,0x0108,0x3393,0x221A,0x56A5,0x472C,0x75B7,0x643E,0x9CC9,0x8D40,0xBFDB,0xAE52,0xDAED,0xCB64,0xF9FF,0xE876,0x2102,0x308B,0x0210,0x1399,0x6726,0x76AF,0x4434,0x55BD,0xAD4A,0xBCC3,0x8E58,0x9FD1,0xEB6E,0xFAE7,0xC87C,0xD9F5,0x3183,0x200A,0x1291,0x0318,0x77A7,0x662E,0x54B5,0x453C,0xBDCB,0xAC42,0x9ED9,0x8F50,0xFBEF,0xEA66,0xD8FD,0xC974,0x4204,0x538D,0x6116,0x709F,0x0420,0x15A9,0x2732,0x36BB,0xCE4C,0xDFC5,0xED5E,0xFCD7,0x8868,0x99E1,0xAB7A,0xBAF3,0x5285,0x430C,0x7197,0x601E,0x14A1,0x0528,0x37B3,0x263A,0xDECD,0xCF44,0xFDDF,0xEC56,0x98E9,0x8960,0xBBFB,0xAA72,0x6306,0x728F,0x4014,0x519D,0x2522,0x34AB,0x0630,0x17B9,0xEF4E,0xFEC7,0xCC5C,0xDDD5,0xA96A,0xB8E3,0x8A78,0x9BF1,0x7387,0x620E,0x5095,0x411C,0x35A3,0x242A,0x16B1,0x0738,0xFFCF,0xEE46,0xDCDD,0xCD54,0xB9EB,0xA862,0x9AF9,0x8B70,0x8408,0x9581,0xA71A,0xB693,0xC22C,0xD3A5,0xE13E,0xF0B7,0x0840,0x19C9,0x2B52,0x3ADB,0x4E64,0x5FED,0x6D76,0x7CFF,0x9489,0x8500,0xB79B,0xA612,0xD2AD,0xC324,0xF1BF,0xE036,0x18C1,0x0948,0x3BD3,0x2A5A,0x5EE5,0x4F6C,0x7DF7,0x6C7E,0xA50A,0xB483,0x8618,0x9791,0xE32E,0xF2A7,0xC03C,0xD1B5,0x2942,0x38CB,0x0A50,0x1BD9,0x6F66,0x7EEF,0x4C74,0x5DFD,0xB58B,0xA402,0x9699,0x8710,0xF3AF,0xE226,0xD0BD,0xC134,0x39C3,0x284A,0x1AD1,0x0B58,0x7FE7,0x6E6E,0x5CF5,0x4D7C,0xC60C,0xD785,0xE51E,0xF497,0x8028,0x91A1,0xA33A,0xB2B3,0x4A44,0x5BCD,0x6956,0x78DF,0x0C60,0x1DE9,0x2F72,0x3EFB,0xD68D,0xC704,0xF59F,0xE416,0x90A9,0x8120,0xB3BB,0xA232,0x5AC5,0x4B4C,0x79D7,0x685E,0x1CE1,0x0D68,0x3FF3,0x2E7A,0xE70E,0xF687,0xC41C,0xD595,0xA12A,0xB0A3,0x8238,0x93B1,0x6B46,0x7ACF,0x4854,0x59DD,0x2D62,0x3CEB,0x0E70,0x1FF9,0xF78F,0xE606,0xD49D,0xC514,0xB1AB,0xA022,0x92B9,0x8330,0x7BC7,0x6A4E,0x58D5,0x495C,0x3DE3,0x2C6A,0x1EF1,0x0F78];
+
+const PROTO = {0x01:"登录信息",0x22:"定位数据",0x13:"状态信息（心跳）",0x15:"字符串信息（终端回复）",0x26:"报警数据",0x80:"服务器指令",0x82:"设备基本信息"};
+const ALARMS = [[0x00,"正常"],[0x01,"SOS 求救"],[0x02,"断电报警"],[0x03,"震动报警"],[0x04,"进围栏报警"],[0x05,"出围栏报警"],[0x06,"超速报警"],[0x09,"位移报警"],[0x0A,"伪基站报警"],[0x0B,"检测到伪基站（实时检测，不作为报警）"],[0x0C,"非法拆除报警（优先级最高）"],[0x0D,"碰撞报警"],[0x0E,"非法启动报警"],[0x0F,"寻车报警"]];
+const TERM_ALARM = [[0,"正常"],[1,"震动报警"],[2,"断电报警"],[3,"低电报警"],[4,"SOS 求救"],[5,"超时报警（疲劳驾驶）"],[6,"超速报警"],[7,"未定义"]];
+// 心跳包 5.4.1 的位表与报警包不同：100 为预留，不是 SOS。
+const HB_TERM_ALARM = [[0,"正常"],[1,"震动报警"],[2,"断电报警"],[3,"低电报警"],[4,"预留"],[5,"超时报警"],[6,"超速报警"],[7,"未定义"]];
+const LOGIN_LANG = [[0,"00 未指定"],[1,"01 中文"],[2,"02 英文"],[3,"03 未定义"]];
+const UPLOAD_MODE = [[0x00,"定时上传"],[0x01,"定距上传（终端未做）"],[0x02,"拐点上传"],[0x03,"ACC 状态改变上传"],[0x04,"静止最后位置上传"],[0x05,"上电登录成功后直接上传"],[0x08,"协议未列出（真实终端上报过，含义待确认）"]];
+const GSM_LEVEL = [[0,"无信号"],[1,"信号极弱"],[2,"信号较弱"],[3,"信号良好"],[4,"信号强"]];
+const TEMPLATES = [["RELAY,1#","断开油电"],["RELAY,0#","恢复油电"],["RESET#","重启"]];
+
+const KINDS = [
+  {id:"login",name:"登录 0x01",dir:"终端 → 服务器"},
+  {id:"loginAck",name:"登录应答",dir:"服务器 → 终端"},
+  {id:"locate",name:"定位 0x22",dir:"终端 → 服务器"},
+  {id:"alarm",name:"报警 0x26",dir:"终端 → 服务器"},
+  {id:"alarmAck",name:"报警应答",dir:"服务器 → 终端"},
+  {id:"heartbeat",name:"心跳 0x13",dir:"终端 → 服务器"},
+  {id:"heartbeatAck",name:"心跳应答",dir:"服务器 → 终端"},
+  {id:"command",name:"指令 0x80",dir:"服务器 → 终端"},
+  {id:"reply",name:"回复 0x15",dir:"终端 → 服务器"},
+  {id:"devinfo",name:"设备信息 0x82",dir:"终端 → 服务器"}
+];
+
+const SAMPLES = [
+  {name:"现场终端定位包（4 字节 Cell ID，上报模式 0x08）",hex:"78 78 27 22 1A 0B 06 06 19 3B CF 02 7C 08 90 0C 2D 37 81 00 14 00 01 CC 01 75 49 07 6A 8F 01 01 08 00 14 18 01 6C 00 37 65 32 0D 0A"},
+  {name:"登录包（发出）",hex:"78 78 11 01 00 00 01 31 22 33 44 55 01 00 32 00 00 00 21 AD 0D 0A"},
+  {name:"登录应答（接收）",hex:"78 78 05 01 00 01 D9 DC 0D 0A"},
+  {name:"GPS 定位包（发出）",hex:"78 78 22 22 11 02 1B 06 01 0D C5 02 6D DE C0 0C 3B FE E6 25 14 00 01 CC 00 26 2C 00 0E BA 00 00 00 00 06 2B 7D 0D 0A"},
+  {name:"心跳包（发出）",hex:"78 78 0A 13 04 06 03 00 02 00 03 69 1C 0D 0A"},
+  {name:"心跳应答（接收）",hex:"78 78 05 13 00 11 F9 70 0D 0A"},
+  {name:"报警包·掉电（发出）",hex:"78 78 25 26 11 02 04 06 11 39 C5 02 6D DE C0 0C 3B FE E6 23 14 49 08 01 CC 00 26 2C 00 0E BA 54 00 03 02 02 00 6B FB EE 0D 0A"},
+  {name:"报警包·超速（发出）",hex:"78 78 25 26 11 02 04 06 11 01 C5 02 6D DE C0 0C 3B FE E6 5B 14 49 08 01 CC 00 26 2C 00 0E BA 74 06 04 06 02 00 67 0B 36 0D 0A"},
+  {name:"断开油电 RELAY,1#（接收）",hex:"78 78 14 80 0C 00 00 00 01 52 45 4C 41 59 2C 31 23 00 02 00 3C 04 2B 0D 0A"},
+  {name:"回复·切断油电成功!（发出）",hex:"78 78 19 15 11 00 00 00 01 C7 D0 B6 CF D3 CD B5 E7 B3 C9 B9 A6 21 00 02 10 22 AB 33 0D 0A"},
+  {name:"已断油电再下发 RELAY,1#（接收）",hex:"78 78 14 80 0C 00 00 00 01 52 45 4C 41 59 2C 31 23 00 02 01 30 D7 9F 0D 0A"},
+  {name:"回复·终端已处于断油电状态，本指令不再执行!（发出）",hex:"78 78 31 15 29 00 00 00 01 D6 D5 B6 CB D2 D1 B4 A6 D3 DA B6 CF D3 CD B5 E7 D7 B4 CC AC A3 AC B1 BE D6 B8 C1 EE B2 BB D4 D9 D6 B4 D0 D0 21 00 02 00 06 EF C6 0D 0A"},
+  {name:"恢复油电 RELAY,0#（接收）",hex:"78 78 14 80 0C 00 00 00 01 52 45 4C 41 59 2C 30 23 00 02 01 31 C2 3D 0D 0A"},
+  {name:"回复·恢复油电成功!（发出）",hex:"78 78 19 15 11 00 00 00 01 BB D6 B8 B4 D3 CD B5 E7 B3 C9 B9 A6 21 00 02 00 07 3B 78 0D 0A"},
+  {name:"已接通再下发 RELAY,0#（接收）",hex:"78 78 14 80 0C 00 00 00 01 52 45 4C 41 59 2C 30 23 00 02 01 32 F0 A6 0D 0A"},
+  {name:"回复·终端已处于油电接通状态，本指令不再执行!（发出）",hex:"78 78 33 15 2B 00 00 00 01 D6 D5 B6 CB D2 D1 B4 A6 D3 DA D3 CD B5 E7 BD D3 CD A8 D7 B4 CC AC A3 AC B1 BE D6 B8 C1 EE B2 BB D4 D9 D6 B4 D0 D0 21 00 02 00 08 28 59 0D 0A"},
+  {name:"重启 RESET#（接收，正文示例）",hex:"78 78 12 80 0A 00 00 00 01 52 45 53 45 54 23 00 02 00 34 73 2E 0D 0A"},
+  {name:"回复·The terminal will restart after 20sec!（发出，正文 6.2 示例）",hex:"78 78 32 15 2A 00 00 00 01 54 68 65 20 74 65 72 6D 69 6E 61 6C 20 77 69 6C 6C 20 72 65 73 74 61 72 74 20 61 66 74 65 72 20 32 30 73 65 63 21 00 02 00 0A 1B F0 0D 0A"},
+  {name:"心跳包（发出，正文 5.4.3 示例）",hex:"78 78 0A 13 04 06 03 00 02 00 04 1D A3 0D 0A"}
+];
+
+const state = {kind:"login", lastBuild:null, frames:[], activeFrame:0, tzAlgo:"hhmm"};
+const $ = (s,root=document) => root.querySelector(s);
+const h = (s) => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function crc16(bytes){
+  let fcs = 0xFFFF;
+  for(const b of bytes) fcs = (fcs >> 8) ^ CRC_TAB[(fcs ^ b) & 0xFF];
+  return (~fcs) & 0xFFFF;
+}
+const hex2 = (n) => (n & 0xFF).toString(16).toUpperCase().padStart(2,"0");
+const hexN = (n,len) => (n >>> 0).toString(16).toUpperCase().padStart(len*2,"0").slice(-len*2);
+function spaced(bytes){return bytes.map(hex2).join(" ");}
+function u16(b,i){return (b[i]<<8)|b[i+1];}
+function u32(b,i){return (b[i]*16777216)+(b[i+1]<<16)+(b[i+2]<<8)+b[i+3];}
+
+const GBK_DECODER = new TextDecoder("gbk");
+function decodeGbk(bytes){
+  const gbk = GBK_DECODER.decode(Uint8Array.from(bytes));
+  const utf8 = new TextDecoder("utf-8",{fatal:false}).decode(Uint8Array.from(bytes));
+  const gbkBad = /�/.test(gbk);
+  return {text:gbk, fallback:gbkBad ? utf8 : null, bad:gbkBad};
+}
+
+function parseHex(input){
+  const cleaned = input.replace(/0x/gi,"").replace(/[^0-9a-fA-F]/g,"");
+  if(cleaned.length === 0) return {bytes:[], error:"没有可识别的十六进制字符"};
+  if(cleaned.length % 2) return {bytes:[], error:"十六进制字符数为奇数，缺半个字节"};
+  const bytes = [];
+  for(let i=0;i<cleaned.length;i+=2) bytes.push(parseInt(cleaned.slice(i,i+2),16));
+  return {bytes, error:null};
+}
+
+function splitFrames(bytes){
+  const frames = [];
+  let i = 0;
+  while(i < bytes.length){
+    if(bytes[i] === 0x78 && bytes[i+1] === 0x78){
+      let end = -1;
+      // 信息内容里可能出现 0D 0A（如 13 时 10 分、纬度字节），先按包长度定位停止位，对不上再退回逐字节查找。
+      const byLen = i + 2 + 1 + (bytes[i+2] ?? 0) + 2;
+      if(i+2 < bytes.length && bytes[byLen-2] === 0x0D && bytes[byLen-1] === 0x0A) end = byLen;
+      for(let j=i+2;end<0 && j<bytes.length-1;j++){
+        if(bytes[j] === 0x0D && bytes[j+1] === 0x0A){end = j+2;break;}
+      }
+      if(end < 0){frames.push({bytes:bytes.slice(i), truncated:true});break;}
+      frames.push({bytes:bytes.slice(i,end), truncated:false});
+      i = end;
+    }else{
+      let j = i;
+      while(j < bytes.length && !(bytes[j] === 0x78 && bytes[j+1] === 0x78)) j++;
+      frames.push({bytes:bytes.slice(i,j), noise:true});
+      i = j;
+    }
+  }
+  return frames;
+}
+
+function field(name, raw, value, note, level, width){
+  return {name, raw, value, note:note||"", level:level||"", width:width||raw.split(" ").filter(Boolean).length};
+}
+
+function decodeFrame(bytes){
+  const issues = [];
+  const fields = [];
+  const add = (f) => fields.push(f);
+  if(bytes.length < 10){
+    issues.push("帧长不足 10 字节，无法构成完整包");
+    return {fields, issues, proto:null, values:null};
+  }
+  const headOk = bytes[0] === 0x78 && bytes[1] === 0x78;
+  const tailOk = bytes[bytes.length-2] === 0x0D && bytes[bytes.length-1] === 0x0A;
+  add(field("起始位", spaced(bytes.slice(0,2)), headOk ? "0x7878" : "非 0x7878", "", headOk?"":"bad"));
+  if(!headOk) issues.push("起始位不是 0x78 0x78");
+  const declared = bytes[2];
+  const actual = bytes.length - 5;
+  add(field("包长度", hex2(declared), `声明 ${declared} 字节，实际 ${actual} 字节`, "长度=协议号+信息内容+序列号+校验", declared===actual?"":"bad"));
+  if(declared !== actual) issues.push(`包长度声明 ${declared}，按帧计算为 ${actual}`);
+  const proto = bytes[3];
+  add(field("协议号", hex2(proto), PROTO[proto] || "协议未定义", "", PROTO[proto]?"":"warn"));
+  if(!PROTO[proto]) issues.push(`协议号 0x${hex2(proto)} 不在 V3.0.17 已定义的协议号范围内`);
+  // 信息内容在协议号之后、信息序列号之前。序列号 2 字节 + 校验 2 字节 + 停止位 2 字节共 6 字节，都不属于信息内容。
+  const body = bytes.slice(4, bytes.length-6);
+  const seq = u16(bytes, bytes.length-6);
+  const crcGot = u16(bytes, bytes.length-4);
+  const crcCalc = crc16(bytes.slice(2, bytes.length-4));
+  const values = decodeBody(proto, body, add, issues);
+  add(field("信息序列号", hexN(seq,2).replace(/(.{2})(?!$)/g,"$1 "), String(seq)));
+  add(field("错误校验", hexN(crcGot,2).replace(/(.{2})(?!$)/g,"$1 "), crcGot===crcCalc?"CRC-ITU 一致":`报文 ${hexN(crcGot,2)}，重算 ${hexN(crcCalc,2)}`, "覆盖从包长度到信息序列号", crcGot===crcCalc?"":"bad"));
+  if(crcGot !== crcCalc) issues.push("CRC-ITU 不一致");
+  add(field("停止位", spaced(bytes.slice(-2)), tailOk?"0x0D0A":"非 0x0D0A", "", tailOk?"":"bad"));
+  if(!tailOk) issues.push("停止位不是 0x0D 0x0A");
+  if(values) values.seq = seq;
+  const ctx = {proto, values, total:bytes.length, bodyLen:body.length, crcCalc};
+  for(const f of fields) f.explain = explainField(f, ctx);
+  return {fields, issues, proto, values, bodyLen:body.length};
+}
+
+function decodeBody(proto, body, add, issues){
+  const values = {proto};
+  if(proto === 0x01 && body.length >= 12){
+    const id = body.slice(0,8);
+    values.terminalId = bcdToDigits(id);
+    add(field("终端 ID", spaced(id), values.terminalId, id.some(b=>b>0x99||(b&0x0F)>9)?"含非 BCD 字节":"BCD"));
+    values.typeCode = u16(body,8);
+    add(field("类型识别码", spaced(body.slice(8,10)), `0x${hexN(values.typeCode,2)}`, typeCodeNote(values.typeCode)));
+    const tz = u16(body,10);
+    Object.assign(values, decodeTimezone(tz));
+    add(field("时区语言", spaced(body.slice(10,12)), values.tzText, "bit15–4 时区×100（小时×100+分钟），bit3 东0/西1，bit2 未定义，bit1–0 语言", values.tzValid?"":"warn"));
+    if(body.length > 12) add(field("剩余字节", spaced(body.slice(12)), `${body.length-12} 字节`, "登录包信息内容应为 12 字节", "warn"));
+    return values;
+  }
+  if(proto === 0x22 || proto === 0x26){
+    return decodeLocation(proto, body, add, issues, values);
+  }
+  if(proto === 0x13 && body.length >= 5){
+    values.terminalInfo = body[0];
+    add(field("终端信息", hex2(body[0]), decodeTerminalInfo(body[0], HB_TERM_ALARM), ((body[0]>>3)&7)?"协议要求心跳包终端报警位固定为正常":"", ((body[0]>>3)&7)?"warn":""));
+    values.battery = body[1];
+    const batOk = body[1] >= 1 && body[1] <= 0x64;
+    add(field("电量百分比", hex2(body[1]), `${body[1]}%`, "0x01–0x64，转十进制即百分比，0x64 为满电", batOk?"":"warn"));
+    values.gsm = body[2];
+    add(field("GSM 信号强度", hex2(body[2]), gsmText(body[2])));
+    values.alarm = body[3]; values.langState = body[4];
+    add(field("报警/语言", spaced(body.slice(3,5)), alarmLangText(body[3], body[4])));
+    if(body.length > 5) add(field("剩余字节", spaced(body.slice(5)), `${body.length-5} 字节`, "心跳信息内容应为 5 字节", "warn"));
+    return values;
+  }
+  if(proto === 0x82){
+    return decodeDevInfo(body, add, issues, values);
+  }
+  if((proto === 0x80 || proto === 0x15) && body.length >= 5){
+    const cmdLen = body[0];
+    if(cmdLen < 4){
+      add(field("指令长度", hex2(cmdLen), `${cmdLen} 字节`, "至少包含 4 字节服务器标志位", "bad"));
+      issues.push(`指令长度 ${cmdLen} 小于服务器标志位的 4 字节`);
+      add(field("信息内容", spaced(body.slice(1)), `${body.length-1} 字节`, "指令长度非法，未拆解", "warn"));
+      return values;
+    }
+    values.cmdLen = cmdLen;
+    // 指令长度只覆盖服务器标志位和内容，语言 2 字节在长度之外，所以内容区比信息内容少 2 字节。
+    const contentArea = body.length - 3;
+    add(field("指令长度", hex2(cmdLen), `${cmdLen} 字节`, "服务器标志位 + 内容长度（4+M），不含语言 2 字节", cmdLen===contentArea?"":"bad"));
+    if(cmdLen !== contentArea) issues.push(`指令长度声明 ${cmdLen}，按帧计算内容区 ${contentArea} 字节`);
+    values.flag = body.slice(1,5);
+    add(field("服务器标志位", spaced(values.flag), "0x"+values.flag.map(hex2).join(""), "终端原样返回"));
+    // 指令长度 = 服务器标志位 4 字节 + 内容。语言 2 字节在指令长度之外，紧跟内容。
+    const content = body.slice(5, 1+cmdLen);
+    values.contentBytes = content;
+    const decoded = decodeGbk(content);
+    values.content = decoded.text;
+    add(field("内容", spaced(content), decoded.text || "（空）", decoded.bad?"GBK 解码异常，对照 UTF-8："+decoded.fallback:"GBK/ASCII", decoded.bad?"warn":""));
+    if(decoded.bad) issues.push("内容按 GBK 解码异常，已给出 UTF-8 对照");
+    const lang = body.slice(1+cmdLen, 3+cmdLen);
+    values.language = lang.length===2 ? u16(lang,0) : null;
+    add(field("语言", lang.length?spaced(lang):"—", lang.length===2?langText(values.language):"缺少语言字节", "", lang.length===2?"":"bad"));
+    if(body.length > 3+cmdLen) add(field("剩余字节", spaced(body.slice(3+cmdLen)), `${body.length-3-cmdLen} 字节`, "不属于指令包结构", "warn"));
+    return values;
+  }
+  if(body.length === 2 && (proto === 0x01 || proto === 0x13 || proto === 0x26)){
+    return values;
+  }
+  if(body.length) add(field("信息内容", spaced(body), `${body.length} 字节`, "未能按该协议号的结构拆解", "warn"));
+  return values;
+}
+
+// 定位包固定尾部 3 字节（ACC/上报模式/补传），报警包固定尾部 5 字节（终端信息/电压等级/GSM/报警语言）。
+function cellTailFits(proto, remain){
+  const fixed = proto === 0x26 ? 5 : 3;
+  return remain === fixed || remain === fixed + 4;
+}
+function decodeLocation(proto, body, add, issues, values){
+  if(body.length < 27){add(field("信息内容", spaced(body), `${body.length} 字节`, "不足定位包最小长度", "bad"));issues.push("信息内容短于定位包最小长度");return values;}
+  let p = 0;
+  const dt = body.slice(p, p+6); p += 6;
+  values.datetime = dt.map(hex2).join("");
+  add(field("日期时间", spaced(dt), formatDatetime(dt), "年(后两位)月日时分秒，各 1 字节十六进制"));
+  const gps = body[p++];
+  values.gpsLen = gps >> 4; values.satellites = gps & 0x0F;
+  add(field("GPS 信息长度/卫星数", hex2(gps), `长度 ${values.gpsLen}，参与定位卫星 ${values.satellites} 颗`, "高半字节为长度，低半字节为卫星数"));
+  const latRaw = u32(body,p); p += 4;
+  const lonRaw = u32(body,p); p += 4;
+  values.latRaw = latRaw; values.lonRaw = lonRaw;
+  add(field("纬度", spaced(body.slice(p-8,p-4)), rawToDegree(latRaw).toFixed(6)+"°", "值 / 30000 = 分，再转度"));
+  add(field("经度", spaced(body.slice(p-4,p)), rawToDegree(lonRaw).toFixed(6)+"°", "值 / 30000 = 分，再转度"));
+  values.speed = body[p];
+  add(field("速度", hex2(body[p++]), `${values.speed} km/h`, "0–255"));
+  const courseRaw = u16(body,p); p += 2;
+  Object.assign(values, decodeCourse(courseRaw));
+  add(field("状态航向", spaced(body.slice(p-2,p)), values.courseText));
+  if(proto === 0x26){
+    values.lbsLen = body[p];
+    add(field("LBS 长度", hex2(body[p++]), `${values.lbsLen} 字节`, "报警包独有，定位包没有该字节"));
+  }
+  if(p+9 > body.length){issues.push("LBS 字段不完整");return values;}
+  values.mcc = u16(body,p); add(field("MCC", spaced(body.slice(p,p+2)), String(values.mcc), "中国为 460")); p += 2;
+  values.mnc = body[p]; add(field("MNC", hex2(body[p++]), String(values.mnc)));
+  values.lac = u16(body,p); add(field("LAC", spaced(body.slice(p,p+2)), `0x${hexN(values.lac,2)}（${values.lac}）`, "0x0001–0xFFFE", values.lac===0||values.lac===0xFFFF?"warn":"")); p += 2;
+  // 字段表写 4 字节（正文示例 0x00 0x1F 0xB8 0xB8），附录 B 是 3 字节；现场终端实测为 4 字节（07 6A 8F 01，LTE 小区号超过 3 字节）。
+  // 两种都认。两种宽度都能凑出合法尾部时优先 4 字节：正文示例按 3 字节解会把扩展电压误当成基础尾，CRC 对不上。
+  const tailAfter = (width) => body.length - (p + width);
+  const threeFits = cellTailFits(proto, tailAfter(3));
+  const fourFits = cellTailFits(proto, tailAfter(4));
+  // 报警包的 LBS 长度 = MCC2 + MNC1 + LAC2 + Cell ID，附录 B 为 0x08（3 字节），正文为 0x09（4 字节）。能对上帧长时以它为准。
+  const lbsWidth = proto === 0x26 ? values.lbsLen - 5 : 0;
+  const lbsFits = (lbsWidth === 3 && threeFits) || (lbsWidth === 4 && fourFits);
+  const cellWidth = lbsFits ? lbsWidth : (fourFits || !threeFits ? 4 : 3);
+  values.cellWidth = cellWidth;
+  if(proto === 0x26 && 5 + cellWidth !== values.lbsLen){
+    add(field("LBS 长度校验", "—", `声明 ${values.lbsLen}，按帧长判定 Cell ID 为 ${cellWidth} 字节，应为 ${5+cellWidth}`, "LBS 长度与实际字段不符", "warn"));
+  }
+  values.cellId = cellWidth === 3 ? (body[p]<<16)|(body[p+1]<<8)|body[p+2] : u32(body,p);
+  add(field("Cell ID", spaced(body.slice(p,p+cellWidth)), `0x${hexN(values.cellId,cellWidth)}（${values.cellId}）`, cellWidth===4?"4 字节，与字段表和现场终端一致":"本帧是 3 字节（附录 B 老格式），现场终端为 4 字节，平台按 4 字节解析会错位", cellWidth===4?"":"warn")); p += cellWidth;
+  if(proto === 0x22){
+    if(p+3 > body.length){issues.push("ACC/上报模式/补传字段不完整");return values;}
+    values.acc = body[p]; add(field("ACC", hex2(body[p++]), values.acc?"ACC 高":"ACC 低", "00 低，01 高"));
+    values.uploadMode = body[p]; add(field("数据上报模式", hex2(body[p++]), dictText(UPLOAD_MODE, values.uploadMode)));
+    values.realtime = body[p]; add(field("GPS 实时补传", hex2(body[p++]), values.realtime?"补传":"实时上传", "00 实时，01 补传"));
+  }else{
+    if(p+5 > body.length){issues.push("状态信息字段不完整");return values;}
+    values.terminalInfo = body[p]; add(field("终端信息", hex2(body[p++]), decodeTerminalInfo(values.terminalInfo)));
+    values.voltageLevel = body[p]; add(field("电压等级", hex2(body[p++]), String(values.voltageLevel), "协议只写“设备电压”，未给取值表"));
+    values.gsm = body[p]; add(field("GSM 信号强度", hex2(body[p++]), gsmText(values.gsm)));
+    values.alarm = body[p]; values.langState = body[p+1];
+    add(field("报警/语言", spaced(body.slice(p,p+2)), alarmLangText(body[p], body[p+1]))); p += 2;
+  }
+  // 定位包的 ACC/上报模式/补传与报警包的状态信息都是固定尾部，后面正好 4 字节才是扩展字段。
+  if(body.length-p === 4){
+    values.extSat = body[p]; add(field("搜星数（扩展）", hex2(body[p++]), `${values.extSat} 颗`));
+    values.extCsq = body[p]; add(field("信号强度 CSQ（扩展）", hex2(body[p++]), String(values.extCsq)));
+    values.extVolt = u16(body,p); add(field("电压（扩展）", spaced(body.slice(p,p+2)), `${(values.extVolt/100).toFixed(2)} V`, "值除以 100 为实际电压")); p += 2;
+    values.hasExt = true;
+  }else if(body.length-p > 4){
+    values.hasExt = false;
+    add(field("未识别尾部", spaced(body.slice(p)), `${body.length-p} 字节`, "长度既不是基础包也不是带扩展包", "warn"));
+    issues.push("尾部字节数对不上基础包或带扩展包");
+    return values;
+  }else{
+    values.hasExt = false;
+    add(field("扩展字段", "—", "本帧不含搜星数/信号强度/电压", "按实际字节长度判断"));
+  }
+  if(p < body.length) add(field("未识别尾部", spaced(body.slice(p)), `${body.length-p} 字节`, "不属于已知字段", "warn"));
+  return values;
+}
+
+// 0x82 字段表：回传时间2 + 夜间开关1 + 开始2 + 结束2，之后两段「扩展头4 + 数据」，分别是固件版本和 ICCID。
+// 扩展头按 2 字节长度 + 2 字节类型理解：固件头 00 19 00 A3 的 0x19 正好是 25 字节固件串；
+// ICCID 头 00 0C 00 B2 的 0x0C 与 10 字节 ICCID 不符，所以长度不符只标黄，以帧长为准。
+function decodeDevInfo(body, add, issues, values){
+  if(body.length < 15){add(field("信息内容", spaced(body), `${body.length} 字节`, "不足设备信息包最小长度（7 字节固定字段 + 两个 4 字节扩展头）", "bad"));issues.push("信息内容短于设备信息包最小长度");return values;}
+  let p = 0;
+  values.reportMinutes = u16(body,p); add(field("回传时间", spaced(body.slice(p,p+2)), `${values.reportMinutes} 分钟`)); p += 2;
+  values.nightOn = body[p]; add(field("夜间模式开关", hex2(body[p++]), values.nightOn===1?"开":values.nightOn===0?"关":`未定义(${values.nightOn})`, "01 开，00 关", values.nightOn>1?"warn":""));
+  values.nightStart = u16(body,p); add(field("夜间开始时间", spaced(body.slice(p,p+2)), hhmmText(values.nightStart), "十进制 HHMM 转十六进制，如 10:10 → 1010 → 03 F2", hhmmValid(values.nightStart)?"":"warn")); p += 2;
+  values.nightEnd = u16(body,p); add(field("夜间结束时间", spaced(body.slice(p,p+2)), hhmmText(values.nightEnd), "十进制 HHMM 转十六进制，如 11:20 → 1120 → 04 60", hhmmValid(values.nightEnd)?"":"warn")); p += 2;
+  const fwLen = u16(body,p), fwType = u16(body,p+2);
+  // 固件长度声明能放下后面的 ICCID 扩展头时按声明取，否则把除 ICCID 头和 10 字节 ICCID 外的部分都算作固件。
+  const fwFits = p + 4 + fwLen + 4 <= body.length;
+  const fwBytes = fwFits ? fwLen : Math.max(0, body.length - p - 4 - 4 - 10);
+  values.fwType = fwType;
+  add(field("固件扩展头", spaced(body.slice(p,p+4)), `长度 ${fwLen}，类型 0x${hexN(fwType,2)}`, fwFits?"2 字节长度 + 2 字节类型":"长度声明超出帧长，按帧长截取", fwFits?"":"warn")); p += 4;
+  const fw = body.slice(p, p+fwBytes);
+  values.firmware = String.fromCharCode(...fw);
+  add(field("固件版本", fw.length?spaced(fw):"—", values.firmware || "（空）", `ASCII，${fw.length} 字节`, fw.some(b=>b<0x20||b>0x7E)?"warn":"")); p += fwBytes;
+  if(p + 4 > body.length){issues.push("ICCID 扩展头不完整");return values;}
+  const iccLen = u16(body,p), iccType = u16(body,p+2);
+  values.iccType = iccType; values.iccHeadLen = iccLen;
+  const iccBytes = body.length - p - 4;
+  add(field("ICCID 扩展头", spaced(body.slice(p,p+4)), `长度 ${iccLen}，类型 0x${hexN(iccType,2)}`, iccLen===iccBytes?"2 字节长度 + 2 字节类型":`声明长度 ${iccLen} 与实际 ${iccBytes} 字节不符（协议示例即为 0x0C 对 10 字节）`, iccLen===iccBytes?"":"warn")); p += 4;
+  const icc = body.slice(p);
+  values.iccid = icc.map(hex2).join("");
+  add(field("ICCID", icc.length?spaced(icc):"—", values.iccid || "（空）", `BCD，${icc.length} 字节`, icc.length===10?"":"warn"));
+  return values;
+}
+function hhmmText(v){return `${String(Math.floor(v/100)).padStart(2,"0")}:${String(v%100).padStart(2,"0")}（十进制 ${v}）`;}
+function hhmmValid(v){return Math.floor(v/100) <= 23 && v%100 <= 59;}
+function parseHhmm(text, issues, name){
+  const m = String(text).match(/^\s*(\d{1,2}):(\d{2})\s*$/);
+  if(!m || +m[1] > 23 || +m[2] > 59){issues.push(`${name} 格式应为 HH:MM，已按 00:00 处理`);return 0;}
+  return (+m[1])*100 + (+m[2]);
+}
+
+function bcdToDigits(bytes){return bytes.map(hex2).join("");}
+function digitsToBcd(text){
+  const digits = text.replace(/\D/g,"");
+  const padded = digits.padStart(16,"0").slice(-16);
+  const bytes = [];
+  for(let i=0;i<16;i+=2) bytes.push(parseInt(padded.slice(i,i+2),16));
+  return {bytes, digits:padded, truncated:digits.length>16};
+}
+function typeCodeNote(v){
+  if(v === 0x2000) return "带断油电功能";
+  if(v === 0x2001) return "不带断油电功能";
+  if(v === 0x0100) return "文档备注：固定为 0x0100";
+  return "前三位机种，后一位分支";
+}
+// 标准时区偏移，单位分钟，东为正。15 分钟一档，覆盖协议示例用到的范围。
+const TZ_OFFSETS = [];
+for(let m=-14*60;m<=14*60;m+=15) TZ_OFFSETS.push(m);
+function tzLabel(minutes){
+  const sign = minutes<0?"-":"+";
+  const abs = Math.abs(minutes);
+  return `GMT${sign}${String(Math.floor(abs/60)).padStart(2,"0")}:${String(abs%60).padStart(2,"0")}`;
+}
+// 协议只给了 GMT+8 → 800、GMT-12:45 → “12.45×100 = 1245” 两个例子，后者既可读成分钟直接拼接，也可能是笔误，
+// 所以两种算法都保留，由页面顶部开关切换。两种算法对整点时区结果相同，只在带分钟的时区上有差别。
+const TZ_ALGOS = {
+  hhmm:{name:"算法 A：小时×100 + 分钟（与协议示例 0x4DD8 一致）",
+    formula:"时区值 = 小时×100 + 分钟。GMT+8:00 → 800 → 0x3200；GMT-12:45 → 1245 → 0x4DD8；GMT+5:30 → 530 → 0x2120"},
+  decimal:{name:"算法 B：十进制小时×100（分钟÷60）",
+    formula:"时区值 = (小时 + 分钟÷60)×100，四舍五入。GMT+8:00 → 800 → 0x3200；GMT-12:45 → 1275 → 0x4FB8；GMT+5:30 → 550 → 0x2260"}
+};
+const TZ_RAW_FORMULA = "报文 = (时区值 << 4) | bit3 东0/西1 | bit2 未定义 | bit1–0 语言";
+function tzValueOf(minutes, algo){
+  const abs = Math.abs(minutes);
+  return algo === "decimal" ? Math.round(abs/60*100) : Math.floor(abs/60)*100 + abs%60;
+}
+function tzMinutesOf(value, algo){
+  return algo === "decimal" ? Math.round(value/100*60) : Math.floor(value/100)*60 + value%100;
+}
+function encodeTimezone(minutes, langBits, bit2, algo=state.tzAlgo){
+  const value = tzValueOf(minutes, algo);
+  let raw = (value << 4) & 0xFFF0;
+  if(minutes < 0) raw |= 0x8;
+  if(bit2) raw |= 0x4;
+  raw |= (langBits & 0x3);
+  return raw & 0xFFFF;
+}
+function decodeTimezone(raw, algo=state.tzAlgo){
+  const value = raw >> 4;
+  const west = (raw & 0x8) !== 0;
+  const bit2 = (raw & 0x4) !== 0;
+  const lang = raw & 0x3;
+  const total = tzMinutesOf(value, algo);
+  const minutes = west?-total:total;
+  const extra = [];
+  let tzValid = total <= 14*60;
+  if(algo === "hhmm" && value%100 >= 60){extra.push(`分钟位 ${value%100} ≥ 60，算法 A 下非法`);tzValid = false;}
+  else if(total > 14*60) extra.push("超出 ±14 小时");
+  else if(!TZ_OFFSETS.includes(minutes)) extra.push("不是 15 分钟整数倍");
+  if(bit2) extra.push("bit2 未定义位被置 1");
+  const other = algo === "decimal" ? "hhmm" : "decimal";
+  const otherTotal = tzMinutesOf(value, other);
+  const otherText = otherTotal === total ? "两种算法结果相同" : `按算法 ${other==="hhmm"?"A":"B"} 为 ${tzLabel(west?-otherTotal:otherTotal)}`;
+  return {tzRaw:raw, tzMinutes:minutes, langBits:lang, tzBit2:bit2, tzValid:tzValid && !bit2,
+    tzText:`${tzLabel(minutes)}（算法 ${algo==="hhmm"?"A":"B"}，${west?"西":"东"}，时区值 ${value}；${otherText}），语言 ${dictText(LOGIN_LANG,lang)}${extra.length?"；"+extra.join("；"):""}`};
+}
+function rawToDegree(raw){const minutes = raw/30000; return minutes/60;}
+function degreeToRaw(deg){return Math.floor(Math.abs(deg)*60*30000 + 1e-6);}
+function formatDatetime(b){
+  const n = b.map(x=>x);
+  return `20${hex2(n[0]).replace(/^0/,"")?String(n[0]).padStart(2,"0"):"00"}-${String(n[1]).padStart(2,"0")}-${String(n[2]).padStart(2,"0")} ${String(n[3]).padStart(2,"0")}:${String(n[4]).padStart(2,"0")}:${String(n[5]).padStart(2,"0")}`;
+}
+function parseDatetime(text){
+  const m = text.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
+  if(!m) return null;
+  return [+m[1]%100,+m[2],+m[3],+m[4],+m[5],+m[6]];
+}
+function decodeCourse(raw){
+  const course = raw & 0x03FF;
+  const latNorth = (raw & 0x0400) !== 0;
+  const lonWest = (raw & 0x0800) !== 0;
+  const positioned = (raw & 0x1000) !== 0;
+  const differential = (raw & 0x2000) !== 0;
+  const text = `${course}°，${positioned?"已定位":"未定位"}，${differential?"差分":"实时"}，${latNorth?"北纬":"南纬"}，${lonWest?"西经":"东经"}`;
+  return {courseRaw:raw, course, latNorth, lonWest, positioned, differential, courseText:text};
+}
+function encodeCourse(course, positioned, differential, latNorth, lonWest){
+  let raw = course & 0x03FF;
+  if(latNorth) raw |= 0x0400;
+  if(lonWest) raw |= 0x0800;
+  if(positioned) raw |= 0x1000;
+  if(differential) raw |= 0x2000;
+  return raw;
+}
+function decodeTerminalInfo(v, table){
+  const alarm = (v >> 3) & 0x7;
+  return `油电${v&0x80?"断开":"接通"}，GPS ${v&0x40?"已定位":"未定位"}，${dictText(table||TERM_ALARM,alarm)}，${v&0x04?"已接电源充电":"未接电源充电"}，ACC ${v&0x02?"高":"低"}，${v&0x01?"设防":"撤防"}`;
+}
+function encodeTerminalInfo(oilCut, gpsFixed, alarmBits, charging, accHigh, armed){
+  return (oilCut?0x80:0)|(gpsFixed?0x40:0)|((alarmBits&7)<<3)|(charging?0x04:0)|(accHigh?0x02:0)|(armed?0x01:0);
+}
+function alarmLangText(alarm, state){
+  const name = dictText(ALARMS, alarm);
+  const lang = state & 0x0F;
+  const light = (state & 0x10) ? "见光" : "未见光";
+  const reserved = (state >> 5) & 0x7;
+  return `${name}；语言 ${langText(lang)}；光感 ${light}${reserved?`；保留位 bit5–7 = ${reserved}（应为 0）`:""}`;
+}
+function langText(v){return v===1?"中文":v===2?"英文":`未定义(${v})`;}
+function gsmText(v){return dictText(GSM_LEVEL, v);}
+function dictText(dict, v){const hit = dict.find(d=>d[0]===v);return hit?hit[1]:`未定义(0x${hex2(v)})`;}
+
+function val(id){const el = document.getElementById(id);return el?el.value:"";}
+function checked(id){const el = document.getElementById(id);return el?el.checked:false;}
+function num(id,fallback){const n = Number(val(id));return Number.isFinite(n)?n:fallback;}
+
+function build(){
+  const issues = [];
+  const kind = state.kind;
+  const seq = clampInt(num("seq",0),0,65535,issues,"序列号");
+  let content = [];
+  if(kind === "login") content = buildLogin(issues);
+  else if(kind === "locate") content = buildLocate(issues);
+  else if(kind === "alarm") content = buildAlarm(issues);
+  else if(kind === "heartbeat") content = buildHeartbeat(issues);
+  else if(kind === "command" || kind === "reply") content = buildCommand(kind, issues);
+  else if(kind === "devinfo") content = buildDevInfo(issues);
+  const proto = {login:0x01,loginAck:0x01,locate:0x22,alarm:0x26,alarmAck:0x26,heartbeat:0x13,heartbeatAck:0x13,command:0x80,reply:0x15,devinfo:0x82}[kind];
+  const length = 1 + content.length + 2 + 2;
+  if(length > 255) issues.push(`包长度 ${length} 超过 1 字节上限，信息内容需缩短`);
+  const core = [length & 0xFF, proto, ...content, (seq>>8)&0xFF, seq&0xFF];
+  const crc = crc16(core);
+  const frame = [0x78,0x78, ...core, (crc>>8)&0xFF, crc&0xFF, 0x0D, 0x0A];
+  return {frame, issues};
+}
+function clampInt(n,min,max,issues,name){
+  if(!Number.isInteger(n)){issues.push(`${name} 不是整数，已按 0 处理`);return 0;}
+  if(n<min||n>max){issues.push(`${name} 超出 ${min}–${max}，已截断`);return Math.min(max,Math.max(min,n));}
+  return n;
+}
+function buildLogin(issues){
+  const id = digitsToBcd(val("terminalId"));
+  if(id.truncated) issues.push("终端 ID 超过 16 位，已取末 16 位");
+  if(val("terminalId").replace(/\D/g,"").length === 0) issues.push("终端 ID 为空，已补 0");
+  const typeCode = parseInt(val("typeCode"),16) || 0;
+  let tz = encodeTimezone(parseInt(val("tzOffset"),10)||0, parseInt(val("langBits"),10)||0, checked("tzBit2"));
+  const override = val("tzRaw").replace(/0x/gi,"").replace(/\s/g,"");
+  if(override){
+    if(/^[0-9a-fA-F]{4}$/.test(override)) tz = parseInt(override,16);
+    else issues.push("时区语言原值需为 4 位 HEX，已忽略，按上方选项构造");
+  }
+  return [...id.bytes, (typeCode>>8)&0xFF, typeCode&0xFF, (tz>>8)&0xFF, tz&0xFF];
+}
+function buildDevInfo(issues){
+  const minutes = clampInt(num("reportMinutes",10),0,65535,issues,"回传时间");
+  const start = parseHhmm(val("nightStart"), issues, "夜间开始时间");
+  const end = parseHhmm(val("nightEnd"), issues, "夜间结束时间");
+  const fw = asciiBytes(val("firmware"), issues, "固件版本").bytes;
+  const fwType = hexWord(val("fwType"), 0x00A3, issues, "固件扩展类型");
+  const iccid = iccidBytes(val("iccid"), issues);
+  const iccType = hexWord(val("iccType"), 0x00B2, issues, "ICCID 扩展类型");
+  // ICCID 头长度：留空按实际字节数；协议示例写的是 0x0C，需要复现示例时手填 12。
+  const iccLenText = val("iccHeadLen").trim();
+  const iccLen = iccLenText === "" ? iccid.length : clampInt(Number(iccLenText),0,65535,issues,"ICCID 扩展头长度");
+  return [(minutes>>8)&0xFF, minutes&0xFF, checked("nightOn")?0x01:0x00, (start>>8)&0xFF, start&0xFF, (end>>8)&0xFF, end&0xFF,
+    (fw.length>>8)&0xFF, fw.length&0xFF, (fwType>>8)&0xFF, fwType&0xFF, ...fw,
+    (iccLen>>8)&0xFF, iccLen&0xFF, (iccType>>8)&0xFF, iccType&0xFF, ...iccid];
+}
+function hexWord(text, fallback, issues, name){
+  const t = String(text).replace(/0x/gi,"").replace(/\s/g,"");
+  if(!/^[0-9a-fA-F]{1,4}$/.test(t)){issues.push(`${name} 需为 1–4 位 HEX，已按 0x${hexN(fallback,2)} 处理`);return fallback;}
+  return parseInt(t,16);
+}
+function iccidBytes(text, issues){
+  let t = String(text).replace(/\s/g,"");
+  if(/[^0-9a-fA-F]/.test(t)){issues.push("ICCID 含非 HEX 字符，已剔除");t = t.replace(/[^0-9a-fA-F]/g,"");}
+  if(t.length % 2){issues.push("ICCID 位数为奇数，末尾已补 F");t += "F";}
+  if(t.length !== 20) issues.push(`ICCID 为 ${t.length/2} 字节，协议示例为 10 字节（20 位）`);
+  const bytes = [];
+  for(let i=0;i<t.length;i+=2) bytes.push(parseInt(t.slice(i,i+2),16));
+  return bytes;
+}
+function buildLocate(issues){return buildGpsCore(issues, false);}
+function buildAlarm(issues){
+  const core = buildGpsCore(issues, true);
+  const info = encodeTerminalInfo(checked("oilCut"), checked("tiGps"), parseInt(val("tiAlarm"),10)||0, checked("charging"), checked("tiAcc"), checked("armed"));
+  const alarm = parseInt(val("alarmCode"),16)||0;
+  const langState = langStateByte(issues);
+  const tail = [info, clampInt(num("voltLevel",0),0,255,issues,"电压等级"), clampInt(num("gsm",0),0,255,issues,"GSM 信号"), alarm & 0xFF, langState & 0xFF];
+  return [...core, ...tail, ...extBytes(issues)];
+}
+function buildGpsCore(issues, alarm){
+  const dt = parseDatetime(val("datetime"));
+  const dtBytes = dt || [0,1,1,0,0,0];
+  if(!dt) issues.push("日期时间格式应为 YYYY-MM-DD HH:MM:SS，已按 2000-01-01 00:00:00 处理");
+  else if(dt.some((n,i)=>n<0 || n>([99,12,31,23,59,59][i]))) issues.push("日期时间含越界分量");
+  const gpsLen = clampInt(num("gpsLen",12),0,15,issues,"GPS 信息长度");
+  const sats = clampInt(num("sats",0),0,15,issues,"卫星数");
+  const lat = degreeToRaw(num("lat",0));
+  const lon = degreeToRaw(num("lon",0));
+  if(lat > 162000000) issues.push("纬度超出 0–90° 对应的协议范围");
+  if(lon > 324000000) issues.push("经度超出 0–180° 对应的协议范围");
+  const speed = clampInt(num("speed",0),0,255,issues,"速度");
+  const course = encodeCourse(clampInt(num("course",0),0,1023,issues,"航向"), checked("positioned"), checked("differential"), val("latHemi")==="N", val("lonHemi")==="W");
+  const head = [...dtBytes, (gpsLen<<4)|sats, ...u32bytes(lat), ...u32bytes(lon), speed, (course>>8)&0xFF, course&0xFF];
+  const cellId = clampInt(num("cellId",0),0,0xFFFFFFFF,issues,"Cell ID");
+  // 现场终端 Cell ID 为 4 字节，构造固定 4 字节；解析仍兼容附录 B 的 3 字节老报文。
+  // LBS 长度留空时按 MCC2 + MNC1 + LAC2 + Cell ID 4 = 9 自动计算；手填用于造异常报文。
+  const lbsText = alarm ? val("lbsLen").trim() : "";
+  const lbsLen = lbsText === "" ? 9 : clampInt(Number(lbsText),0,255,issues,"LBS 长度");
+  if(alarm && lbsLen !== 9) issues.push(`LBS 长度 ${lbsLen} 与实际 9 字节不符`);
+  const lbs = alarm ? [lbsLen] : [];
+  const cellValue = cellId >>> 0;
+  const cell = [ (clampInt(num("mcc",460),0,999,issues,"MCC")>>8)&0xFF, clampInt(num("mcc",460),0,999,issues,"MCC")&0xFF,
+    clampInt(num("mnc",0),0,255,issues,"MNC"), (clampInt(num("lac",0),0,65534,issues,"LAC")>>8)&0xFF, clampInt(num("lac",0),0,65534,issues,"LAC")&0xFF,
+    ...u32bytes(cellValue)];
+  if(alarm) return [...head, ...lbs, ...cell];
+  const tail = [checked("accHigh")?0x01:0x00, parseInt(val("uploadMode"),16)||0, checked("realtime")?0x00:0x01, ...extBytes(issues)];
+  return [...head, ...cell, ...tail];
+}
+function extBytes(issues){
+  if(!checked("withExt")) return [];
+  const volt = Math.round(num("extVolt",4.01)*100);
+  return [clampInt(num("extSat",0),0,255,issues,"搜星数"), clampInt(num("extCsq",0),0,255,issues,"CSQ"), (clampInt(volt,0,65535,issues,"电压")>>8)&0xFF, clampInt(volt,0,65535,issues,"电压")&0xFF];
+}
+function u32bytes(n){return [(n>>>24)&0xFF,(n>>>16)&0xFF,(n>>>8)&0xFF,n&0xFF];}
+function buildHeartbeat(issues){
+  const info = encodeTerminalInfo(checked("oilCut"), checked("tiGps"), parseInt(val("tiAlarm"),10)||0, checked("charging"), checked("tiAcc"), checked("armed"));
+  const battery = clampInt(num("battery",100),0,255,issues,"电量");
+  if(battery < 1 || battery > 100) issues.push(`电量 ${battery} 超出协议 1–100（0x01–0x64）`);
+  return [info, battery, clampInt(num("gsm",0),0,255,issues,"GSM 信号"), parseInt(val("alarmCode"),16)||0, langStateByte(issues)];
+}
+function langStateByte(issues){
+  const lang = clampInt(parseInt(val("langBits2"),10)||0,0,15,issues,"语言类型");
+  const reserved = clampInt(num("langReserved",0),0,7,issues,"保留位");
+  return (lang | (checked("light")?0x10:0) | (reserved<<5)) & 0xFF;
+}
+function buildCommand(kind, issues){
+  const encoded = kind === "reply" ? gbkEncodeChecked(val("content"), issues) : asciiBytes(val("content"), issues);
+  const flag = flagBytes(val("flag"), issues);
+  const content = encoded.bytes;
+  const cmdLen = 4 + content.length;
+  if(cmdLen > 255) issues.push("指令长度超过 1 字节上限");
+  const lang = val("cmdLang") === "2" ? [0x00,0x02] : [0x00,0x01];
+  return [cmdLen & 0xFF, ...flag, ...content, ...lang];
+}
+function asciiBytes(text, issues, name="指令内容"){
+  const bytes = [];
+  for(const ch of text){
+    const cp = ch.codePointAt(0);
+    if(cp > 0x7F){issues.push(`${name}含非 ASCII 字符“${ch}”，协议要求 ASCII，已跳过`);continue;}
+    bytes.push(cp);
+  }
+  return {bytes};
+}
+function flagBytes(text, issues){
+  const {bytes, error} = parseHex(text || "");
+  if(error || bytes.length !== 4){issues.push("服务器标志位需为 4 字节 HEX，已按 00 00 00 01 处理");return [0,0,0,1];}
+  return bytes;
+}
+function gbkEncodeChecked(text, issues){
+  const bytes = [];
+  for(const ch of text){
+    const cp = ch.codePointAt(0);
+    if(cp <= 0x7F){bytes.push(cp);continue;}
+    const gb = encodeGbkChar(ch);
+    if(!gb){issues.push(`“${ch}” 无法按 GBK 编码，已跳过`);continue;}
+    bytes.push(gb>>8, gb&0xFF);
+  }
+  return {bytes};
+}
+
+let unicodeToGbk = null;
+function encodeGbkChar(ch){
+  if(!unicodeToGbk) unicodeToGbk = loadGbk();
+  return unicodeToGbk.get(ch) || 0;
+}
+function loadGbk(){
+  const map = new Map();
+  for(let b1=0x81;b1<=0xFE;b1++){
+    for(let b2=0x40;b2<=0xFE;b2++){
+      if(b2 === 0x7F) continue;
+      const text = GBK_DECODER.decode(Uint8Array.from([b1,b2]));
+      if(text && text.length === 1 && text !== "�" && text.codePointAt(0) > 0x7F) map.set(text,(b1<<8)|b2);
+    }
+  }
+  return map;
+}
+
+function renderCards(){
+  $("#kindCards").innerHTML = KINDS.map(k=>`<label class="card ${k.id===state.kind?"selected":""}"><input type="radio" name="kind" value="${k.id}" ${k.id===state.kind?"checked":""}><b>${h(k.name)}</b><small>${h(k.dir)}</small></label>`).join("");
+  $("#kindCards").onchange = (e)=>{
+    if(e.target.name!=="kind") return;
+    state.kind=e.target.value;
+    // selected 只在重建卡片时写过一次，切换时必须同步移动，否则视觉上永远停在初始项。
+    $("#kindCards").querySelectorAll(".card").forEach(c=>c.classList.toggle("selected", c.querySelector("input").value===state.kind));
+    renderForm();
+    refresh();
+  };
+}
+function inputField(cls,id,label,value,hint,extra=""){
+  return `<div class="field ${cls}"><label class="lbl" for="${id}">${label}</label><input id="${id}" type="text" value="${h(value)}" ${extra}><div class="hint">${hint||""}</div></div>`;
+}
+function selectField(cls,id,label,options,current,hint){
+  const opts = options.map(o=>`<option value="${h(o[0])}" ${String(o[0])===String(current)?"selected":""}>${h(o[1])}</option>`).join("");
+  return `<div class="field ${cls}"><label class="lbl" for="${id}">${label}</label><select id="${id}">${opts}</select><div class="hint">${hint||""}</div></div>`;
+}
+function refreshField(cls,id,label,value,hint,target,title){
+  return `<div class="field ${cls}"><label class="lbl" for="${id}">${label}</label><div class="input-with-action"><input id="${id}" type="text" value="${h(value)}"><button class="btn field-refresh" type="button" data-refresh="${target}" title="${h(title)}" aria-label="${h(title)}">↻</button></div><div class="hint">${hint||""}</div></div>`;
+}
+// 球面大圆公式：从当前点沿随机方位走 meters 米。半球选择参与符号，跨赤道/本初子午线时同步改半球。
+function moveCoords(meters){
+  const latIn = Number(val("lat")), lonIn = Number(val("lon"));
+  const valid = Number.isFinite(latIn) && latIn >= 0 && latIn <= 90 && Number.isFinite(lonIn) && lonIn >= 0 && lonIn <= 180 && val("lat").trim() !== "" && val("lon").trim() !== "";
+  const lat0 = (valid ? latIn : 23.111668) * (valid && val("latHemi") === "S" ? -1 : 1);
+  const lon0 = (valid ? lonIn : 114.409285) * (valid && val("lonHemi") === "W" ? -1 : 1);
+  const R = 6371000, d = meters / R, bearing = Math.random() * Math.PI * 2;
+  const phi1 = lat0 * Math.PI/180, lam1 = lon0 * Math.PI/180;
+  const phi2 = Math.asin(Math.sin(phi1)*Math.cos(d) + Math.cos(phi1)*Math.sin(d)*Math.cos(bearing));
+  const lam2 = lam1 + Math.atan2(Math.sin(bearing)*Math.sin(d)*Math.cos(phi1), Math.cos(d) - Math.sin(phi1)*Math.sin(phi2));
+  const lat = phi2 * 180/Math.PI, lon = ((lam2 * 180/Math.PI + 540) % 360) - 180;
+  $("#lat").value = Math.abs(lat).toFixed(6); $("#latHemi").value = lat < 0 ? "S" : "N";
+  $("#lon").value = Math.abs(lon).toFixed(6); $("#lonHemi").value = lon < 0 ? "W" : "E";
+  const deg = Math.round(bearing * 180/Math.PI) % 360;
+  const hint = $("#coordMoveHint");
+  if(hint) hint.textContent = `${valid?"":"原坐标无效，已从示例坐标出发；"}上次刷新：朝${direction(deg)}（方位 ${deg}°）移动约 ${meters} 米，${lat0.toFixed(6)}, ${lon0.toFixed(6)} → ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+}
+function checkField(id,label,on){
+  return `<label class="check"><input id="${id}" type="checkbox" ${on?"checked":""}>${label}</label>`;
+}
+function seqField(){
+  return `<div class="field s3"><label class="lbl" for="seq">信息序列号</label><div class="row"><input id="seq" type="text" inputmode="numeric" value="0"><button class="btn tiny" id="seqPlus" type="button">+1</button></div><div class="hint">十进制 0–65535。手动维护，刷新页面不跳号。</div></div>`;
+}
+function renderForm(){
+  const k = state.kind;
+  let html = "";
+  if(k === "login"){
+    html += `<div class="group-title">登录信息包 · 终端发出</div>`;
+    html += inputField("s6","terminalId","终端 ID","123456789012345","15 位数字按 BCD 左补 0 成 8 字节，如 01 23 45 67 89 01 23 45");
+    html += selectField("s3","typeCode","类型识别码",[["0100","0x0100 固定值（文档备注）"],["2000","0x2000 带断油电"],["2001","0x2001 不带断油电"],["0118","0x0118 字段表示例"]],"0100","前三位机种，后一位分支");
+    html += `<div class="group-title">时区语言（2 字节）</div>`;
+    html += selectField("s3","tzOffset","时区",TZ_OFFSETS.map(m=>[String(m),tzLabel(m)]),"480","东/西由正负号决定（bit3）");
+    html += selectField("s3","langBits","语言选择位 bit1–0",LOGIN_LANG.map(o=>[String(o[0]),o[1]]),"0","登录包这一节未给取值表，01 中文 / 02 英文沿用心跳、报警、指令包的定义。附录 B 实测为 00");
+    html += `<div class="field s3"><label class="lbl">bit2</label><div class="bits" style="margin-top:8px">${checkField("tzBit2","置 1（协议暂无定义）",false)}</div></div>`;
+    html += inputField("s3","tzRaw","原值覆盖 <em>可选</em>","","4 位 HEX，如 4DD8。填了就直接用，忽略左侧选项，用于造非法时区");
+    html += `<div class="field s12"><div class="hint" id="tzFormulaHint"></div></div>`;
+    html += seqField();
+  }else if(k === "loginAck" || k === "alarmAck" || k === "heartbeatAck"){
+    const name = {loginAck:"登录应答 0x01",alarmAck:"报警应答 0x26",heartbeatAck:"心跳应答 0x13"}[k];
+    html += `<div class="group-title">${name} · 服务器响应</div>`;
+    html += `<div class="field s12"><div class="hint">应答包无信息内容，只有协议号与序列号。序列号应回填终端来包的序列号。</div></div>`;
+    html += seqField();
+  }else if(k === "locate" || k === "alarm"){
+    html += `<div class="group-title">${k==="locate"?"定位数据包 0x22":"报警数据包 0x26"} · 终端发出</div>`;
+    html += refreshField("s6","datetime","日期时间",nowText(),"YYYY-MM-DD HH:MM:SS，各分量转成 1 字节十六进制。↻ 取当前系统时间","datetime","刷新为当前系统时间");
+    html += inputField("s3","gpsLen","GPS 信息长度","12","高半字节，0–15");
+    html += inputField("s3","sats","参与定位卫星数","11","低半字节，0–15");
+    html += refreshField("s3","lat","纬度","23.111668","十进制度，内部按 分×30000 换算。↻ 经纬度一起随机方向移动约 100 米","coords","经纬度随机方向移动约 100 米");
+    html += selectField("s3","latHemi","纬度半球",[["N","北纬"],["S","南纬"]],"N","");
+    html += refreshField("s3","lon","经度","114.409285","十进制度，0–180。↻ 与纬度同一个按钮效果","coords","经纬度随机方向移动约 100 米");
+    html += selectField("s3","lonHemi","经度半球",[["E","东经"],["W","西经"]],"E","");
+    html += `<div class="field s12"><div class="hint" id="coordMoveHint"></div></div>`;
+    html += inputField("s3","speed","速度 km/h","0","0–255，超出按协议上限截断");
+    html += `<div class="field s3"><label class="lbl" for="course">航向 °</label><input id="course" type="text" inputmode="numeric" value="332"><div class="hint">协议以正北为 0、顺时针，字段占 10 bit（0–1023），文档描述范围为 0–360。</div></div>`;
+    html += `<div class="field s6"><label class="lbl">定位状态</label><div class="bits">${checkField("positioned","GPS 已定位",true)}${checkField("differential","差分定位",false)}</div><div class="hint">未勾选“差分”即实时 GPS。</div></div>`;
+    if(k === "alarm") html += inputField("s3","lbsLen","LBS 长度 <em>留空自动</em>","","报警包独有。留空 = MCC 2 + MNC 1 + LAC 2 + Cell ID 4 = 09；手填用于造异常");
+    html += inputField("s3","mcc","MCC","460","中国 460，范围 0–999");
+    html += inputField("s3","mnc","MNC","0","中国移动为 0x00");
+    html += inputField("s3","lac","LAC","10365","0x0001–0xFFFE，0 与 65535 协议禁用");
+    html += inputField("s6","cellId","Cell ID（4 字节）","124423937","十进制或 0x 开头的十六进制都行，如 124423937 = 0x076A8F01。构造固定 4 字节（现场终端实测）；从附录 B 的 3 字节老报文填回时会补成 4 字节");
+    if(k === "locate"){
+      html += `<div class="field s3"><label class="lbl">ACC</label><div class="bits" style="margin-top:8px">${checkField("accHigh","ACC 高",true)}</div></div>`;
+      html += selectField("s3","uploadMode","数据上报模式",UPLOAD_MODE.map(o=>[hex2(o[0]),o[1]]),"00","");
+      html += `<div class="field s3"><label class="lbl">实时/补传</label><div class="bits" style="margin-top:8px">${checkField("realtime","实时上传",true)}</div><div class="hint">不勾选即补传 0x01。</div></div>`;
+    }else{
+      html += terminalInfoFields();
+      html += inputField("s3","voltLevel","电压等级","6","报警包内的电压等级字节");
+      html += selectField("s3","gsm","GSM 信号强度",GSM_LEVEL.map(o=>[String(o[0]),o[1]]),"4","");
+      html += alarmLangFields();
+    }
+    html += extFields();
+    html += seqField();
+  }else if(k === "heartbeat"){
+    html += `<div class="group-title">心跳包 0x13 · 终端发出</div>`;
+    html += `<div class="field s12"><div class="hint">协议注明心跳包的终端报警信息固定为正常，不会上传报警信息。这里仍按字段表开放编辑，便于造异常报文。</div></div>`;
+    html += terminalInfoFields(HB_TERM_ALARM);
+    html += inputField("s3","battery","电量 %","100","1–100，报文为 0x01–0x64，0x64 为满电");
+    html += selectField("s3","gsm","GSM 信号强度",GSM_LEVEL.map(o=>[String(o[0]),o[1]]),"3","");
+    html += alarmLangFields();
+    html += seqField();
+  }else if(k === "command" || k === "reply"){
+    html += `<div class="group-title">${k==="command"?"服务器指令 0x80":"终端回复 0x15"}</div>`;
+    html += inputField("s6","flag","服务器标志位","00 00 00 01","4 字节，终端在回复中原样返回");
+    html += `<div class="field s12"><label class="lbl" for="content">${k==="command"?"指令内容（ASCII）":"回复内容（GBK）"}</label><textarea id="content">${k==="command"?"RELAY,1#":"切断油电成功!"}</textarea><div class="hint">${k==="command"?"协议要求以 ASCII 字符串表示，兼容短信指令。":"中文按 GBK 编码，解码异常时解析区给出 UTF-8 对照。"}</div></div>`;
+    if(k === "command") html += `<div class="field s12"><label class="lbl">文档示例模板</label><div class="templates">${TEMPLATES.map(t=>`<button class="btn tiny" type="button" data-tpl="${h(t[0])}">${h(t[0])} ${h(t[1])}</button>`).join("")}</div></div>`;
+    html += selectField("s3","cmdLang","语言",[["1","0x0001 中文"],["2","0x0002 英文"]],"1","中文 0x00 0x01，英文 0x00 0x02");
+    html += seqField();
+  }else if(k === "devinfo"){
+    html += `<div class="group-title">设备基本信息 0x82 · 终端发出</div>`;
+    html += `<div class="field s12"><div class="hint">设备重启或收到修改指令时上传。0x82 未列入 4.3 协议号表，文档也没写服务器是否应答。字段按 5.3 节后的字段表，不含标题里提到的“设备时间”。</div></div>`;
+    html += inputField("s3","reportMinutes","回传时间（分钟）","10","2 字节，示例 00 0A = 10 分钟");
+    html += `<div class="field s3"><label class="lbl">夜间模式</label><div class="bits" style="margin-top:8px">${checkField("nightOn","开启",false)}</div><div class="hint">01 开，00 关</div></div>`;
+    html += inputField("s3","nightStart","夜间开始","10:10","HH:MM，按十进制 HHMM 编码：10:10 → 03 F2");
+    html += inputField("s3","nightEnd","夜间结束","11:20","HH:MM：11:20 → 04 60");
+    html += inputField("s8","firmware","固件版本（ASCII）","Jan 13 2023_11:51:33,V1.0","扩展头长度自动等于字节数（示例 25 → 00 19）");
+    html += inputField("s3","fwType","固件扩展类型","00A3","扩展头后 2 字节，示例 00 A3");
+    html += inputField("s6","iccid","ICCID","89860477012170551389","20 位按 BCD 压成 10 字节");
+    html += inputField("s3","iccType","ICCID 扩展类型","00B2","示例 00 B2");
+    html += inputField("s3","iccHeadLen","ICCID 头长度 <em>留空自动</em>","","留空 = ICCID 实际字节数（10）。协议示例写 0x0C，要复现示例填 12");
+    html += seqField();
+  }
+  $("#form").innerHTML = html;
+  $("#form").onchange = refresh;
+  // 只响应使用者的真实输入。renderForm 重建控件时会派发无 inputType 的 input 事件，
+  // 若此时刷新，会在字段回填完成前用默认值覆盖构造结果。
+  $("#form").oninput = (e)=>{if(e.inputType) refresh();};
+  const plus = $("#seqPlus"); if(plus) plus.onclick = ()=>{const el=$("#seq");el.value=String(Math.min(65535,(Number(el.value)||0)+1));refresh();};
+  $("#form").querySelectorAll("[data-refresh]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.refresh === "datetime") $("#datetime").value = nowText();
+    else if(b.dataset.refresh === "coords") moveCoords(100);
+    refresh();
+  });
+  $("#form").querySelectorAll("[data-tpl]").forEach(b=>b.onclick=()=>{$("#content").value=b.dataset.tpl;refresh();});
+  updateTzHints();
+}
+function updateTzHints(){
+  const text = `${TZ_ALGOS[state.tzAlgo].formula}。${TZ_RAW_FORMULA}。`;
+  $("#tzAlgoFormula").textContent = text;
+  const formHint = $("#tzFormulaHint");
+  if(formHint) formHint.textContent = `当前 ${TZ_ALGOS[state.tzAlgo].name}。${text}协议原文只有“8×100 = 800”和“12.45×100 = 1245 → 0x4DD8”两例，算法未定，可在页面顶部切换。`;
+}
+function renderTzAlgo(){
+  const sel = $("#tzAlgo");
+  sel.innerHTML = Object.entries(TZ_ALGOS).map(([k,a])=>`<option value="${k}" ${k===state.tzAlgo?"selected":""}>${h(a.name)}</option>`).join("");
+  sel.onchange = ()=>{
+    state.tzAlgo = sel.value;
+    updateTzHints();
+    refresh();
+    if(state.frames.length) parseInput();
+  };
+  updateTzHints();
+}
+function terminalInfoFields(table){
+  const hb = table === HB_TERM_ALARM;
+  return `<div class="field s12"><label class="lbl">终端信息</label><div class="bits">${checkField("oilCut","油电断开",false)}${checkField("tiGps","GPS 已定位",true)}${checkField("charging","已接电源充电",true)}${checkField("tiAcc","ACC 高",false)}${checkField("armed","设防",false)}</div></div>`
+    + selectField("s6","tiAlarm","终端信息内报警位",(table||TERM_ALARM).map(o=>[String(o[0]),`${o[0].toString(2).padStart(3,"0")} ${o[1]}`]),"0",hb?"占 bit3–bit5。心跳包位表 100 为预留，协议要求固定为正常。":"占 bit3–bit5。");
+}
+function alarmLangFields(){
+  return selectField("s6","alarmCode","报警/语言前位",ALARMS.map(o=>[hex2(o[0]),`0x${hex2(o[0])} ${o[1]}`]),"00","非法拆除优先级最高")
+    + `<div class="field s6"><label class="lbl">报警/语言后位</label><div class="bits"><label class="check">语言 <select id="langBits2"><option value="1">01 中文</option><option value="2">02 英文</option><option value="0">00 未定义</option></select></label>${checkField("light","见光",false)}<label class="check">保留 bit5–7 <input id="langReserved" type="text" inputmode="numeric" value="0" style="width:52px"></label></div><div class="hint">bit0–bit3 语言类型，bit4 光感，bit5–bit7 保留（应为 0，可填 0–7 造异常）。中文见光 = 0x11。</div></div>`;
+}
+function extFields(){
+  return `<div class="field s12"><label class="lbl">扩展字段</label><div class="bits">${checkField("withExt","携带搜星数 / CSQ / 电压",true)}</div><div class="hint">默认带上。关闭后构造的报文不含这 4 字节，解析按实际长度自动判断。</div></div>`
+    + inputField("s3","extSat","搜星数","11","扩展字节")
+    + inputField("s3","extCsq","信号强度 CSQ","31","扩展字节")
+    + inputField("s3","extVolt","电压 V","4.01","实际电压，报文内为该值乘 100");
+}
+function nowText(){
+  const d = new Date();
+  const p = (n)=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+// ---------- 大白话解释 ----------
+// raw 必须是空格分隔的十六进制字节；占位字段（如「扩展字段」）传「—」，不占字节。
+function rawBytes(f){return /^[0-9A-Fa-f]{2}( [0-9A-Fa-f]{2})*$/.test(f.raw) ? f.raw.split(" ").map(x=>parseInt(x,16)) : [];}
+const binStr = (v,w) => v.toString(2).padStart(w,"0");
+const bin4 = (v,w) => binStr(v,w).replace(/(.{4})(?=.)/g,"$1 ");
+const decOf = (b) => b.reduce((a,x)=>a*256+x,0);
+const hexOf = (b) => "0x"+b.map(hex2).join("");
+const yesNo = (ok) => ok ? "对得上" : "对不上，有问题";
+function bitRows(v, defs){
+  return defs.map(([hi,lo,name,fn])=>{
+    const n = (v >> lo) & ((1 << (hi-lo+1)) - 1);
+    return {pos: hi===lo?`bit${hi}`:`bit${hi}–${lo}`, bin: binStr(n,hi-lo+1), name, meaning: fn(n)};
+  });
+}
+function listText(dict, v){return dict.map(d=>`${d[0]===v?"【":""}${typeof d[0]==="number"?"0x"+hex2(d[0]):d[0]} ${d[1]}${d[0]===v?"】":""}`).join("，");}
+function direction(deg){const names=["正北","东北","正东","东南","正南","西南","正西","西北"];return names[Math.round((deg%360)/45)%8];}
+function charMap(bytes){
+  const parts = [];
+  for(let i=0;i<bytes.length;){
+    if(bytes[i] < 0x80){const c = bytes[i]; parts.push(`${c===0x20?"空格":String.fromCharCode(c)}=${hex2(c)}`); i++;}
+    else{const pair = bytes.slice(i,i+2); parts.push(`${GBK_DECODER.decode(Uint8Array.from(pair))}=${pair.map(hex2).join("")}`); i+=2;}
+  }
+  return parts.join("  ");
+}
+const COMMAND_MEANING = {"RELAY,1#":"断开油电","RELAY,0#":"恢复油电","RESET#":"重启终端"};
+
+function explainField(f, ctx){
+  const b = rawBytes(f), v = ctx.values || {}, n = decOf(b), H = hexOf(b);
+  switch(f.name){
+    case "起始位": return {calc:["每一帧都固定以 78 78 开头，看到它就知道一帧开始了。"]};
+    case "包长度": return {calc:[`${H} 转十进制 = ${n}。`, "它数的是「协议号 + 信息内容 + 信息序列号 + 错误校验」一共多少字节，不含起始位、包长度自己和停止位。", `本帧：总长 ${ctx.total} − 起始位 2 − 包长度 1 − 停止位 2 = ${ctx.total-5}，${yesNo(n===ctx.total-5)}。`]};
+    case "协议号": return {calc:[`${H} 代表「${PROTO[n]||"协议未定义"}」，后面的信息内容就按这种包的格式拆。`, ctx.bodyLen===0?"这一帧没有信息内容，只有协议号和序列号，是服务器回给终端的应答包。":"", "全部协议号：" + Object.entries(PROTO).map(([k,s])=>`0x${hex2(+k)} ${s}`).join("，") + "。"]};
+    case "终端 ID": return {calc:["BCD 码：每个字节的两位十六进制直接当两位数字读，不做进制换算。", `${b.map(hex2).join(" ")} → ${v.terminalId}`, `去掉左边补的 0 → ${String(v.terminalId).replace(/^0+/,"")||"0"}（一般就是设备 IMEI，15 位）。`]};
+    case "类型识别码": return {calc:[`${H}：${typeCodeNote(n)}。`, "协议例子：0x2000 带断油电，0x2001 不带断油电；文档备注写固定为 0x0100。"]};
+    case "时区语言": {
+      const value = n >> 4, west = !!(n & 8);
+      const aMin = tzMinutesOf(value,"hhmm"), bMin = tzMinutesOf(value,"decimal");
+      const cur = state.tzAlgo === "hhmm" ? "A" : "B";
+      return {calc:[
+        `${H} 写成二进制：${bin4(n,16)}`,
+        `拆开：前 12 位（bit15–4）是「时区值」，二进制 ${bin4(value,12)} = 0x${value.toString(16).toUpperCase()} = ${value}。`,
+        `算法 A（小时×100+分钟）：${value} → ${Math.floor(value/100)} 小时 ${value%100} 分${cur==="A"?"（当前选用）":""}`,
+        `算法 B（小时×100，分钟÷60）：${value} ÷ 100 = ${(value/100).toFixed(2)} 小时 → ${Math.floor(bMin/60)} 小时 ${bMin%60} 分${cur==="B"?"（当前选用）":""}`,
+        `bit3 = ${west?1:0} → ${west?"西时区，取负号":"东时区，取正号"}。`,
+        `结论：${tzLabel(west?-(cur==="A"?aMin:bMin):(cur==="A"?aMin:bMin))}，语言 ${dictText(LOGIN_LANG, n&3)}。页面顶部可切换算法。`],
+        bits: bitRows(n, [[15,4,"时区值",x=>`${x}（见上方计算）`],[3,3,"东/西",x=>x?"西时区":"东时区"],[2,2,"未定义",x=>x?"被置 1（协议未定义）":"0"],[1,0,"语言选择",x=>dictText(LOGIN_LANG,x)]])};
+    }
+    case "日期时间": {
+      const names = ["年","月","日","时","分","秒"];
+      return {calc:[`6 个字节依次是年、月、日、时、分、秒，每个字节十六进制转十进制：`, b.map((x,i)=>`${hex2(x)} → ${x} ${names[i]}`).join("；"), `年份只存后两位，前面补 20 → ${formatDatetime(b)}。`, "协议没写这是 UTC 还是北京时间，以平台约定为准。"]};
+    }
+    case "GPS 信息长度/卫星数": return {calc:[`${H} 拆成前后两个半字节（各 4 位）：`, `前半 ${(n>>4).toString(16).toUpperCase()} = ${n>>4} → GPS 信息长度 ${n>>4} 字节`, `后半 ${(n&15).toString(16).toUpperCase()} = ${n&15} → 参与定位的卫星 ${n&15} 颗`]};
+    case "纬度": case "经度": {
+      const lat = f.name === "纬度";
+      const deg = n/1800000, d = Math.floor(deg), m = (deg-d)*60;
+      const hemi = lat ? (v.latNorth?"北纬":"南纬") : (v.lonWest?"西经":"东经");
+      const sign = lat ? (v.latNorth?1:-1) : (v.lonWest?-1:1);
+      return {calc:[`${H} 转十进制 = ${n}`, `÷ 30000 = ${(n/30000).toFixed(4)} 分`, `÷ 60 = ${deg.toFixed(6)} 度（= ${d}°${m.toFixed(4)}′）`, `${lat?"南北":"东西"}看「状态航向」的 ${lat?"bit10":"bit11"}：${hemi}。`, `地图上用的带符号写法：${(sign*deg).toFixed(6)}`]};
+    }
+    case "速度": return {calc:[`${H} 转十进制 = ${n} km/h（范围 0–255）。`]};
+    case "状态航向": return {calc:[`${H} 写成二进制：${bin4(n,16)}`, `低 10 位是航向：${binStr(n&1023,10)} = ${n&1023}°，以正北为 0° 顺时针，大致朝${direction(n&1023)}。`, "其余各位见下表。"],
+      bits: bitRows(n, [[15,14,"固定为 0",x=>x?"不为 0，异常":"0"],[13,13,"实时/差分",x=>x?"差分 GPS":"实时 GPS"],[12,12,"是否定位",x=>x?"GPS 已定位":"GPS 未定位（经纬度可能不可信）"],[11,11,"东经/西经",x=>x?"西经":"东经"],[10,10,"南纬/北纬",x=>x?"北纬":"南纬"],[9,0,"航向",x=>`${x}°`]])};
+    case "LBS 长度": return {calc:[`${H} = ${n}，表示后面基站信息共 ${n} 字节 = MCC 2 + MNC 1 + LAC 2 + Cell ID ${n-5}。`]};
+    case "MCC": return {calc:[`${H} 转十进制 = ${n}，移动国家码，${n===460?"460 就是中国":"中国是 460"}。`]};
+    case "MNC": return {calc:[`${H} = ${n}，运营商代码。中国常见：00/02/07 中国移动，01/06/09 中国联通，03/05/11 中国电信。`]};
+    case "LAC": return {calc:[`${H} 转十进制 = ${n}，基站位置区码。0 和 65535 协议禁用。`]};
+    case "Cell ID": return {calc:[`${H} 转十进制 = ${n}，基站小区编号。`, "MCC + MNC + LAC + Cell ID 合起来能在基站库里查到大致位置（GPS 没定位时靠它）。"]};
+    case "ACC": return {calc:[`${H}：00 = ACC 低，01 = ACC 高（一般 ACC 高表示车辆点火）。本帧 ${n?"ACC 高":"ACC 低"}。`]};
+    case "数据上报模式": return {calc:[`${H}：${dictText(UPLOAD_MODE,n)}。`, "全部取值：" + listText(UPLOAD_MODE,n)]};
+    case "GPS 实时补传": return {calc:[`${H}：00 = 实时上传，01 = 补传（之前没发出去的盲区数据，网络恢复后补发）。本帧 ${n?"补传":"实时"}。`]};
+    case "终端信息": {
+      const table = ctx.proto === 0x13 ? HB_TERM_ALARM : TERM_ALARM;
+      return {calc:[`${H} 写成二进制：${bin4(n,8)}，每一位含义见下表。`],
+        bits: bitRows(n, [[7,7,"油电",x=>x?"断开":"接通"],[6,6,"GPS",x=>x?"已定位":"未定位"],[5,3,"终端报警",x=>dictText(table,x)],[2,2,"充电",x=>x?"已接电源充电":"未接电源充电"],[1,1,"ACC",x=>x?"高":"低"],[0,0,"设防",x=>x?"设防":"撤防"]])};
+    }
+    case "电量百分比": return {calc:[`${H} 转十进制 = ${n} → 电量 ${n}%（0x64 = 100 为满电）。`]};
+    case "GSM 信号强度": return {calc:[`${H}：${gsmText(n)}。`, "全部取值：" + listText(GSM_LEVEL,n)]};
+    case "电压等级": return {calc:[`${H} = ${n}。协议只写“设备电压”，没给对照表，只能看原值。`]};
+    case "报警/语言": {
+      const alarm = b[0], st = b[1];
+      return {calc:[`第 1 字节 ${hex2(alarm)} 是报警类型：${dictText(ALARMS,alarm)}。`, `第 2 字节 ${hex2(st)} 写成二进制 ${bin4(st,8)}，按位拆见下表（中文 + 见光 = 0x11）。`],
+        bits: bitRows(st, [[7,5,"保留",x=>x?"不为 0（应为 0）":"0"],[4,4,"光感",x=>x?"见光":"未见光"],[3,0,"语言",x=>langText(x)]])};
+    }
+    case "搜星数（扩展）": return {calc:[`${H} = ${n}，终端搜到的卫星 ${n} 颗。`]};
+    case "信号强度 CSQ（扩展）": return {calc:[`${H} = ${n}，CSQ 范围一般 0–31，越大信号越好（31 最强，99 表示未知）。`]};
+    case "电压（扩展）": return {calc:[`${H} 转十进制 = ${n}，÷ 100 = ${(n/100).toFixed(2)} V。`]};
+    case "扩展字段": return {calc:["定位包、报警包末尾可以多带 4 字节：搜星数、CSQ、电压。本帧长度说明没带。"]};
+    case "指令长度": return {calc:[`${H} = ${n} = 服务器标志位 4 + 内容 ${n-4} 字节（后面的语言 2 字节不算在内）。`]};
+    case "服务器标志位": return {calc:["服务器自己定的编号，终端回复时原样带回，服务器靠它对上是哪条指令的回复。"]};
+    case "内容": {
+      const meaning = COMMAND_MEANING[v.content];
+      return {calc:[ctx.proto===0x80?"服务器下发的指令，ASCII 字符，每个字符 1 字节：":"终端回复的文字，英文 1 字节、汉字 2 字节（GBK 编码）：", charMap(b), `合起来：「${v.content||""}」${meaning?`，意思是「${meaning}」`:""}。`]};
+    }
+    case "语言": return {calc:[`${H}：0x0001 中文，0x0002 英文。本帧 ${langText(n)}。`]};
+    case "回传时间": return {calc:[`${H} 转十进制 = ${n}，每 ${n} 分钟定时回传一次。`]};
+    case "夜间模式开关": return {calc:[`${H}：01 开，00 关。`]};
+    case "夜间开始时间": case "夜间结束时间": return {calc:[`${H} 转十进制 = ${n}，按「时时分分」读 → ${String(Math.floor(n/100)).padStart(2,"0")}:${String(n%100).padStart(2,"0")}。`]};
+    case "固件扩展头": case "ICCID 扩展头": return {calc:[`前 2 字节 ${b.slice(0,2).map(hex2).join(" ")} = ${decOf(b.slice(0,2))}，是后面数据的长度；后 2 字节 ${b.slice(2).map(hex2).join(" ")} 是类型标识。`]};
+    case "固件版本": return {calc:["ASCII 字符串，每字节一个字符：", charMap(b), `合起来：「${v.firmware}」`]};
+    case "ICCID": return {calc:["SIM 卡号，BCD 码，每字节两位十六进制直接当数字读：", `${b.map(hex2).join(" ")} → ${v.iccid}`]};
+    case "信息序列号": return {calc:[`${H} 转十进制 = ${n}。终端开机后每发一条加 1；服务器应答时要把这个号原样带回。`]};
+    case "错误校验": return {calc:[`用附录 A 的 CRC-ITU 算法，对「包长度」到「信息序列号」这 ${ctx.total-6} 字节计算，得到 ${hexN(ctx.crcCalc,2)}。`, `报文里写的是 ${hexN(n,2)}，${n===ctx.crcCalc?"一致，说明数据传输没出错":"不一致，数据被改动或传错了，按协议应丢弃这一帧"}。`]};
+    case "停止位": return {calc:["每一帧固定以 0D 0A 结尾（回车换行）。"]};
+    case "剩余字节": case "未识别尾部": case "信息内容": return {calc:["这些字节没法按协议对应到具体字段，可能是报文多了字节、少了字节，或者是协议没写的扩展。"]};
+    case "LBS 长度校验": return {calc:["LBS 长度字节说的长度和实际 Cell ID 宽度对不上，以帧总长为准拆分。"]};
+    default: return {calc:[]};
+  }
+}
+
+// 整帧的大白话总结，并给出服务器该回的应答报文（登录、心跳、报警需要应答）。
+function ackFrame(proto, seq){
+  const core = [0x05, proto, (seq>>8)&0xFF, seq&0xFF];
+  const crc = crc16(core);
+  return spaced([0x78,0x78,...core,(crc>>8)&0xFF,crc&0xFF,0x0D,0x0A]);
+}
+function summarize(d){
+  const v = d.values || {}, p = d.proto, s = [];
+  if(!d.values || p == null) return s;
+  if((p === 0x22 || p === 0x26) && (!v.datetime || v.mcc == null)){
+    s.push(`<b>${PROTO[p]}</b>，但报文不完整，只能拆出部分字段，详见下表标红/标黄的行。`);
+    return s;
+  }
+  const pos = () => {
+    const lat = rawToDegree(v.latRaw||0)*(v.latNorth?1:-1), lon = rawToDegree(v.lonRaw||0)*(v.lonWest?-1:1);
+    return `${v.positioned?"GPS 已定位":"GPS 未定位（位置可能不准）"}，坐标 ${lat.toFixed(6)}, ${lon.toFixed(6)}（${v.latNorth?"北纬":"南纬"} ${v.lonWest?"西经":"东经"}），速度 ${v.speed} km/h，航向 ${v.course}°（${direction(v.course||0)}）；基站 MCC ${v.mcc} / MNC ${v.mnc} / LAC ${v.lac} / CI ${v.cellId}`;
+  };
+  if(d.bodyLen === 0){
+    s.push(`这是<b>服务器的应答包</b>（${PROTO[p]||"未知"}），告诉终端：序列号 ${v.seq} 那条我收到了。`);
+    return s;
+  }
+  if(p === 0x01){
+    s.push(`<b>终端登录</b>：设备号 ${String(v.terminalId).replace(/^0+/,"")}，类型码 0x${hexN(v.typeCode,2)}，时区 ${tzLabel(v.tzMinutes)}，语言 ${dictText(LOGIN_LANG,v.langBits)}。`);
+  }else if(p === 0x22){
+    s.push(`<b>终端上报位置</b>：时间 ${formatDatetime(v.datetime.match(/../g).map(x=>parseInt(x,16)))}，${pos()}。`);
+    if(v.acc != null) s.push(`ACC ${v.acc?"高":"低"}，${dictText(UPLOAD_MODE,v.uploadMode)}，${v.realtime?"补传的历史数据":"实时数据"}${v.hasExt?`；搜星 ${v.extSat} 颗，CSQ ${v.extCsq}，电压 ${(v.extVolt/100).toFixed(2)} V`:""}。`);
+  }else if(p === 0x26){
+    s.push(`<b>终端报警：${dictText(ALARMS,v.alarm)}</b>。时间 ${formatDatetime(v.datetime.match(/../g).map(x=>parseInt(x,16)))}，${pos()}。`);
+    if(v.terminalInfo != null) s.push(`终端状态：${decodeTerminalInfo(v.terminalInfo)}；${gsmText(v.gsm)}${v.hasExt?`；搜星 ${v.extSat} 颗，CSQ ${v.extCsq}，电压 ${(v.extVolt/100).toFixed(2)} V`:""}。`);
+  }else if(p === 0x13){
+    s.push(`<b>终端心跳</b>：${decodeTerminalInfo(v.terminalInfo, HB_TERM_ALARM)}；电量 ${v.battery}%，${gsmText(v.gsm)}；报警 ${alarmLangText(v.alarm, v.langState)}。`);
+  }else if(p === 0x80){
+    const m = COMMAND_MEANING[v.content];
+    s.push(`<b>服务器下发指令</b>「${h(v.content||"")}」${m?`（${m}）`:""}，标志位 ${spaced(v.flag||[])}，语言 ${langText(v.language)}。终端执行后会用 0x15 回复，并带回同样的标志位。`);
+  }else if(p === 0x15){
+    s.push(`<b>终端回复指令结果</b>：「${h(v.content||"")}」，对应服务器标志位 ${spaced(v.flag||[])}，语言 ${langText(v.language)}。`);
+  }else if(p === 0x82){
+    s.push(`<b>终端上报设备信息</b>：每 ${v.reportMinutes} 分钟回传，夜间模式${v.nightOn?"开":"关"}（${hhmmText(v.nightStart||0).slice(0,5)}–${hhmmText(v.nightEnd||0).slice(0,5)}），固件「${h(v.firmware||"")}」，ICCID ${v.iccid}。`);
+  }
+  s.push(`序列号 ${v.seq}。`);
+  if([0x01,0x13,0x26].includes(p)) s.push(`服务器应回复：<code>${ackFrame(p, v.seq)}</code>`);
+  return s;
+}
+
+const STRIP_COLORS = ["c0","c1","c2","c3"];
+function renderFrameDetail(d){
+  if(!d.fields.length) return `<p class="hint">无字段。</p>`;
+  const sum = summarize(d);
+  let offset = 0, idx = 0;
+  const strip = [], rows = [];
+  for(const f of d.fields){
+    const bytes = rawBytes(f);
+    idx++;
+    const pos = bytes.length ? (bytes.length===1 ? `第 ${offset+1} 字节` : `第 ${offset+1}–${offset+bytes.length} 字节`) : "—";
+    if(bytes.length) strip.push(`<span class="${f.level||STRIP_COLORS[idx%4]}" title="${h(f.name)}：${h(f.value)}"><sup>${idx}</sup>${bytes.map(hex2).join(" ")}</span>`);
+    const ex = f.explain || {calc:[]};
+    const calc = [...ex.calc.filter(Boolean), ...(f.note?[`说明：${f.note}`]:[])];
+    const bits = ex.bits ? `<table class="bits"><thead><tr><th>位</th><th>二进制</th><th>含义</th><th>本帧</th></tr></thead><tbody>${ex.bits.map(r=>`<tr><td>${r.pos}</td><td><code>${r.bin}</code></td><td>${h(r.name)}</td><td>${h(r.meaning)}</td></tr>`).join("")}</tbody></table>` : "";
+    rows.push(`<div class="fcard ${f.level}"><div class="fcard-h"><span class="fno">${idx}</span><b>${h(f.name)}</b><span class="fpos">${pos}</span><code class="fraw">${h(f.raw)}</code></div><div class="fres">结果：${h(f.value)}</div>${calc.length?`<ol class="calc">${calc.map(c=>`<li>${h(c)}</li>`).join("")}</ol>`:""}${bits}</div>`);
+    offset += bytes.length;
+  }
+  return `${sum.length?`<div class="summary"><div class="summary-t">这条报文在说什么</div>${sum.map(x=>`<div>${x}</div>`).join("")}</div>`:""}`
+    + `<div class="lbl" style="margin-top:8px">按字段分色（鼠标悬停看字段名，上标数字对应下表序号）</div><div class="hexstrip">${strip.join("")}</div>`
+    + `<div class="fcards">${rows.join("")}</div>`;
+}
+function renderIssues(issues){
+  if(!issues.length) return `<span class="tag ok">校验通过</span>`;
+  return issues.map(i=>`<div><span class="tag bad">异常</span> ${h(i)}</div>`).join("");
+}
+function refresh(){
+  const {frame, issues} = build();
+  state.lastBuild = frame;
+  $("#outSpaced").textContent = spaced(frame);
+  $("#outPlain").textContent = frame.map(hex2).join("");
+  $("#buildStatus").textContent = `${frame.length} 字节`;
+  $("#buildIssues").innerHTML = renderIssues(issues);
+  const decoded = decodeFrame(frame);
+  $("#buildParse").innerHTML = renderFrameDetail(decoded);
+}
+
+function parseInput(){
+  const {bytes, error} = parseHex($("#rawInput").value);
+  if(error){$("#parseOut").innerHTML = `<span class="tag bad">无法解析</span> ${h(error)}`;state.frames=[];return;}
+  const parts = splitFrames(bytes);
+  state.frames = parts.map(p=>({...p, decoded:p.noise?null:decodeFrame(p.bytes)}));
+  state.activeFrame = state.frames.findIndex(f=>!f.noise);
+  $("#parseOut").innerHTML = state.frames.map((f,idx)=>{
+    if(f.noise) return `<div class="frame"><div class="frame-h"><span class="tag warn">帧间杂字节</span><span class="hex">${h(spaced(f.bytes))}</span></div></div>`;
+    const d = f.decoded;
+    const title = f.truncated ? "帧不完整" : (PROTO[d.proto] || "未知协议");
+    const worst = f.truncated || d.issues.length ? "bad" : "ok";
+    return `<div class="frame"><div class="frame-h" data-frame="${idx}"><span><span class="tag ${worst}">${h(title)}</span> ${f.bytes.length} 字节</span><span class="hex">${h(spaced(f.bytes).slice(0,42))}</span></div><div class="panel-b" ${idx===state.activeFrame?"":"hidden"}>${f.truncated?`<span class="tag bad">异常</span> 找到起始位但没有停止位，按残帧展示`:renderIssues(d.issues)}${renderFrameDetail(d)}</div></div>`;
+  }).join("") || `<p class="hint">没有内容。</p>`;
+  $("#parseOut").querySelectorAll("[data-frame]").forEach(el=>el.onclick=()=>{state.activeFrame=Number(el.dataset.frame);parseInput();});
+}
+
+function fillForm(){
+  const f = state.frames[state.activeFrame];
+  if(!f || !f.decoded || !f.decoded.values){return;}
+  const v = f.decoded.values;
+  const kind = kindFromProto(v.proto, f.bytes);
+  if(!kind) return;
+  state.kind = kind;
+  renderCards();
+  renderForm();
+  setVal("seq", v.seq);
+  if(kind === "login"){
+    setVal("terminalId", v.terminalId||"");
+    setSelect("typeCode", hexN(v.typeCode||0,2));
+    setSelect("tzOffset", String(v.tzMinutes||0));
+    setVal("langBits", String(v.langBits||0));
+    setChecked("tzBit2", v.tzBit2);
+    // 分钟位 ≥ 60 之类的非法值无法由选项还原，填原值保证重建字节不变。
+    if(encodeTimezone(v.tzMinutes||0, v.langBits||0, v.tzBit2) !== v.tzRaw) setVal("tzRaw", hexN(v.tzRaw,2));
+  }
+  if(kind === "devinfo"){
+    setVal("reportMinutes", v.reportMinutes);
+    setChecked("nightOn", v.nightOn===1);
+    if(v.nightStart!=null) setVal("nightStart", hhmmText(v.nightStart).slice(0,5));
+    if(v.nightEnd!=null) setVal("nightEnd", hhmmText(v.nightEnd).slice(0,5));
+    setVal("firmware", v.firmware||"");
+    if(v.fwType!=null) setVal("fwType", hexN(v.fwType,2));
+    setVal("iccid", v.iccid||"");
+    if(v.iccType!=null) setVal("iccType", hexN(v.iccType,2));
+    if(v.iccHeadLen!=null && v.iccid && v.iccHeadLen !== v.iccid.length/2) setVal("iccHeadLen", v.iccHeadLen);
+  }
+  if(kind === "locate" || kind === "alarm"){
+    if(v.datetime){const b=v.datetime.match(/../g).map(x=>parseInt(x,16));setVal("datetime",`20${String(b[0]).padStart(2,"0")}-${String(b[1]).padStart(2,"0")}-${String(b[2]).padStart(2,"0")} ${String(b[3]).padStart(2,"0")}:${String(b[4]).padStart(2,"0")}:${String(b[5]).padStart(2,"0")}`);}
+    setVal("gpsLen", v.gpsLen); setVal("sats", v.satellites);
+    setVal("lat", String(rawToDegree(v.latRaw||0))); setVal("lon", String(rawToDegree(v.lonRaw||0)));
+    setVal("latHemi", v.latNorth?"N":"S"); setVal("lonHemi", v.lonWest?"W":"E");
+    setVal("speed", v.speed); setVal("course", v.course);
+    setChecked("positioned", v.positioned); setChecked("differential", v.differential);
+    setVal("mcc", v.mcc); setVal("mnc", v.mnc); setVal("lac", v.lac); setVal("cellId", v.cellId);
+    if(kind === "locate"){setChecked("accHigh", v.acc===1);setVal("uploadMode", hex2(v.uploadMode||0));setChecked("realtime", v.realtime===0);}
+    if(kind === "alarm"){if(v.lbsLen !== 5 + v.cellWidth) setVal("lbsLen", v.lbsLen);fillTerminalInfo(v);setVal("voltLevel", v.voltageLevel);setVal("gsm", v.gsm);fillAlarmLang(v);}
+    const extBox = document.getElementById("withExt");
+    if(extBox) extBox.checked = !!v.hasExt;
+    if(v.hasExt){setVal("extSat", v.extSat);setVal("extCsq", v.extCsq);setVal("extVolt", (v.extVolt/100).toFixed(2));}
+  }
+  if(kind === "heartbeat"){fillTerminalInfo(v);setVal("battery", v.battery);setVal("gsm", v.gsm);fillAlarmLang(v);}
+  if(kind === "command" || kind === "reply"){
+    setVal("flag", v.flag?spaced(v.flag):"");
+    setVal("content", v.content||"");
+    setVal("cmdLang", v.language===2?"2":"1");
+  }
+  refresh();
+}
+function kindFromProto(proto, bytes){
+  const short = bytes.length === 10;
+  if(proto === 0x01) return short?"loginAck":"login";
+  if(proto === 0x26) return short?"alarmAck":"alarm";
+  if(proto === 0x13) return short?"heartbeatAck":"heartbeat";
+  if(proto === 0x22) return "locate";
+  if(proto === 0x80) return "command";
+  if(proto === 0x15) return "reply";
+  if(proto === 0x82) return "devinfo";
+  return null;
+}
+function fillTerminalInfo(v){
+  const t = v.terminalInfo||0;
+  setChecked("oilCut", !!(t&0x80)); setChecked("tiGps", !!(t&0x40)); setChecked("charging", !!(t&0x04));
+  setChecked("tiAcc", !!(t&0x02)); setChecked("armed", !!(t&0x01)); setVal("tiAlarm", String((t>>3)&7));
+}
+function fillAlarmLang(v){
+  setSelect("alarmCode", hex2(v.alarm||0));
+  const s = v.langState||0;
+  const langEl = document.getElementById("langBits2");
+  if(langEl && ![...langEl.options].some(o=>o.value===String(s&0x0F))){
+    const opt = document.createElement("option"); opt.value = String(s&0x0F); opt.textContent = `${hex2(s&0x0F)} 报文原值（未定义）`; langEl.appendChild(opt);
+  }
+  setVal("langBits2", String(s&0x0F));
+  setChecked("light", !!(s&0x10));
+  setVal("langReserved", String((s>>5)&7));
+}
+function setVal(id,value){const el=document.getElementById(id);if(el && value!=null) el.value=String(value);}
+function setSelect(id,value){
+  const el=document.getElementById(id);
+  if(!el || value==null) return;
+  const v=String(value);
+  if(![...el.options].some(o=>o.value===v)){
+    const opt=document.createElement("option");
+    // 时区下拉的值是分钟偏移，不是十六进制协议码，不能套「0x」标注。
+    opt.value=v; opt.textContent = id==="tzOffset" ? `${tzLabel(Number(v))}（报文原值，非 15 分钟整数倍）` : `0x${v} 报文原值（协议表未列）`;
+    el.appendChild(opt);
+  }
+  el.value=v;
+}
+function setChecked(id,on){const el=document.getElementById(id);if(el) el.checked=!!on;}
+
+function renderSamples(){
+  $("#samples").innerHTML = SAMPLES.map((s,i)=>`<div class="frame"><div class="frame-h"><span>${h(s.name)}</span><button class="btn tiny" type="button" data-sample="${i}">填入并解析</button></div><div class="panel-b"><div class="out">${h(s.hex)}</div></div></div>`).join("");
+  $("#samples").onclick = (e)=>{
+    const btn = e.target.closest("[data-sample]");
+    if(!btn) return;
+    $("#rawInput").value = SAMPLES[btn.dataset.sample].hex;
+    parseInput();
+    fillForm();
+  };
+}
+
+document.addEventListener("click",(e)=>{
+  const btn = e.target.closest("[data-copy]");
+  if(!btn || !state.lastBuild) return;
+  const text = btn.dataset.copy==="plain"?state.lastBuild.map(hex2).join(""):spaced(state.lastBuild);
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent="已复制";setTimeout(()=>btn.textContent="复制",1200);});
+});
+$("#parseBtn").onclick = parseInput;
+$("#fillBtn").onclick = fillForm;
+
+renderTzAlgo();
+renderCards();
+renderForm();
+renderSamples();
+refresh();
+</script>
+</body>
+</html>
